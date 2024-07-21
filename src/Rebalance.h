@@ -1,0 +1,21 @@
+#pragma once
+
+#include <sstream>
+#include <librdkafka/rdkafkacpp.h>
+#include "Loger.h"
+
+class Rebalance : public RdKafka::RebalanceCb 
+{
+public:
+
+    void SetLoger(Loger* Loger);
+    void rebalance_cb(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions);
+
+private:
+    Loger* loger;
+
+    void LogConfig(const std::vector<RdKafka::TopicPartition*>& partitions);
+    void CooperativeRebalance(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions);
+    void EagerRebalance(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions);
+
+};
