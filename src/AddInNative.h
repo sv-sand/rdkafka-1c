@@ -8,6 +8,7 @@
 #include "ComponentBase.h"
 #include "AddInDefBase.h"
 #include "IMemoryManager.h"
+#include "Strings.h"
 #include "RdKafka1C.h"
 
 #if defined( __linux__ ) || defined(__APPLE__)
@@ -39,7 +40,8 @@ public:
 
     enum Methods
     {
-        eMethEnableLogging = 0,
+        eMethStartLogging = 0,
+        eMethStopLogging,
         eMethSetConfigProperty,
         eMethInitProducer,
         eMethProduce,
@@ -48,6 +50,7 @@ public:
         eMethConsume,
         eMethGetMessageData,
         eMethGetMessageMetadata,
+        eMethCommitOffset,
         eMethStopConsumer,
         eMethLast      // Always last
     };
@@ -89,15 +92,23 @@ public:
     
 private:
     const wchar_t* EXTENSION_NAME = L"RdKafka1C";
-    const wchar_t* COMPONENT_VERSION = L"0.1b";
+    const wchar_t* COMPONENT_VERSION = L"0.2b";
+    std::string errorDescription;
 
     IAddInDefBase* m_iConnect;
     IMemoryManager* m_iMemory;
     std::u16string m_userLang;
     RdKafka1C* rdk1c;
 
+    // General action
+    std::string ErrorDescription();
+    
+    bool StartLogging(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    bool StopLogging();
+    bool SetLogLevel(tVariant* varPropVal);
+    std::string GetLogLevel();
+    
     bool SetConfigProperty(tVariant* paParams, const long lSizeArray);
-    bool EnableLogging(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool InitProducer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool Produce(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool StopProducer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
@@ -105,22 +116,19 @@ private:
     bool Consume(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool GetMessageData(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool GetMessageMetadata(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    bool CommitOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool StopConsumer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
 
     long findName(const wchar_t* names[], const wchar_t* name, const uint32_t size) const;
-    void addError(uint32_t wcode, const wchar_t* source, const wchar_t* descriptor, long code);
-    void addError(uint32_t wcode, const char16_t* source, const char16_t* descriptor, long code);
-
+    
+    // String conversion
+    std::string ToString(tVariant* Source);
     void SetVariant(tVariant* Dest, std::string Source);
     void SetVariant(tVariant* Dest, const wchar_t* Source);
     void SetVariant(tVariant* Dest, const char* Source);
     void SetVariant(tVariant* Dest, int Source);
-
-    uint32_t ToShortWchar(WCHAR_T** Dest, const wchar_t* Source);
-    uint32_t ToShortWchar(WCHAR_T** Dest, const char* Source);
-    std::string ToString(const WCHAR_T* Source);
-    
-    bool SetLogLevel(WCHAR_T* pwstrLogLevel);
-    std::string GetLogLevel();
-    
+    void SetVariant(tVariant* Dest, bool Source);
+    uint32_t ToShortWchar(WCHAR_T** Dest, const wchar_t* Source, uint32_t Length);
+    uint32_t ToShortWchar(WCHAR_T** Dest, const char* Source, uint32_t Length);
+      
 };

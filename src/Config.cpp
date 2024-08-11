@@ -3,54 +3,46 @@
 Config::Config(Loger* Loger)
 {
     loger = Loger;
+
+    rebalance = nullptr;
+    event = nullptr;
+    deliveryReport = nullptr;
     
     loger->Info("Create global config");
-    config = RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL);
-
-    loger->Info("Delivery report callback initialization");
-    deliveryReport = new DeliveryReport();
-    deliveryReport->SetLoger(loger);
-
-    loger->Info("Rebalance callback initialization");
-    rebalance = new Rebalance();
-    rebalance->SetLoger(loger);
-
-    loger->Info("Event callback initialization");
-    event = new Event();
-    event->SetLoger(loger);
+    conf = RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL);
 }
 
 Config::~Config()
 {
-    delete deliveryReport;
-    delete rebalance;
-    delete event;
-    delete config;
+    
 }
 
 bool Config::Build(std::string& ErrorDescription)
 {
     // Set common props
     if (loger->level == Loger::Levels::DEBUG)
-        if (!Set("debug", "all", ErrorDescription))
+        if (!SetProperty("debug", "all", ErrorDescription))
             return false;
 
-    if (!Set("enable.partition.eof", "true", ErrorDescription))
+    if (!SetProperty("client.id", "rdkafka-1c", ErrorDescription))
+        return false;
+
+    if (!SetProperty("enable.partition.eof", "true", ErrorDescription))
         return false;
 
     // Set user props
     for (const auto& [key, value] : properties)
-        if (!Set(key, value, ErrorDescription))
+        if (!SetProperty(key, value, ErrorDescription))
             return false;
 
     // Set callbacks
-    if (!SetDeliveryReport(deliveryReport, ErrorDescription))
+    if (!SetPropertyDeliveryReport(deliveryReport, ErrorDescription))
         return false;
-
-    if (!SetRebalance(rebalance, ErrorDescription))
+    
+    if (!SetPropertyRebalance(rebalance, ErrorDescription))
         return false;
-
-    if (!SetEvent(event, ErrorDescription))
+        
+    if (!SetPropertyEvent(event, ErrorDescription))
         return false;
 
     // Log dump
@@ -60,14 +52,9 @@ bool Config::Build(std::string& ErrorDescription)
     return true;
 }
 
-RdKafka::Conf* Config::Get()
+RdKafka::Conf* Config::GetConf()
 {
-    return config;
-}
-
-void Config::AddProperty(std::string Name, std::string Value)
-{
-    properties[Name] = Value;
+    return conf;
 }
 
 void Config::ClearProperties()
@@ -75,12 +62,32 @@ void Config::ClearProperties()
     properties.clear();
 }
 
+void Config::AddProperty(std::string Name, std::string Value)
+{
+    properties[Name] = Value;
+}
+
+void Config::SetDeliveryReport(DeliveryReport* DeliveryReport)
+{
+    deliveryReport = DeliveryReport;
+}
+
+void Config::SetRebalance(Rebalance* Rebalance)
+{
+    rebalance = Rebalance;
+}
+
+void Config::SetEvent(Event* Event)
+{
+    event = Event;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // Support methods
 
 void Config::LogConfigDump()
 {
-    std::list<std::string>* dump = config->dump();
+    std::list<std::string>* dump = conf->dump();
     std::stringstream stream;
 
     stream << "Config dump:";
@@ -95,11 +102,11 @@ void Config::LogConfigDump()
     loger->Debug(stream.str());
 }
 
-bool Config::Set(std::string Name, std::string Value, std::string& ErrorDescription)
+bool Config::SetProperty(std::string Name, std::string Value, std::string& ErrorDescription)
 {
     loger->Info("Set config property '" + Name + "' in value '" + Value + "'");
 
-    RdKafka::Conf::ConfResult result = config->set(Name, Value, ErrorDescription);
+    RdKafka::Conf::ConfResult result = conf->set(Name, Value, ErrorDescription);
     if (result != RdKafka::Conf::CONF_OK)
     {
         loger->Error("Failed to set config property: " + ErrorDescription);
@@ -109,11 +116,14 @@ bool Config::Set(std::string Name, std::string Value, std::string& ErrorDescript
     return true;
 }
 
-bool Config::SetDeliveryReport(DeliveryReport* Value, std::string& ErrorDescription)
+bool Config::SetPropertyDeliveryReport(DeliveryReport* Value, std::string& ErrorDescription)
 {
+    if (!deliveryReport)
+        return true;
+    
     loger->Info("Set delivery report in config property 'dr_cb'");
 
-    RdKafka::Conf::ConfResult result = config->set("dr_cb", Value, ErrorDescription);
+    RdKafka::Conf::ConfResult result = conf->set("dr_cb", Value, ErrorDescription);
     if (result != RdKafka::Conf::CONF_OK)
     {
         loger->Error("Failed to set config property: " + ErrorDescription);
@@ -123,11 +133,14 @@ bool Config::SetDeliveryReport(DeliveryReport* Value, std::string& ErrorDescript
     return true;
 }
 
-bool Config::SetRebalance(Rebalance* Value, std::string& ErrorDescription)
+bool Config::SetPropertyRebalance(Rebalance* Value, std::string& ErrorDescription)
 {
+    if (!rebalance)
+        return true;
+    
     loger->Info("Set rebalance callback in config property 'rebalance_cb'");
 
-    RdKafka::Conf::ConfResult result = config->set("rebalance_cb", Value, ErrorDescription);
+    RdKafka::Conf::ConfResult result = conf->set("rebalance_cb", Value, ErrorDescription);
     if (result != RdKafka::Conf::CONF_OK)
     {
         loger->Error("Failed to set config property: " + ErrorDescription);
@@ -137,11 +150,14 @@ bool Config::SetRebalance(Rebalance* Value, std::string& ErrorDescription)
     return true;
 }
 
-bool Config::SetEvent(Event* Value, std::string& ErrorDescription)
+bool Config::SetPropertyEvent(Event* Value, std::string& ErrorDescription)
 {
+    if (!event)
+        return true;
+    
     loger->Info("Set event callback in config property 'event_cb'");
 
-    RdKafka::Conf::ConfResult result = config->set("event_cb", Value, ErrorDescription);
+    RdKafka::Conf::ConfResult result = conf->set("event_cb", Value, ErrorDescription);
     if (result != RdKafka::Conf::CONF_OK)
     {
         loger->Error("Failed to set config property: " + ErrorDescription);

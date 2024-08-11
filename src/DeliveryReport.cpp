@@ -1,11 +1,17 @@
 #include "DeliveryReport.h"
 
-void DeliveryReport::SetLoger(Loger* Loger)
+DeliveryReport::DeliveryReport(Loger* Loger)
 {
     loger = Loger;
 }
 
 void DeliveryReport::dr_cb(RdKafka::Message& Message) 
+{
+    LogMessageStatus(Message);
+    AddMessageStatus(Message);       
+}
+
+void DeliveryReport::LogMessageStatus(RdKafka::Message& Message)
 {
     std::stringstream stream;
 
@@ -32,4 +38,39 @@ void DeliveryReport::dr_cb(RdKafka::Message& Message)
     }
 
     loger->Debug(stream.str());
+}
+
+void DeliveryReport::AddMessageStatus(RdKafka::Message& Message)
+{
+    if (!Message.msg_opaque())
+        return;
+    
+    std::string* opaque = (std::string*)Message.msg_opaque();
+    std::string uuid = std::string(*opaque);
+
+    if (uuid.empty())
+        return;
+
+    statuses[uuid] = Message.status();    
+}
+
+void DeliveryReport::ClearStatuses()
+{
+    statuses.clear();
+}
+
+RdKafka::Message::Status DeliveryReport::GetStatus(std::string Uuid)
+{
+    RdKafka::Message::Status status;
+
+    try
+    {
+        status = statuses.at(Uuid);
+    }
+    catch (const std::out_of_range& e)
+    {
+        return RdKafka::Message::MSG_STATUS_NOT_PERSISTED;
+    }
+
+    return status;
 }

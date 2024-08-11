@@ -15,25 +15,27 @@ public:
     ~Config();
 
     bool Build(std::string& ErrorDescription);    
-    RdKafka::Conf* Get();    
+    RdKafka::Conf* GetConf();    
     
-    void AddProperty(std::string Name, std::string Value);
     void ClearProperties();
+    void AddProperty(std::string Name, std::string Value);
+    void SetDeliveryReport(DeliveryReport* DeliveryReport);
+    void SetRebalance(Rebalance* Rebalance);
+    void SetEvent(Event* Event);
 
 private:
-    RdKafka::Conf* config;
-
+    RdKafka::Conf* conf;
+    DeliveryReport* deliveryReport;
     Rebalance* rebalance;
     Event* event;
-    DeliveryReport* deliveryReport;
-
+    
     Loger* loger;
     std::map<std::string, std::string> properties;
 
     void LogConfigDump();
 
-    bool Set(std::string Name, std::string Value, std::string& ErrorDescription);
-    bool SetDeliveryReport(DeliveryReport* Value, std::string& ErrorDescription);
-    bool SetRebalance(Rebalance* Value, std::string& ErrorDescription);
-    bool SetEvent(Event* Value, std::string& ErrorDescription);
+    bool SetProperty(std::string Name, std::string Value, std::string& ErrorDescription);
+    bool SetPropertyDeliveryReport(DeliveryReport* Value, std::string& ErrorDescription);
+    bool SetPropertyRebalance(Rebalance* Value, std::string& ErrorDescription);
+    bool SetPropertyEvent(Event* Value, std::string& ErrorDescription);
 };

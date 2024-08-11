@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Add vcpkg to PATH or uncomment line bellow
-# cd etc/vcpkg/vcpkg
+# Before add vcpkg to system PATH
 
 vcpkg remove librdkafka:x64-linux
 vcpkg remove boost-test:x64-linux

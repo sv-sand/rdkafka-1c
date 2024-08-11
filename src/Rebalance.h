@@ -8,7 +8,7 @@ class Rebalance : public RdKafka::RebalanceCb
 {
 public:
 
-    void SetLoger(Loger* Loger);
+    Rebalance(Loger* Loger);
     void rebalance_cb(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions);
 
 private:
