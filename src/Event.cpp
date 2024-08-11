@@ -1,6 +1,6 @@
 #include "Event.h"
 
-void Event::SetLoger(Loger* Loger)
+Event::Event(Loger* Loger)
 {
     loger = Loger;
 }

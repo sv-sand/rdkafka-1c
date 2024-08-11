@@ -1,5 +1,4 @@
-@REM Add vcpkg to PATH or uncomment line bellow
-@REM cd C:/tools/vcpkg
+@REM Before add vcpkg to system PATH
 
 vcpkg remove librdkafka:x64-windows
 vcpkg remove avro-cpp:x64-windows

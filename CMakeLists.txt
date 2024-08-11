@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.12)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -11,10 +11,10 @@ if(WIN32)
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 
-# DLL
-project(RdKafka1C)
+# DLL 
+project(RdKafka1C) 
 
-find_package(Boost 1.85 REQUIRED COMPONENTS filesystem iostreams program_options regex system json)
+find_package(Boost 1.85 REQUIRED COMPONENTS filesystem iostreams program_options regex system json uuid)
 find_package(RdKafka CONFIG REQUIRED)
 
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
@@ -34,7 +34,8 @@ add_library(RdKafka1C SHARED
 	src/Config.cpp
 	src/DeliveryReport.cpp
 	src/Event.cpp
-	src/Rebalance.cpp) 
+	src/Rebalance.cpp
+	src/Strings.cpp) 
 
 if(WIN32)
 	if(NOT MSVC)
@@ -82,7 +83,7 @@ enable_testing()
 
 add_executable(testing 
 	test/main.cpp
-	test/RdKafka1c_test.cpp
+	test/RdKafka1CTest.cpp
 	src/RdKafka1c.cpp
 	src/Loger.cpp
 	src/Config.cpp

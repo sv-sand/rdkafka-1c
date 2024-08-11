@@ -8,7 +8,7 @@ class Event : public RdKafka::EventCb
 {
 public:
 
-    void SetLoger(Loger* Loger);
+    Event(Loger* Loger);
     void event_cb(RdKafka::Event& event);
 
 private:
