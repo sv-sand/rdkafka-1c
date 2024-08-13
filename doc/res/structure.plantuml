@@ -1,0 +1,41 @@
+
+@startuml
+title Структура компоненты
+
+rectangle 1CPlatform as "Платформа 1С"
+
+package "RdKafka1C.dll" {
+    rectangle AddInNative
+    rectangle RdKafka1C [
+        <b>RdKafka1C</b>
+        Loger
+        Config
+        ...
+    ]
+    rectangle LibRdKafka as "librdkafka"
+}
+
+note bottom of AddInNative
+    Интерфейс
+    компоненты
+end note
+
+note bottom of RdKafka1C
+    Основная
+    логика
+    компоененты
+end note
+
+note bottom of LibRdKafka
+    Библиотека 
+    confluentinc/librdkafka
+end note
+
+rectangle Kafka as "Kafka"
+
+1CPlatform <-> AddInNative
+AddInNative <-> RdKafka1C
+RdKafka1C <-> LibRdKafka
+LibRdKafka <-> Kafka
+
+@enduml
