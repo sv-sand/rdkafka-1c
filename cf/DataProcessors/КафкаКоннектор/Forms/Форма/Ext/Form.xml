@@ -5,26 +5,14 @@
 		<ChildItems>
 			<Button name="ФормаПодключитьКомпоненту" id="9">
 				<Type>CommandBarButton</Type>
+				<DefaultButton>true</DefaultButton>
 				<CommandName>Form.Command.ПодключитьКомпоненту</CommandName>
-				<LocationInCommandBar>InAdditionalSubmenu</LocationInCommandBar>
 				<ExtendedTooltip name="ФормаПодключитьКомпонентуРасширеннаяПодсказка" id="10"/>
 			</Button>
-			<Button name="ФормаЗапустить" id="1">
+			<Button name="ФормаОтключитьКомпоненту" id="90">
 				<Type>CommandBarButton</Type>
-				<DefaultButton>true</DefaultButton>
-				<CommandName>Form.Command.Запустить</CommandName>
-				<ExtendedTooltip name="ФормаЗапуститьРасширеннаяПодсказка" id="2"/>
-			</Button>
-			<Button name="ФормаОстановить" id="11">
-				<Type>CommandBarButton</Type>
-				<CommandName>Form.Command.Остановить</CommandName>
-				<ExtendedTooltip name="ФормаОстановитьРасширеннаяПодсказка" id="12"/>
-			</Button>
-			<Button name="ФормаПрочитатьЛоги" id="13">
-				<Type>CommandBarButton</Type>
-				<CommandName>Form.Command.ПрочитатьЛоги</CommandName>
-				<LocationInCommandBar>InAdditionalSubmenu</LocationInCommandBar>
-				<ExtendedTooltip name="ФормаПрочитатьЛогиРасширеннаяПодсказка" id="14"/>
+				<CommandName>Form.Command.ОтключитьКомпоненту</CommandName>
+				<ExtendedTooltip name="ФормаОтключитьКомпонентуРасширеннаяПодсказка" id="91"/>
 			</Button>
 		</ChildItems>
 	</AutoCommandBar>
@@ -33,11 +21,11 @@
 		<Event name="OnCreateAtServer">ПриСозданииНаСервере</Event>
 	</Events>
 	<ChildItems>
-		<InputField name="ПутьККомпоненте" id="61">
-			<DataPath>Объект.ПутьККомпоненте</DataPath>
+		<InputField name="НастройкиКафки" id="92">
+			<DataPath>НастройкиКафки</DataPath>
 			<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
-			<ContextMenu name="ПутьККомпонентеКонтекстноеМеню" id="62"/>
-			<ExtendedTooltip name="ПутьККомпонентеРасширеннаяПодсказка" id="63"/>
+			<ContextMenu name="НастройкиКафкиКонтекстноеМеню" id="93"/>
+			<ExtendedTooltip name="НастройкиКафкиРасширеннаяПодсказка" id="94"/>
 		</InputField>
 		<UsualGroup name="ГруппаВерсии" id="48">
 			<Title>
@@ -84,40 +72,39 @@
 			<ExtendedTooltip name="ГруппаПараметрыРасширеннаяПодсказка" id="51"/>
 			<ChildItems>
 				<InputField name="Брокер" id="52">
-					<DataPath>Объект.Брокер</DataPath>
+					<DataPath>1/0:fa18708c-8312-41f2-be74-5f74a7ca2924</DataPath>
 					<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
 					<ContextMenu name="БрокерКонтекстноеМеню" id="53"/>
 					<ExtendedTooltip name="БрокерРасширеннаяПодсказка" id="54"/>
 				</InputField>
 				<InputField name="Топик" id="55">
-					<DataPath>Объект.Топик</DataPath>
+					<DataPath>1/0:7eec333b-8df8-4dc7-9d92-06ee5f13cd05</DataPath>
 					<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
 					<ContextMenu name="ТопикКонтекстноеМеню" id="56"/>
 					<ExtendedTooltip name="ТопикРасширеннаяПодсказка" id="57"/>
 				</InputField>
 			</ChildItems>
 		</UsualGroup>
-		<UsualGroup name="ГруппаОтправкаИПолучение" id="18">
+		<Pages name="ГруппаОперации" id="88">
 			<Title>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Отправка и получение</v8:content>
+					<v8:content>Группа операции</v8:content>
 				</v8:item>
 			</Title>
 			<ToolTip>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Группа отправка и получение</v8:content>
+					<v8:content>Группа операции</v8:content>
 				</v8:item>
 			</ToolTip>
-			<Group>Vertical</Group>
-			<ExtendedTooltip name="ГруппаОтправкаИПолучениеРасширеннаяПодсказка" id="19"/>
+			<ExtendedTooltip name="ГруппаОперацииРасширеннаяПодсказка" id="89"/>
 			<ChildItems>
-				<UsualGroup name="ГруппаОтправка" id="41">
+				<Page name="ГруппаОтправка" id="41">
 					<Title>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
-							<v8:content>Группа отправка</v8:content>
+							<v8:content>Отправка</v8:content>
 						</v8:item>
 					</Title>
 					<ToolTip>
@@ -126,12 +113,40 @@
 							<v8:content>Группа отправка</v8:content>
 						</v8:item>
 					</ToolTip>
-					<Group>Vertical</Group>
-					<Representation>None</Representation>
-					<ShowTitle>false</ShowTitle>
-					<ThroughAlign>Use</ThroughAlign>
 					<ExtendedTooltip name="ГруппаОтправкаРасширеннаяПодсказка" id="42"/>
 					<ChildItems>
+						<CommandBar name="ГруппаДействияПродюсера" id="103">
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Группа действия продюсера</v8:content>
+								</v8:item>
+							</Title>
+							<ToolTip>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Группа действия продюсера</v8:content>
+								</v8:item>
+							</ToolTip>
+							<ExtendedTooltip name="ГруппаДействияПродюсераРасширеннаяПодсказка" id="104"/>
+							<ChildItems>
+								<Button name="Отправить" id="20">
+									<Type>CommandBarButton</Type>
+									<CommandName>Form.Command.ОтправитьСообщения</CommandName>
+									<ExtendedTooltip name="ОтправитьРасширеннаяПодсказка" id="21"/>
+								</Button>
+								<Button name="ОтправитьСообщенияАсинхронно" id="113">
+									<Type>CommandBarButton</Type>
+									<CommandName>Form.Command.ОтправитьСообщенияАсинхронно</CommandName>
+									<ExtendedTooltip name="ОтправитьСообщенияАсинхронноРасширеннаяПодсказка" id="114"/>
+								</Button>
+								<Button name="ОчередьПродюсера" id="97">
+									<Type>CommandBarButton</Type>
+									<CommandName>Form.Command.ОчередьСообщенийПродюсера</CommandName>
+									<ExtendedTooltip name="ОчередьПродюсераРасширеннаяПодсказка" id="98"/>
+								</Button>
+							</ChildItems>
+						</CommandBar>
 						<UsualGroup name="ГруппаПараметрыСообщения" id="76">
 							<Title>
 								<v8:item>
@@ -150,7 +165,7 @@
 							<ExtendedTooltip name="ГруппаПараметрыСообщенияРасширеннаяПодсказка" id="77"/>
 							<ChildItems>
 								<InputField name="КлючСообщения" id="67">
-									<DataPath>Объект.КлючСообщения</DataPath>
+									<DataPath>КлючСообщения</DataPath>
 									<Title>
 										<v8:item>
 											<v8:lang>ru</v8:lang>
@@ -162,7 +177,7 @@
 									<ExtendedTooltip name="КлючСообщенияРасширеннаяПодсказка" id="69"/>
 								</InputField>
 								<InputField name="ЗаголовкиСообщения" id="70">
-									<DataPath>Объект.ЗаголовкиСообщения</DataPath>
+									<DataPath>ЗаголовкиСообщения</DataPath>
 									<Title>
 										<v8:item>
 											<v8:lang>ru</v8:lang>
@@ -173,28 +188,64 @@
 									<ContextMenu name="ЗаголовкиСообщенияКонтекстноеМеню" id="71"/>
 									<ExtendedTooltip name="ЗаголовкиСообщенияРасширеннаяПодсказка" id="72"/>
 								</InputField>
-								<InputField name="ПартицияСообщения" id="73">
-									<DataPath>Объект.ПартицияСообщения</DataPath>
+								<UsualGroup name="ГруппаПартиция" id="111">
 									<Title>
 										<v8:item>
 											<v8:lang>ru</v8:lang>
-											<v8:content>Партиция</v8:content>
+											<v8:content>Группа партиция</v8:content>
 										</v8:item>
 									</Title>
-									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
-									<ContextMenu name="ПартицияСообщенияКонтекстноеМеню" id="74"/>
-									<ExtendedTooltip name="ПартицияСообщенияРасширеннаяПодсказка" id="75"/>
-								</InputField>
+									<ToolTip>
+										<v8:item>
+											<v8:lang>ru</v8:lang>
+											<v8:content>Группа партиция</v8:content>
+										</v8:item>
+									</ToolTip>
+									<Group>AlwaysHorizontal</Group>
+									<Representation>None</Representation>
+									<ShowTitle>false</ShowTitle>
+									<ExtendedTooltip name="ГруппаПартицияРасширеннаяПодсказка" id="112"/>
+									<ChildItems>
+										<InputField name="ПартицияОтправка" id="73">
+											<DataPath>ПартицияСообщения</DataPath>
+											<Title>
+												<v8:item>
+													<v8:lang>ru</v8:lang>
+													<v8:content>Партиция</v8:content>
+												</v8:item>
+											</Title>
+											<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+											<ContextMenu name="ПартицияОтправкаКонтекстноеМеню" id="74"/>
+											<ExtendedTooltip name="ПартицияОтправкаРасширеннаяПодсказка" id="75"/>
+										</InputField>
+										<CheckBoxField name="ПартицияАвтоОтправка" id="108">
+											<DataPath>ПартицияСообщенияАвто</DataPath>
+											<TitleLocation>Right</TitleLocation>
+											<CheckBoxType>Auto</CheckBoxType>
+											<ContextMenu name="ПартицияАвтоОтправкаКонтекстноеМеню" id="109"/>
+											<ExtendedTooltip name="ПартицияАвтоОтправкаРасширеннаяПодсказка" id="110"/>
+											<Events>
+												<Event name="OnChange">ПартицияСообщенияАвтоПриИзменении</Event>
+											</Events>
+										</CheckBoxField>
+									</ChildItems>
+								</UsualGroup>
 							</ChildItems>
 						</UsualGroup>
 						<InputField name="КоличествоСообщенийКОтправке" id="80">
-							<DataPath>Объект.КоличествоСообщенийКОтправке</DataPath>
+							<DataPath>КоличествоСообщенийКОтправке</DataPath>
 							<Title>
 								<v8:item>
 									<v8:lang>ru</v8:lang>
 									<v8:content>Количество</v8:content>
 								</v8:item>
 							</Title>
+							<ToolTip>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Количество сообщений к отправке</v8:content>
+								</v8:item>
+							</ToolTip>
 							<ToolTipRepresentation>ShowRight</ToolTipRepresentation>
 							<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
 							<ContextMenu name="КоличествоСообщенийКОтправкеКонтекстноеМеню" id="81"/>
@@ -219,21 +270,25 @@
 							<ExtendedTooltip name="ГруппаСообщениеРасширеннаяПодсказка" id="79"/>
 							<ChildItems>
 								<InputField name="ТекстСообщения" id="15">
-									<DataPath>ТекстСообщения</DataPath>
+									<DataPath>ТекстСообщенияКОтправке</DataPath>
+									<ToolTip>
+										<v8:item>
+											<v8:lang>ru</v8:lang>
+											<v8:content>Текст сообщения к отправке</v8:content>
+										</v8:item>
+									</ToolTip>
+									<AutoMaxWidth>false</AutoMaxWidth>
+									<MaxWidth>60</MaxWidth>
+									<MultiLine>true</MultiLine>
 									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
 									<ContextMenu name="ТекстСообщенияКонтекстноеМеню" id="16"/>
 									<ExtendedTooltip name="ТекстСообщенияРасширеннаяПодсказка" id="17"/>
 								</InputField>
-								<Button name="Отправить" id="20">
-									<Type>UsualButton</Type>
-									<CommandName>Form.Command.ОтправитьСообщения</CommandName>
-									<ExtendedTooltip name="ОтправитьРасширеннаяПодсказка" id="21"/>
-								</Button>
 							</ChildItems>
 						</UsualGroup>
 					</ChildItems>
-				</UsualGroup>
-				<UsualGroup name="ГруппаПолучение" id="43">
+				</Page>
+				<Page name="ГруппаПолучение" id="43">
 					<Title>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
@@ -246,25 +301,136 @@
 							<v8:content>Группа получение</v8:content>
 						</v8:item>
 					</ToolTip>
-					<ShowTitle>false</ShowTitle>
-					<ThroughAlign>Use</ThroughAlign>
 					<ExtendedTooltip name="ГруппаПолучениеРасширеннаяПодсказка" id="44"/>
 					<ChildItems>
-						<InputField name="ГруппаКонсюмера" id="58">
-							<DataPath>Объект.ГруппаКонсюмера</DataPath>
+						<CommandBar name="ГруппаДействияКонсюмера" id="101">
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Группа действия консюмера</v8:content>
+								</v8:item>
+							</Title>
+							<ToolTip>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Группа действия консюмера</v8:content>
+								</v8:item>
+							</ToolTip>
+							<ExtendedTooltip name="ГруппаДействияКонсюмераРасширеннаяПодсказка" id="102"/>
+							<ChildItems>
+								<Button name="Прочитать" id="25">
+									<Type>CommandBarButton</Type>
+									<CommandName>Form.Command.ПрочитатьСообщения</CommandName>
+									<ExtendedTooltip name="ПрочитатьРасширеннаяПодсказка" id="26"/>
+								</Button>
+								<Button name="ЗафиксироватьОффсет" id="131">
+									<Type>CommandBarButton</Type>
+									<CommandName>Form.Command.ЗафиксироватьОффсет</CommandName>
+									<ExtendedTooltip name="ЗафиксироватьОффсетРасширеннаяПодсказка" id="132"/>
+								</Button>
+								<Button name="ОчередьСообщенийКонсюмера" id="99">
+									<Type>CommandBarButton</Type>
+									<CommandName>Form.Command.ОчередьСообщенийКонсюмера</CommandName>
+									<ExtendedTooltip name="ОчередьСообщенийКонсюмераРасширеннаяПодсказка" id="100"/>
+								</Button>
+							</ChildItems>
+						</CommandBar>
+						<UsualGroup name="ГруппаПараметрыПолучения" id="129">
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Группа параметры получения</v8:content>
+								</v8:item>
+							</Title>
+							<ToolTip>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Группа параметры получения</v8:content>
+								</v8:item>
+							</ToolTip>
+							<Representation>None</Representation>
+							<ShowTitle>false</ShowTitle>
+							<ExtendedTooltip name="ГруппаПараметрыПолученияРасширеннаяПодсказка" id="130"/>
+							<ChildItems>
+								<UsualGroup name="ГруппаПартицияПолучение" id="124">
+									<Title>
+										<v8:item>
+											<v8:lang>ru</v8:lang>
+											<v8:content>Группа партиция получение</v8:content>
+										</v8:item>
+									</Title>
+									<ToolTip>
+										<v8:item>
+											<v8:lang>ru</v8:lang>
+											<v8:content>Группа партиция получение</v8:content>
+										</v8:item>
+									</ToolTip>
+									<Representation>None</Representation>
+									<ShowTitle>false</ShowTitle>
+									<ExtendedTooltip name="ГруппаПартицияПолучениеРасширеннаяПодсказка" id="125"/>
+									<ChildItems>
+										<InputField name="ПартицияПолучение" id="118">
+											<DataPath>ПартицияСообщения</DataPath>
+											<Title>
+												<v8:item>
+													<v8:lang>ru</v8:lang>
+													<v8:content>Партиция</v8:content>
+												</v8:item>
+											</Title>
+											<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+											<ContextMenu name="ПартицияПолучениеКонтекстноеМеню" id="119"/>
+											<ExtendedTooltip name="ПартицияПолучениеРасширеннаяПодсказка" id="120"/>
+										</InputField>
+										<CheckBoxField name="ПартицияАвтоПолучение" id="126">
+											<DataPath>ПартицияСообщенияАвто</DataPath>
+											<TitleLocation>Right</TitleLocation>
+											<CheckBoxType>Auto</CheckBoxType>
+											<ContextMenu name="ПартицияАвтоПолучениеКонтекстноеМеню" id="127"/>
+											<ExtendedTooltip name="ПартицияАвтоПолучениеРасширеннаяПодсказка" id="128"/>
+											<Events>
+												<Event name="OnChange">ПартицияСообщенияАвтоПриИзменении</Event>
+											</Events>
+										</CheckBoxField>
+									</ChildItems>
+								</UsualGroup>
+								<InputField name="Оффсет" id="121">
+									<DataPath>Оффсет</DataPath>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="ОффсетКонтекстноеМеню" id="122"/>
+									<ExtendedTooltip name="ОффсетРасширеннаяПодсказка" id="123"/>
+								</InputField>
+							</ChildItems>
+						</UsualGroup>
+						<InputField name="КоличествоСообщенийКЧтению" id="115">
+							<DataPath>КоличествоСообщенийКЧтению</DataPath>
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Количество</v8:content>
+								</v8:item>
+							</Title>
+							<ToolTip>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Количество сообщений к чтению</v8:content>
+								</v8:item>
+							</ToolTip>
+							<ToolTipRepresentation>ShowRight</ToolTipRepresentation>
 							<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
-							<ContextMenu name="ГруппаКонсюмераКонтекстноеМеню" id="59"/>
-							<ExtendedTooltip name="ГруппаКонсюмераРасширеннаяПодсказка" id="60"/>
+							<ContextMenu name="КоличествоСообщенийКЧтениюКонтекстноеМеню" id="116"/>
+							<ExtendedTooltip name="КоличествоСообщенийКЧтениюРасширеннаяПодсказка" id="117"/>
 						</InputField>
-						<Button name="Прочитать" id="25">
-							<Type>UsualButton</Type>
-							<CommandName>Form.Command.ПрочитатьСообщения</CommandName>
-							<ExtendedTooltip name="ПрочитатьРасширеннаяПодсказка" id="26"/>
-						</Button>
+						<CheckBoxField name="ЧитатьМетаданныеСообщений" id="105">
+							<DataPath>ЧитатьМетаданныеСообщений</DataPath>
+							<TitleLocation>Right</TitleLocation>
+							<CheckBoxType>Switcher</CheckBoxType>
+							<ContextMenu name="ЧитатьМетаданныеСообщенийКонтекстноеМеню" id="106"/>
+							<ExtendedTooltip name="ЧитатьМетаданныеСообщенийРасширеннаяПодсказка" id="107"/>
+						</CheckBoxField>
 					</ChildItems>
-				</UsualGroup>
+				</Page>
 			</ChildItems>
-		</UsualGroup>
+		</Pages>
 		<UsualGroup name="ГруппаЛоги" id="27">
 			<Title>
 				<v8:item>
@@ -281,12 +447,6 @@
 			<Group>Vertical</Group>
 			<ExtendedTooltip name="ГруппаЛогиРасширеннаяПодсказка" id="28"/>
 			<ChildItems>
-				<CheckBoxField name="ВключитьЛогирование" id="64">
-					<DataPath>Объект.ВключитьЛогирование</DataPath>
-					<CheckBoxType>Switcher</CheckBoxType>
-					<ContextMenu name="ВключитьЛогированиеКонтекстноеМеню" id="65"/>
-					<ExtendedTooltip name="ВключитьЛогированиеРасширеннаяПодсказка" id="66"/>
-				</CheckBoxField>
 				<UsualGroup name="ГруппаНастройкиЛогов" id="34">
 					<Title>
 						<v8:item>
@@ -304,20 +464,17 @@
 					<ShowTitle>false</ShowTitle>
 					<ExtendedTooltip name="ГруппаНастройкиЛоговРасширеннаяПодсказка" id="35"/>
 					<ChildItems>
-						<InputField name="КаталогЛогов" id="38">
-							<DataPath>Объект.КаталогЛогов</DataPath>
-							<Title>
-								<v8:item>
-									<v8:lang>ru</v8:lang>
-									<v8:content>Каталог</v8:content>
-								</v8:item>
-							</Title>
-							<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
-							<ContextMenu name="КаталогЛоговКонтекстноеМеню" id="39"/>
-							<ExtendedTooltip name="КаталогЛоговРасширеннаяПодсказка" id="40"/>
-						</InputField>
+						<CheckBoxField name="ВключитьЛогирование" id="64">
+							<DataPath>ВключитьЛогирование</DataPath>
+							<CheckBoxType>Switcher</CheckBoxType>
+							<ContextMenu name="ВключитьЛогированиеКонтекстноеМеню" id="65"/>
+							<ExtendedTooltip name="ВключитьЛогированиеРасширеннаяПодсказка" id="66"/>
+							<Events>
+								<Event name="OnChange">ВключитьЛогированиеПриИзменении</Event>
+							</Events>
+						</CheckBoxField>
 						<InputField name="УровеньЛогов" id="31">
-							<DataPath>Объект.УровеньЛогирования</DataPath>
+							<DataPath>УровеньЛогирования</DataPath>
 							<Title>
 								<v8:item>
 									<v8:lang>ru</v8:lang>
@@ -397,9 +554,6 @@
 							</ChoiceList>
 							<ContextMenu name="УровеньЛоговКонтекстноеМеню" id="32"/>
 							<ExtendedTooltip name="УровеньЛоговРасширеннаяПодсказка" id="33"/>
-							<Events>
-								<Event name="OnChange">УровеньЛоговПриИзменении</Event>
-							</Events>
 						</InputField>
 					</ChildItems>
 				</UsualGroup>
@@ -421,7 +575,7 @@
 					<ExtendedTooltip name="ГруппаЛогФайлРасширеннаяПодсказка" id="37"/>
 					<ChildItems>
 						<LabelField name="ЛогФайл" id="22">
-							<DataPath>Объект.ЛогФайл</DataPath>
+							<DataPath>ЛогФайл</DataPath>
 							<Title>
 								<v8:item>
 									<v8:lang>ru</v8:lang>
@@ -463,18 +617,19 @@
 			</Type>
 			<MainAttribute>true</MainAttribute>
 			<Save>
+				<Field>1/0:080f605a-50d6-42fa-9f4d-bb6bf614e5be</Field>
+				<Field>1/0:190bd905-4638-4aba-a9a3-51b21001228c</Field>
+				<Field>1/0:1921652b-2151-4735-a72b-2308862b6989</Field>
+				<Field>1/0:30e43706-b358-4adf-95b5-3b19c9d800d6</Field>
 				<Field>1/0:3795484a-1cdc-4181-9fc5-696caf1d484a</Field>
-				<Field>Объект.Брокер</Field>
-				<Field>Объект.ВключитьЛогирование</Field>
-				<Field>Объект.ГруппаКонсюмера</Field>
-				<Field>Объект.ЗаголовкиСообщения</Field>
-				<Field>Объект.КаталогЛогов</Field>
-				<Field>Объект.КлючСообщения</Field>
-				<Field>Объект.КоличествоСообщенийКОтправке</Field>
-				<Field>Объект.ПартицияСообщения</Field>
-				<Field>Объект.ПутьККомпоненте</Field>
-				<Field>Объект.Топик</Field>
-				<Field>Объект.УровеньЛогирования</Field>
+				<Field>1/0:42c34581-8524-4962-91ee-6b053a0db0b3</Field>
+				<Field>1/0:682ca854-4c14-4f15-9853-cdcbece18946</Field>
+				<Field>1/0:6fbae433-8da8-4a20-bf0f-a33a201b87ea</Field>
+				<Field>1/0:7eec333b-8df8-4dc7-9d92-06ee5f13cd05</Field>
+				<Field>1/0:83ccba7e-d289-40c5-99f7-b4eb10ed9742</Field>
+				<Field>1/0:8e664594-2d8d-419a-90f0-58e684e4ef03</Field>
+				<Field>1/0:d40bfba9-bb29-46c9-8182-f23c964f4860</Field>
+				<Field>1/0:fa18708c-8312-41f2-be74-5f74a7ca2924</Field>
 			</Save>
 		</Attribute>
 		<Attribute name="Логи" id="2">
@@ -488,7 +643,7 @@
 				<v8:Type xmlns:d5p1="http://v8.1c.ru/8.1/data/txtedt">d5p1:TextDocument</v8:Type>
 			</Type>
 		</Attribute>
-		<Attribute name="ТекстСообщения" id="3">
+		<Attribute name="ТекстСообщенияКОтправке" id="3">
 			<Title>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
@@ -503,14 +658,46 @@
 				</v8:StringQualifiers>
 			</Type>
 			<Save>
-				<Field>ТекстСообщения</Field>
+				<Field>ТекстСообщенияКОтправке</Field>
 			</Save>
 		</Attribute>
-		<Attribute name="АдресКомпоненты" id="4">
+		<Attribute name="ИсточникКомпонентыФайл" id="4">
 			<Title>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Адрес компоненты</v8:content>
+					<v8:content>Источник компоненты файл</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:boolean</v8:Type>
+			</Type>
+			<Save>
+				<Field>ИсточникКомпонентыФайл</Field>
+			</Save>
+		</Attribute>
+		<Attribute name="ПутьККомпоненте" id="5">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Путь к компоненте</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>0</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+			<Save>
+				<Field>ПутьККомпоненте</Field>
+			</Save>
+		</Attribute>
+		<Attribute name="АдресКоннектора" id="6">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Адрес коннектора</v8:content>
 				</v8:item>
 			</Title>
 			<Type>
@@ -521,23 +708,210 @@
 				</v8:StringQualifiers>
 			</Type>
 		</Attribute>
-	</Attributes>
-	<Commands>
-		<Command name="Запустить" id="1">
+		<Attribute name="КлючСообщения" id="7">
 			<Title>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Запустить</v8:content>
+					<v8:content>Ключ сообщения</v8:content>
 				</v8:item>
 			</Title>
-			<ToolTip>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>0</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+			<Save>
+				<Field>КлючСообщения</Field>
+			</Save>
+		</Attribute>
+		<Attribute name="ЗаголовкиСообщения" id="8">
+			<Title>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Запустить</v8:content>
+					<v8:content>Заголовки сообщения</v8:content>
 				</v8:item>
-			</ToolTip>
-			<Action>Запустить</Action>
-		</Command>
+			</Title>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>0</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+			<Save>
+				<Field>ЗаголовкиСообщения</Field>
+			</Save>
+		</Attribute>
+		<Attribute name="ПартицияСообщения" id="9">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Партиция сообщения</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:decimal</v8:Type>
+				<v8:NumberQualifiers>
+					<v8:Digits>1</v8:Digits>
+					<v8:FractionDigits>0</v8:FractionDigits>
+					<v8:AllowedSign>Nonnegative</v8:AllowedSign>
+				</v8:NumberQualifiers>
+			</Type>
+			<Save>
+				<Field>ПартицияСообщения</Field>
+			</Save>
+		</Attribute>
+		<Attribute name="КоличествоСообщенийКОтправке" id="10">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Количество сообщений к отправке</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:decimal</v8:Type>
+				<v8:NumberQualifiers>
+					<v8:Digits>10</v8:Digits>
+					<v8:FractionDigits>0</v8:FractionDigits>
+					<v8:AllowedSign>Any</v8:AllowedSign>
+				</v8:NumberQualifiers>
+			</Type>
+			<Save>
+				<Field>КоличествоСообщенийКОтправке</Field>
+			</Save>
+		</Attribute>
+		<Attribute name="ЛогФайл" id="11">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Лог файл</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>0</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
+		<Attribute name="ВключитьЛогирование" id="12">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Включить логирование</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:boolean</v8:Type>
+			</Type>
+			<Save>
+				<Field>ВключитьЛогирование</Field>
+			</Save>
+		</Attribute>
+		<Attribute name="НастройкиКафки" id="13">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Настройки кафки</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>cfg:CatalogRef.НастройкиКафки</v8:Type>
+			</Type>
+			<FillCheck>ShowError</FillCheck>
+			<Save>
+				<Field>НастройкиКафки</Field>
+			</Save>
+		</Attribute>
+		<Attribute name="УровеньЛогирования" id="14">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Уровень логирования</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>20</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+			<Save>
+				<Field>УровеньЛогирования</Field>
+			</Save>
+		</Attribute>
+		<Attribute name="ЧитатьМетаданныеСообщений" id="15">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Читать метаданные сообщений</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:boolean</v8:Type>
+			</Type>
+			<Save>
+				<Field>ЧитатьМетаданныеСообщений</Field>
+			</Save>
+		</Attribute>
+		<Attribute name="ПартицияСообщенияАвто" id="16">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Авто</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:boolean</v8:Type>
+			</Type>
+			<Save>
+				<Field>ПартицияСообщенияАвто</Field>
+			</Save>
+		</Attribute>
+		<Attribute name="КоличествоСообщенийКЧтению" id="17">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Количество сообщений к чтению</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:decimal</v8:Type>
+				<v8:NumberQualifiers>
+					<v8:Digits>10</v8:Digits>
+					<v8:FractionDigits>0</v8:FractionDigits>
+					<v8:AllowedSign>Any</v8:AllowedSign>
+				</v8:NumberQualifiers>
+			</Type>
+			<Save>
+				<Field>КоличествоСообщенийКЧтению</Field>
+			</Save>
+		</Attribute>
+		<Attribute name="Оффсет" id="18">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Оффсет</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:decimal</v8:Type>
+				<v8:NumberQualifiers>
+					<v8:Digits>10</v8:Digits>
+					<v8:FractionDigits>0</v8:FractionDigits>
+					<v8:AllowedSign>Nonnegative</v8:AllowedSign>
+				</v8:NumberQualifiers>
+			</Type>
+			<Save>
+				<Field>Оффсет</Field>
+			</Save>
+		</Attribute>
+	</Attributes>
+	<Commands>
 		<Command name="ПодключитьКомпоненту" id="2">
 			<Title>
 				<v8:item>
@@ -552,21 +926,6 @@
 				</v8:item>
 			</ToolTip>
 			<Action>ПодключитьКомпоненту</Action>
-		</Command>
-		<Command name="Остановить" id="3">
-			<Title>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Остановить</v8:content>
-				</v8:item>
-			</Title>
-			<ToolTip>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Остановить</v8:content>
-				</v8:item>
-			</ToolTip>
-			<Action>Остановить</Action>
 		</Command>
 		<Command name="ПрочитатьЛоги" id="4">
 			<Title>
@@ -596,7 +955,12 @@
 					<v8:content>Отправить сообщения</v8:content>
 				</v8:item>
 			</ToolTip>
+			<Picture>
+				<xr:Ref>StdPicture.SendMessage</xr:Ref>
+				<xr:LoadTransparent>true</xr:LoadTransparent>
+			</Picture>
 			<Action>ОтправитьСообщения</Action>
+			<Representation>TextPicture</Representation>
 		</Command>
 		<Command name="ПрочитатьСообщения" id="6">
 			<Title>
@@ -611,7 +975,107 @@
 					<v8:content>Прочитать сообщения</v8:content>
 				</v8:item>
 			</ToolTip>
+			<Picture>
+				<xr:Ref>StdPicture.Message</xr:Ref>
+				<xr:LoadTransparent>true</xr:LoadTransparent>
+			</Picture>
 			<Action>ПрочитатьСообщения</Action>
+			<Representation>TextPicture</Representation>
+		</Command>
+		<Command name="ОтключитьКомпоненту" id="1">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Отключить компоненту</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Отключить компоненту</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Action>ОтключитьКомпоненту</Action>
+		</Command>
+		<Command name="ОчередьСообщенийПродюсера" id="3">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Очередь сообщений</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Очередь сообщений продюсера</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Picture>
+				<xr:Ref>StdPicture.InputFieldSelect</xr:Ref>
+				<xr:LoadTransparent>true</xr:LoadTransparent>
+			</Picture>
+			<Action>ОчередьСообщенийПродюсера</Action>
+			<Representation>Picture</Representation>
+		</Command>
+		<Command name="ОчередьСообщенийКонсюмера" id="7">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Очередь сообщений консюмера</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Очередь сообщений консюмера</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Picture>
+				<xr:Ref>StdPicture.InputFieldSelect</xr:Ref>
+				<xr:LoadTransparent>true</xr:LoadTransparent>
+			</Picture>
+			<Action>ОчередьСообщенийКонсюмера</Action>
+			<Representation>Picture</Representation>
+		</Command>
+		<Command name="ОтправитьСообщенияАсинхронно" id="8">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Отправить асинхронно</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Отправить сообщения асинхронно</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Picture>
+				<xr:Ref>StdPicture.SendMessage</xr:Ref>
+				<xr:LoadTransparent>true</xr:LoadTransparent>
+			</Picture>
+			<Action>ОтправитьСообщенияАсинхронно</Action>
+			<Representation>TextPicture</Representation>
+		</Command>
+		<Command name="ЗафиксироватьОффсет" id="9">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Зафиксировать оффсет</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Зафиксировать оффсет</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Picture>
+				<xr:Ref>StdPicture.Rename</xr:Ref>
+				<xr:LoadTransparent>true</xr:LoadTransparent>
+			</Picture>
+			<Action>ЗафиксироватьОффсет</Action>
+			<Representation>TextPicture</Representation>
 		</Command>
 	</Commands>
 </Form>

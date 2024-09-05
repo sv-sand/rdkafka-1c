@@ -1,6 +1,10 @@
 ﻿#pragma once
 
 #include <string>
+#include <fstream>
+#include <sstream>
+#include <filesystem>
+#include "Strings.h"
 
 class Loger
 {
@@ -20,8 +24,8 @@ public:
     Loger();
     ~Loger();
     
-    bool Init(std::string Directory);
-    bool Init(std::string Directory, std::string &ErrorDescription);
+    bool Init(std::string FileName);
+    bool Init(std::string FileName, std::string &ErrorDescription);
     
     void Debug(std::string Message);
     void Info(std::string Message);
@@ -31,7 +35,6 @@ public:
     std::string GetLogFile();
 
 private:
-    unsigned pid;
     std::string fileName;
 };
 

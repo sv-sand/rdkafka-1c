@@ -45,13 +45,21 @@ public:
         eMethSetConfigProperty,
         eMethInitProducer,
         eMethProduce,
+        eMethStartProduceAsynch,
+        eMethProduceAsynch,
+        eMethFlush,
         eMethStopProducer,
         eMethInitConsumer,
         eMethConsume,
         eMethGetMessageData,
         eMethGetMessageMetadata,
-        eMethCommitOffset,
         eMethStopConsumer,
+        eMethCommitOffset,
+        eMethSubscription,
+        eMethSubscribe,
+        eMethUnsubscribe,
+        eMethProducerQueueLen,
+        eMethConsumerQueueLen,
         eMethLast      // Always last
     };
 
@@ -92,7 +100,7 @@ public:
     
 private:
     const wchar_t* EXTENSION_NAME = L"RdKafka1C";
-    const wchar_t* COMPONENT_VERSION = L"0.2b";
+    const wchar_t* COMPONENT_VERSION = L"0.3.1-beta";
     std::string errorDescription;
 
     IAddInDefBase* m_iConnect;
@@ -111,17 +119,31 @@ private:
     bool SetConfigProperty(tVariant* paParams, const long lSizeArray);
     bool InitProducer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool Produce(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    bool StartProduceAsynch(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    bool ProduceAsynch(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    bool Flush(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool StopProducer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    
     bool InitConsumer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool Consume(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool GetMessageData(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool GetMessageMetadata(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool CommitOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool StopConsumer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    
+    bool Subscription(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    bool Subscribe(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    bool Unsubscribe(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+
+    bool ProducerQueueLen(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    bool ConsumerQueueLen(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
 
     long findName(const wchar_t* names[], const wchar_t* name, const uint32_t size) const;
     
-    // String conversion
+    // Variant conversion
+    int ToInt(tVariant* Source);
+    int ToInt(tVariant* Source, int defaultValue);
+    int64_t ToLongInt(tVariant* Source);
     std::string ToString(tVariant* Source);
     void SetVariant(tVariant* Dest, std::string Source);
     void SetVariant(tVariant* Dest, const wchar_t* Source);

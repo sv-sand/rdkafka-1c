@@ -20,7 +20,7 @@ TEST_F(RdKafka1CTest, InitProducer_Twice)
 {
     InitProducer();
     
-    bool initResult = rdk1c->InitProducer("some-broker", "some-topic");
+    bool initResult = rdk1c->InitProducer("some-broker");
     ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "Failed to create producer: producer has been initialized already"); 
     ASSERT_FALSE(initResult);
     
@@ -120,6 +120,28 @@ TEST_F(RdKafka1CTest, StartStopLoggingInWork)
     Consume();
 }
 
+TEST_F(RdKafka1CTest, SetProperty)
+{
+    SetProperty("sasl.username", "test-user");
+    
+    StartLogging();
+    InitProducer();
+    StopProducer();
+}
+
+TEST_F(RdKafka1CTest, SASL_SSL)
+{
+    SetProperty("security.protocol", "sasl_ssl");
+    //SetProperty("ssl.ca.location", "ca-cert");
+    //SetProperty("ssl.certificate.location", "c:/");
+    SetProperty("sasl.mechanism", "SCRAM-SHA-512");
+    SetProperty("sasl.username", "user");
+    SetProperty("sasl.password", "password");
+
+    InitProducer();
+    StopProducer();
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // Test class members
 
@@ -137,7 +159,7 @@ void RdKafka1CTest::TearDown()
 
 void RdKafka1CTest::InitProducer()
 {   
-    bool initResult = rdk1c->InitProducer(BROKERS, TOPIC);
+    bool initResult = rdk1c->InitProducer(BROKERS);
     ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");   
     ASSERT_TRUE(initResult);
 }
@@ -152,7 +174,7 @@ void RdKafka1CTest::Produce()
 
 void RdKafka1CTest::ProduceMessage()
 {   
-    bool sendResult = rdk1c->Produce(DATA, KEY, HEADERS, 0);    
+    bool sendResult = rdk1c->Produce(TOPIC, DATA, KEY, HEADERS, 0);
     ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
     ASSERT_TRUE(sendResult);
 }
@@ -215,7 +237,7 @@ void RdKafka1CTest::StopConsumer()
 
 void RdKafka1CTest::StartLogging()
 {
-    bool initLogs = rdk1c->StartLogging(LOG_DIR);
+    bool initLogs = rdk1c->StartLogging(LOG_FILE);
     ASSERT_TRUE(initLogs);     
 }
 
@@ -278,16 +300,16 @@ std::string RdKafka1CTest::GetHeadersFromMessage()
 /////////////////////////////////////////////////////////////////////////////
 // Support methods
 
-std::string RdKafka1CTest::NewRand()
+int RdKafka1CTest::NewRand()
 {
     srand(time(0));
-    return std::to_string(rand());
+    return rand();
 }
 
 void RdKafka1CTest::GenerateNewData()
 {
     std::stringstream stream;
-    stream << "test message (тестовое сообщение) " + NewRand();
+    stream << "test message (тестовое сообщение) " << NewRand();
     DATA = stream.str();
 }
 
@@ -299,6 +321,11 @@ void RdKafka1CTest::SetKey(std::string key)
 void RdKafka1CTest::SetHeaders(std::string headers)
 {
     HEADERS = headers;
+}
+
+void RdKafka1CTest::SetProperty(std::string name, std::string value)
+{
+    rdk1c->SetConfigProperty(name, value);
 }
 
 

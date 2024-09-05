@@ -74,3 +74,14 @@ RdKafka::Message::Status DeliveryReport::GetStatus(std::string Uuid)
 
     return status;
 }
+
+int DeliveryReport::CountUndelivered()
+{
+    int count = 0;
+    
+    for (const auto& [key, value] : statuses)
+        if (value != RdKafka::Message::MSG_STATUS_PERSISTED)
+            count++;
+
+    return count;
+}

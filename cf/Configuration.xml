@@ -260,7 +260,9 @@
 		</Properties>
 		<ChildObjects>
 			<Language>Русский</Language>
-			<CommonTemplate>RdKafka1C</CommonTemplate>
+			<Subsystem>Кафка</Subsystem>
+			<Catalog>НастройкиКафки</Catalog>
+			<Catalog>БрокерыКафка</Catalog>
 			<DataProcessor>КафкаКоннектор</DataProcessor>
 		</ChildObjects>
 	</Configuration>
