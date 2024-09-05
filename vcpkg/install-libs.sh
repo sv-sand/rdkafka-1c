@@ -2,6 +2,7 @@
 
 # Before add vcpkg to system PATH
 
+vcpkg install openssl --overlay-triplets=static-triplets --triplet x64-windows
 vcpkg install librdkafka --overlay-triplets=static-triplets --triplet x64-linux
 vcpkg install boost-test --overlay-triplets=static-triplets --triplet x64-linux
 vcpkg install boost-property-tree --overlay-triplets=static-triplets --triplet x64-linux

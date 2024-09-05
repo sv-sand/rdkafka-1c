@@ -45,17 +45,18 @@ class RdKafka1CTest : public testing::Test
         std::string GetHeadersFromMessage();
         void SetKey(std::string key);
         void SetHeaders(std::string headers);
+        void SetProperty(std::string name, std::string value);
         
     private:
 
         const std::string BROKERS = "localhost";
         const std::string TOPIC = "test";
         const std::string CONSUMER_GROUP_ID = "testgroup";
-        const std::string LOG_DIR = "../../logs";
+        const std::string LOG_FILE = "../../build/testing.log";
 
         std::string DATA;       
         std::string KEY;
         std::string HEADERS;
 
-        std::string NewRand();        
+        int NewRand();        
 };

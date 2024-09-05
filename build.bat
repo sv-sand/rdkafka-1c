@@ -1,5 +1,5 @@
-@set BUILD_DIR=./build
-@set VCPKG_DIR=D:\tools\vcpkg
+@set BUILD_DIR="./build"
+@set VCPKG_DIR="D:\tools\vcpkg"
 
 del %BUILD_DIR% /Q /S
 

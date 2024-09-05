@@ -15,6 +15,7 @@ public:
 
 	void ClearStatuses();
 	RdKafka::Message::Status GetStatus(std::string Uuid);
+	int CountUndelivered();
 
 private:
 	Loger* loger;

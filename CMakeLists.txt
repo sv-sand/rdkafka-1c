@@ -49,13 +49,15 @@ if(WIN32)
 
 	target_link_libraries(RdKafka1C 
 		${Boost_LIBRARIES}
-		RdKafka::rdkafka RdKafka::rdkafka++) 
+		RdKafka::rdkafka
+		RdKafka::rdkafka++
+		) 
 	
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
  
 	target_compile_definitions(RdKafka1C PRIVATE
 		_WINDOWS
-		_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
+		_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING) 
 
 else()
 	target_include_directories(RdKafka1C PRIVATE include 
@@ -65,7 +67,9 @@ else()
 
 	target_link_libraries(RdKafka1C 
 		${Boost_LIBRARIES}
-		RdKafka::rdkafka RdKafka::rdkafka++)
+		RdKafka::rdkafka
+		RdKafka::rdkafka++
+		)
 
 	if(NOT CMAKE_BUILD_TYPE)
 		set (CMAKE_BUILD_TYPE Release CACHE STRING
