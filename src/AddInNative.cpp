@@ -28,13 +28,21 @@ static const wchar_t *g_MethodNames[] = {
     L"SetConfigProperty",
     L"InitProducer",
     L"Produce",
+    L"StartProduceAsynch",
+    L"ProduceAsynch",
+    L"Flush",
     L"StopProducer",
     L"InitConsumer",
     L"Consume",
     L"GetMessageData",
     L"GetMessageMetadata",
-    L"CommitOffset",
     L"StopConsumer",
+    L"CommitOffset",
+    L"Subscription",
+    L"Subscribe",
+    L"Unsubscribe",
+    L"ProducerQueueLen",
+    L"ConsumerQueueLen",
 };
 static const wchar_t *g_MethodNamesRu[] = {
     L"НачатьЛогирование",
@@ -42,13 +50,21 @@ static const wchar_t *g_MethodNamesRu[] = {
     L"УстановитьПараметр",
     L"ИнициализироватьПродюсера",
     L"Отправить",
+    L"НачатьАсинхроннуюОтправку",
+    L"ОтправитьАсинхронно",
+    L"Слить",
     L"ОстановитьПродюсера",
     L"ИнициализироватьКонсюмера",
     L"Прочитать",
     L"ДанныеСообщения",
     L"МетаданныеСообщения",
-    L"ЗафиксироватьОффсет",
     L"ОстановитьКонсюмера",
+    L"ЗафиксироватьОффсет",
+    L"Подписки",
+    L"Подписаться",
+    L"Отписаться",
+    L"ОчередьСообщенийПродюсера",
+    L"ОчередьСообщенийКонсюмера",
 };
 
 static const WCHAR_T g_kClassNames[] = u"RdKafka1C"; //"|OtherClass1|OtherClass2";
@@ -326,10 +342,16 @@ long CAddInNative::GetNParams(const long lMethodNum)
         case eMethSetConfigProperty:
             return 2;
         case eMethInitProducer:
-            return 2;
+            return 1;
         case eMethProduce:
-            return 4;
+            return 5;
+        case eMethProduceAsynch:
+            return 5;
         case eMethInitConsumer:
+            return 2;
+        case eMethSubscribe:
+            return 1;
+        case eMethCommitOffset:
             return 3;
     }
     
@@ -343,16 +365,32 @@ bool CAddInNative::GetParamDefValue(const long lMethodNum, const long lParamNum,
     case eMethProduce:
         switch (lParamNum)
         {
-        case 1:
-            SetVariant(pvarParamDefValue, "");
-            return true;
         case 2:
             SetVariant(pvarParamDefValue, "");
             return true;
         case 3:
-            SetVariant(pvarParamDefValue, 0);
+            SetVariant(pvarParamDefValue, "");
+            return true;
+        case 4:
+            SetVariant(pvarParamDefValue, -1);
             return true;
         }
+        break;
+
+    case eMethProduceAsynch:
+        switch (lParamNum)
+        {
+        case 2:
+            SetVariant(pvarParamDefValue, "");
+            return true;
+        case 3:
+            SetVariant(pvarParamDefValue, "");
+            return true;
+        case 4:
+            SetVariant(pvarParamDefValue, -1);
+            return true;
+        }
+        break;
     }   
     
     TV_VT(pvarParamDefValue) = VTYPE_EMPTY;
@@ -366,6 +404,9 @@ bool CAddInNative::HasRetVal(const long lMethodNum)
         case eMethStartLogging:
         case eMethInitProducer:
         case eMethProduce:
+        case eMethStartProduceAsynch:
+        case eMethProduceAsynch:
+        case eMethFlush:
         case eMethStopProducer:
         case eMethInitConsumer:
         case eMethConsume:
@@ -373,6 +414,11 @@ bool CAddInNative::HasRetVal(const long lMethodNum)
         case eMethGetMessageMetadata:
         case eMethCommitOffset:
         case eMethStopConsumer:
+        case eMethSubscription:
+        case eMethSubscribe:
+        case eMethUnsubscribe:
+        case eMethProducerQueueLen:
+        case eMethConsumerQueueLen:
             return true;
     }
 
@@ -410,6 +456,15 @@ bool CAddInNative::CallAsFunc(const long lMethodNum, tVariant* pvarRetValue, tVa
     case eMethProduce:
         return Produce(pvarRetValue, paParams, lSizeArray);
 
+    case eMethStartProduceAsynch:
+        return StartProduceAsynch(pvarRetValue, paParams, lSizeArray);
+
+    case eMethProduceAsynch:
+        return ProduceAsynch(pvarRetValue, paParams, lSizeArray);
+
+    case eMethFlush:
+        return Flush(pvarRetValue, paParams, lSizeArray);
+
     case eMethStopProducer:
         return StopProducer(pvarRetValue, paParams, lSizeArray);
 
@@ -430,6 +485,21 @@ bool CAddInNative::CallAsFunc(const long lMethodNum, tVariant* pvarRetValue, tVa
 
     case eMethStopConsumer:
         return StopConsumer(pvarRetValue, paParams, lSizeArray);
+
+    case eMethSubscription:
+        return Subscription(pvarRetValue, paParams, lSizeArray);
+
+    case eMethSubscribe:
+        return Subscribe(pvarRetValue, paParams, lSizeArray);
+
+    case eMethUnsubscribe:
+        return Unsubscribe(pvarRetValue, paParams, lSizeArray);
+
+    case eMethProducerQueueLen:
+        return ProducerQueueLen(pvarRetValue, paParams, lSizeArray);
+
+    case eMethConsumerQueueLen:
+        return ConsumerQueueLen(pvarRetValue, paParams, lSizeArray);
 
     }
     return false;
@@ -490,9 +560,15 @@ bool CAddInNative::StartLogging(tVariant* pvarRetValue, tVariant* paParams, cons
         return false;
     }
 
-    std::string directory = ToString(&paParams[0]);
+    std::string fileName = ToString(&paParams[0]);
     
-    auto result = rdk1c->StartLogging(directory);
+    if (!errorDescription.empty())
+    {
+        SetVariant(pvarRetValue, false);
+        return true;
+    }
+
+    auto result = rdk1c->StartLogging(fileName);
     SetVariant(pvarRetValue, result);
 
     return true;
@@ -508,6 +584,9 @@ bool CAddInNative::SetLogLevel(tVariant* varPropVal)
 {
     std::string level = ToString(varPropVal);
     
+    if (!errorDescription.empty())
+        return false;
+
     if (level == "none")
         rdk1c->SetLogerLevel(Loger::Levels::NONE);
     else if (level == "debug")
@@ -557,6 +636,9 @@ bool CAddInNative::SetConfigProperty(tVariant* paParams, const long lSizeArray)
     std::string paramName = ToString(&paParams[0]);
     std::string paramValue = ToString(&paParams[1]);
 
+    if (!errorDescription.empty())
+        return false;
+
     rdk1c->SetConfigProperty(paramName, paramValue);
 
     return true;
@@ -564,16 +646,21 @@ bool CAddInNative::SetConfigProperty(tVariant* paParams, const long lSizeArray)
 
 bool CAddInNative::InitProducer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
 {
-    if (lSizeArray != 2 || !paParams || TV_VT(paParams) != VTYPE_PWSTR)
+    if (lSizeArray != 1 || !paParams || TV_VT(paParams) != VTYPE_PWSTR)
     {
         errorDescription = "Invalid parameters";
         return false;
     }
 
     std::string brokers = ToString(&paParams[0]);
-    std::string topic = ToString(&paParams[1]);
         
-    auto result = rdk1c->InitProducer(brokers, topic);
+    if (!errorDescription.empty())
+    {
+        SetVariant(pvarRetValue, false);
+        return true;
+    }
+
+    auto result = rdk1c->InitProducer(brokers);
     SetVariant(pvarRetValue, result);
 
     return true;
@@ -581,18 +668,67 @@ bool CAddInNative::InitProducer(tVariant* pvarRetValue, tVariant* paParams, cons
 
 bool CAddInNative::Produce(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
 {
-    if (lSizeArray != 4 || !paParams || TV_VT(paParams) != VTYPE_PWSTR)
+    if (lSizeArray != 5 || !paParams || TV_VT(paParams) != VTYPE_PWSTR)
     {
         errorDescription = "Invalid parameters";
         return false;
     }
 
-    std::string message = ToString(&paParams[0]);
-    std::string key = ToString(&paParams[1]);
-    std::string headers = ToString(&paParams[2]);
-    int partition = paParams[3].intVal;
+    std::string topic = ToString(&paParams[0]);
+    std::string message = ToString(&paParams[1]);
+    std::string key = ToString(&paParams[2]);
+    std::string headers = ToString(&paParams[3]);
+    int partition = ToInt(&paParams[4], -1);
 
-    auto result = rdk1c->Produce(message, key, headers, partition);
+    if (!errorDescription.empty())
+    {
+        SetVariant(pvarRetValue, false);
+        return true;
+    }
+
+    auto result = rdk1c->Produce(topic, message, key, headers, partition);
+    SetVariant(pvarRetValue, result);
+
+    return true;
+}
+
+bool CAddInNative::StartProduceAsynch(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
+{
+    auto result = rdk1c->StartProduceAsynch();
+    SetVariant(pvarRetValue, result);
+
+    return true;
+}
+
+bool CAddInNative::ProduceAsynch(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
+{
+    if (lSizeArray != 5 || !paParams || TV_VT(paParams) != VTYPE_PWSTR)
+    {
+        errorDescription = "Invalid parameters";
+        return false;
+    }
+
+    std::string topic = ToString(&paParams[0]);
+    std::string message = ToString(&paParams[1]);
+    std::string key = ToString(&paParams[2]);
+    std::string headers = ToString(&paParams[3]);
+    int partition = ToInt(&paParams[4], -1);
+
+    if (!errorDescription.empty())
+    {
+        SetVariant(pvarRetValue, false);
+        return true;
+    }
+
+    auto result = rdk1c->ProduceAsynch(topic, message, key, headers, partition);
+    SetVariant(pvarRetValue, result);
+
+    return true;
+}
+
+bool CAddInNative::Flush(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
+{
+    auto result = rdk1c->Flush();
     SetVariant(pvarRetValue, result);
 
     return true;
@@ -608,32 +744,23 @@ bool CAddInNative::StopProducer(tVariant* pvarRetValue, tVariant* paParams, cons
 
 bool CAddInNative::InitConsumer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
 {
-    if (lSizeArray != 3 || !paParams || TV_VT(paParams) != VTYPE_PWSTR)
+    if (lSizeArray != 2 || !paParams || TV_VT(paParams) != VTYPE_PWSTR)
     {
         errorDescription = "Invalid parameters";
         return false;
     }
 
     std::string brokers = ToString(&paParams[0]);
-    std::string topic = ToString(&paParams[1]);
-    std::string groupId = ToString(&paParams[2]);
+    std::string groupId = ToString(&paParams[1]);
 
-    bool initResult = rdk1c->InitConsumer(brokers, groupId);
-    if (!initResult)
+    if (!errorDescription.empty())
     {
         SetVariant(pvarRetValue, false);
-        return false;
+        return true;
     }
 
-    bool subscribeResult = rdk1c->Subscribe(topic);
-    if (!subscribeResult)
-    {
-        SetVariant(pvarRetValue, false);
-        return false;
-    }
-
-    // Set success
-    SetVariant(pvarRetValue, true);
+    bool result = rdk1c->InitConsumer(brokers, groupId);
+    SetVariant(pvarRetValue, result);
 
     return true;
 }
@@ -668,10 +795,16 @@ bool CAddInNative::CommitOffset(tVariant* pvarRetValue, tVariant* paParams, cons
     }
 
     std::string topic = ToString(&paParams[0]);
-    int offcet = paParams[1].intVal;
-    int partition = paParams[2].intVal;
+    int partition = ToInt(&paParams[1]);
+    int64_t offset = ToLongInt(&paParams[2]);
 
-    auto result = rdk1c->CommitOffset(topic, offcet, partition);
+    if (!errorDescription.empty())
+    {
+        SetVariant(pvarRetValue, false);
+        return true;
+    }
+
+    auto result = rdk1c->CommitOffset(topic, partition, offset);
     SetVariant(pvarRetValue, result);
 
     return true;
@@ -684,15 +817,113 @@ bool CAddInNative::StopConsumer(tVariant* pvarRetValue, tVariant* paParams, cons
     return true;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// Support methods
+bool CAddInNative::Subscription(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
+{
+    auto result = rdk1c->Subscription();
+    SetVariant(pvarRetValue, result);
+    return true;
+}
 
+bool CAddInNative::Subscribe(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
+{
+    if (lSizeArray != 1 || !paParams || TV_VT(paParams) != VTYPE_PWSTR)
+    {
+        errorDescription = "Invalid parameters";
+        return false;
+    }
+
+    std::string topic = ToString(&paParams[0]);
+
+    if (!errorDescription.empty())
+    {
+        SetVariant(pvarRetValue, false);
+        return true;
+    }
+
+    bool result = rdk1c->Subscribe(topic);
+    SetVariant(pvarRetValue, result);
+
+    return true;
+}
+
+bool CAddInNative::Unsubscribe(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
+{
+    auto result = rdk1c->Unsubscribe();
+    SetVariant(pvarRetValue, result);
+    return true;
+}
+
+bool CAddInNative::ProducerQueueLen(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
+{
+    auto result = rdk1c->ProducerQueueLen();
+    SetVariant(pvarRetValue, result);
+    return true;
+}
+
+bool CAddInNative::ConsumerQueueLen(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
+{
+    auto result = rdk1c->ConsumerQueueLen();
+    SetVariant(pvarRetValue, result);
+    return true;
+}
 
 /////////////////////////////////////////////////////////////////////////////
-// String conversion
+// Variant conversion
+
+int CAddInNative::ToInt(tVariant* Source, int defaultValue)
+{
+    if (TV_VT(Source) == VTYPE_EMPTY)
+        return defaultValue;
+
+    return ToInt(Source);
+}
+
+int CAddInNative::ToInt(tVariant* Source)
+{
+    if (TV_VT(Source) != VTYPE_I2
+        && TV_VT(Source) != VTYPE_I4
+        && TV_VT(Source) != VTYPE_UI1
+        && TV_VT(Source) != VTYPE_UI2
+        && TV_VT(Source) != VTYPE_UI4
+        && TV_VT(Source) != VTYPE_I8
+        && TV_VT(Source) != VTYPE_UI8
+        && TV_VT(Source) != VTYPE_INT
+        && TV_VT(Source) != VTYPE_UINT)
+    {
+        errorDescription = "Value isn't integer";
+        return 0;
+    }
+
+    return TV_INT(Source);
+}
+
+int64_t CAddInNative::ToLongInt(tVariant* Source)
+{
+    if (TV_VT(Source) != VTYPE_I2
+        && TV_VT(Source) != VTYPE_I4
+        && TV_VT(Source) != VTYPE_UI1
+        && TV_VT(Source) != VTYPE_UI2
+        && TV_VT(Source) != VTYPE_UI4
+        && TV_VT(Source) != VTYPE_I8
+        && TV_VT(Source) != VTYPE_UI8
+        && TV_VT(Source) != VTYPE_INT
+        && TV_VT(Source) != VTYPE_UINT)
+    {
+        errorDescription = "Value isn't integer";
+        return 0;
+    }
+
+    return TV_INT(Source);
+}
 
 std::string CAddInNative::ToString(tVariant* Source)
 {
+    if (TV_VT(Source) != VTYPE_PWSTR)
+    {
+        errorDescription = "Value isn't string"; 
+        return "";
+    }
+
     wchar_t* wcstr = Strings::ToWchar(Source->pwstrVal, Source->wstrLen);
     char* cstr = Strings::ToChar(wcstr, Source->wstrLen);
 

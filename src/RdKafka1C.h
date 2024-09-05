@@ -7,17 +7,11 @@
 #include <map>
 #include <sstream>
 #include <librdkafka/rdkafkacpp.h>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/trim_all.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/uuid/uuid.hpp>           
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/lexical_cast.hpp>
 #include "Config.h"
 #include "Loger.h"
+#include "Strings.h"
 
 #define delete_pointer(ptr) {delete ptr; ptr = nullptr;}
 
@@ -25,7 +19,7 @@ class RdKafka1C
 {
 public:
 
-    int OperationTimeout = 1000; // ms
+    int OperationTimeout = 10000; // ms
 
     RdKafka1C();
     ~RdKafka1C();
@@ -38,36 +32,44 @@ public:
     void SetConfigProperty(std::string Name, std::string Value);
 
     // Producer
-    bool InitProducer(std::string Brokers, std::string Topic);
-    bool Produce(std::string Message);
-    bool Produce(std::string Message, std::string Headers);
-    bool Produce(std::string Message, std::string Key, std::string Headers, int partition);
+    bool InitProducer(std::string Brokers);
+    bool Produce(std::string Topic, std::string Message, std::string Key, std::string Headers, int partition);
+    bool StartProduceAsynch();
+    bool ProduceAsynch(std::string Topic, std::string Message, std::string Key, std::string Headers, int partition);
+    bool Flush();
     bool StopProduser();
+    int ProducerQueueLen();
 
     // Consumer
     bool InitConsumer(std::string Brokers, std::string GroupId);
-    bool Subscribe(std::string Topic);
     bool Consume();
     std::string GetMessageData();
     std::string GetMessageMetadata();
-    bool CommitOffset(std::string Topic, int Offcet, int Partition);
-    bool Unsubscribe();
+    bool CommitOffset(std::string Topic, int Partition, int64_t Offset);
     bool StopConsumer();
+    int ConsumerQueueLen();
+
+    // Subscriptions
+    std::string Subscription();
+    bool Subscribe(std::string Topic);
+    bool Unsubscribe();
 
     // Logging
-    bool StartLogging(std::string Directory);
-    bool StartLogging(std::string Directory, Loger::Levels Level);
+    bool StartLogging(std::string FileName);
+    bool StartLogging(std::string FileName, Loger::Levels Level);
     void StopLogging();
     Loger::Levels GetLogerLevel();
     void SetLogerLevel(Loger::Levels Level);
     std::string GetCurrentLogFile();
+
+    // Other
+    std::string MessageStatusToString(RdKafka::Message::Status Status);
     
 private:
     
     RdKafka::Producer* producer;
     RdKafka::KafkaConsumer* consumer;
     RdKafka::Message* message;
-    std::string topicName;
     
     Config* config;
     Rebalance* rebalance;
@@ -77,7 +79,6 @@ private:
     Loger* loger;
     std::string errorDescription;
 
-    RdKafka::Headers* CreateHeaders(std::string Header);
-
+    bool CreateHeaders(RdKafka::Headers* Headers, std::string StringHeaders);
 };
 

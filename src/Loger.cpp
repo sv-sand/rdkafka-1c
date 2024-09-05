@@ -1,32 +1,13 @@
-﻿#include <fstream>
-#include <sstream>
-#include <chrono>
-#include <iomanip>
-#include <filesystem>
-#include "Loger.h"
+﻿#include "Loger.h"
 
-#ifdef _WINDOWS
-#include <process.h>
-#endif
-
-const std::string TimeStamp();
-const std::string TimeStamp(std::string format);
-void Write(std::string FileName, std::string Message);
-std::string Replace(std::string str, const std::string& from, const std::string& to);
-std::string AddFinalSlash(std::string Path);
+bool ClearFile(std::string FileName);
+void WriteFile(std::string FileName, std::string Message);
 
 /////////////////////////////////////////////////////////////////////////////
 // Class members
 
 Loger::Loger()
-{
-
-#ifdef _WINDOWS
-    pid = _getpid();
-#else
-    pid = getpid();
-#endif
-    
+{   
 }
 
 Loger::~Loger()
@@ -34,30 +15,22 @@ Loger::~Loger()
     Info("Stop logging");
 }
 
-bool Loger::Init(std::string Directory)
+bool Loger::Init(std::string FileName)
 {
     std::string ErrorDescription = "";
-    return Init(Directory, ErrorDescription);
+    return Init(FileName, ErrorDescription);
 }
 
-bool Loger::Init(std::string Directory, std::string &ErrorDescription)
+bool Loger::Init(std::string FileName, std::string &ErrorDescription)
 {
-    fileName = "";
+    fileName = FileName;
 
-    if (!std::filesystem::exists(Directory))
+    if (!ClearFile(fileName))
     {
-        ErrorDescription = "Path '" + Directory + "' not found";
+        ErrorDescription = "Failed to open file " + fileName;
         return false;
     }
-    
-    std::stringstream stream;
-    stream << AddFinalSlash(Directory) 
-        << "RkKafka1C_" 
-        << TimeStamp("%Y-%m-%d %H%M%S")
-        << "_" << std::to_string(pid) 
-        << ".log";
-    
-    fileName = stream.str();
+
     return true;
 }
 
@@ -67,9 +40,9 @@ void Loger::Debug(std::string Message)
 		return;
 
     std::stringstream stream;
-    stream << TimeStamp() << " [DEBUG] " << Message;
+    stream << Strings::TimeStamp() << " [DEBUG] " << Message;
 
-    Write(fileName, stream.str());
+    WriteFile(fileName, stream.str());
 
 }
 
@@ -79,9 +52,9 @@ void Loger::Info(std::string Message)
         return;
 
     std::stringstream stream;
-    stream << TimeStamp() << " [INFO] " << Message;
+    stream << Strings::TimeStamp() << " [INFO] " << Message;
 
-    Write(fileName, stream.str());
+    WriteFile(fileName, stream.str());
 }
 
 void Loger::Warn(std::string Message)
@@ -90,9 +63,9 @@ void Loger::Warn(std::string Message)
         return;
 
     std::stringstream stream;
-    stream << TimeStamp() << " [WARNING] " << Message;
+    stream << Strings::TimeStamp() << " [WARNING] " << Message;
 
-    Write(fileName, stream.str());
+    WriteFile(fileName, stream.str());
 }
 
 void Loger::Error(std::string Message)
@@ -101,9 +74,9 @@ void Loger::Error(std::string Message)
         return;
 
     std::stringstream stream;
-    stream << TimeStamp() << " [ERROR] " << Message;
+    stream << Strings::TimeStamp() << " [ERROR] " << Message;
 
-    Write(fileName, stream.str());
+    WriteFile(fileName, stream.str());
 }
 
 std::string Loger::GetLogFile()
@@ -112,69 +85,27 @@ std::string Loger::GetLogFile()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// Supporting methods
+// File operations
 
-void Write(std::string FileName, std::string Message)
+bool ClearFile(std::string FileName)
+{
+    bool result;
+    std::ofstream file(FileName, std::ios_base::app);
+
+    result = file.is_open();
+    if (result)
+        file.clear();
+   
+    file.close();
+
+    return result;
+}
+
+void WriteFile(std::string FileName, std::string Message)
 {
     std::ofstream file(FileName, std::ios_base::app);
     if (file.is_open())
-    {
         file << Message << std::endl;
-    }
-    file.close();
-}
-
-const std::string TimeStamp()
-{
-    return TimeStamp("%Y-%m-%d %T");
-}
-
-const std::string TimeStamp(std::string format)
-{
-    std::chrono::time_point now = std::chrono::high_resolution_clock::now();
-    tm current{};
-
-#ifdef _WINDOWS
-    time_t time = std::time(NULL);
-    localtime_s(&current, &time);
-#else
-    auto time = std::chrono::system_clock::to_time_t(now);
-    current = *std::gmtime(&time);
-#endif
-
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds> (now.time_since_epoch());
-    auto nanosecond = duration.count() % 1000000000;
-
-    std::ostringstream stream{};
-    stream << std::put_time(&current, format.c_str()) << "." << nanosecond;
-
-    return stream.str();
-}
-
-std::string Replace(std::string str, const std::string& from, const std::string& to) 
-{
-    size_t start_pos = 0;
-    while ((start_pos = str.find(from, start_pos)) != std::string::npos) 
-    {
-        str.replace(start_pos, from.length(), to);
-        start_pos += to.length();
-    }
-
-    return str;
-}
-
-std::string AddFinalSlash(std::string Path)
-{
-    if (Path.empty())
-        return Path;
     
-    if (Path.back() == '/' || Path.back() == '\\')
-        return Path;
-
-    if (Path.find('/'))
-        Path += "/";
-    else if (Path.find('\\'))
-        Path += "\\";
-
-    return Path;
+    file.close();
 }
