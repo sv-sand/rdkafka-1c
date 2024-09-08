@@ -110,6 +110,14 @@ bool RdKafka1C::Produce(std::string Topic, std::string Message, std::string Key,
     if (partition < 0)
         partition = RdKafka::Topic::PARTITION_UA;
     
+    loger->Debug("Define data for transmit");
+    const char* key = Key.c_str();
+    size_t keySize = strlen(key) + 1;
+    
+    const char* payload = Message.c_str();
+    size_t payloadSize = strlen(payload) + 1;
+    loger->Debug("Message payload (" + std::to_string(payloadSize) + "): " + payload);
+
     RdKafka::ErrorCode errorCode;
 
     for (int attempt = 1; attempt < 10; attempt++)
@@ -126,8 +134,8 @@ bool RdKafka1C::Produce(std::string Topic, std::string Message, std::string Key,
         
         errorCode = producer->produce(
             Topic, partition, RdKafka::Producer::RK_MSG_COPY,
-            const_cast<char*>(Message.c_str()), Message.size(),
-            Key.c_str(), Key.size(), 
+            const_cast<char*>(payload), payloadSize,
+            key, keySize,
             0, headers, (void*) &uuid);
 
         loger->Debug("Poll kafka for events");
@@ -231,6 +239,14 @@ bool RdKafka1C::ProduceAsynch(std::string Topic, std::string Message, std::strin
     if (partition < 0)
         partition = RdKafka::Topic::PARTITION_UA;
 
+    loger->Debug("Define data for transmit");
+    const char* key = Key.c_str();    
+    size_t keySize = strlen(key) + 1;
+    
+    const char* payload = Message.c_str();
+    size_t payloadSize = strlen(payload) + 1;    
+    loger->Debug("Message payload (" + std::to_string(payloadSize) + "): " + payload);
+
     RdKafka::ErrorCode errorCode;
 
     for (int attempt = 1; attempt < 10; attempt++)
@@ -247,8 +263,8 @@ bool RdKafka1C::ProduceAsynch(std::string Topic, std::string Message, std::strin
 
         errorCode = producer->produce(
             Topic, partition, RdKafka::Producer::RK_MSG_COPY,
-            const_cast<char*>(Message.c_str()), Message.size(),
-            Key.c_str(), Key.size(),
+            const_cast<char*>(payload), payloadSize,
+            key, keySize,
             0, headers, nullptr);
 
         if (errorCode == RdKafka::ERR__QUEUE_FULL)
@@ -490,7 +506,7 @@ std::string RdKafka1C::GetMessageData()
     const char* cstr = static_cast<const char*> (message->payload());
 
     loger->Debug("Convert to string");
-    std::string result =  std::string(cstr, message->len());
+    std::string result = std::string(cstr);
 
     return result;
 }
@@ -516,7 +532,7 @@ std::string RdKafka1C::GetMessageMetadata()
     boost::property_tree::ptree treeHeaders;    
     if (message->headers())
         for (auto header : message->headers()->get_all())
-            treeHeaders.put(header.key(), std::string(header.value_string()));
+            treeHeaders.put(header.key(), std::string(header.value_string(), header.value_size()));
 
     loger->Debug("Fill JSON tree");
     boost::property_tree::ptree tree;
@@ -669,19 +685,19 @@ bool RdKafka1C::Unsubscribe()
 
 bool RdKafka1C::StartLogging(std::string FileName)
 {
-    return StartLogging(FileName, Loger::Levels::DEBUG);
-}
-
-bool RdKafka1C::StartLogging(std::string FileName, Loger::Levels Level)
-{
     errorDescription = "";
-    SetLogerLevel(Level);
-
+    
     bool result = loger->Init(FileName, errorDescription);
     if (result)
         loger->Info("Start loging");
 
     return result;
+}
+
+bool RdKafka1C::StartLogging(std::string FileName, Loger::Levels Level)
+{
+    SetLogerLevel(Level);
+    return StartLogging(FileName);
 }
 
 void RdKafka1C::StopLogging()

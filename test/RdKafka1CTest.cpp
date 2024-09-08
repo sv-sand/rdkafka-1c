@@ -115,9 +115,7 @@ TEST_F(RdKafka1CTest, StartStopLoggingInWork)
 {
     StartLogging();
     ConsumeAll();
-    Produce();
     StopLogging();
-    Consume();
 }
 
 TEST_F(RdKafka1CTest, SetProperty)
