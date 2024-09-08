@@ -1,54 +1,10 @@
 # Внешняя компонента для обмена 1С с Kafka
 
-Версия 0.3.1-beta
-
-**!!! Проект в разработке !!!**
+Версия 1.0.0
 
 [Сборка внешней компоненты](./doc/build.md)
 
-Структура помпоненты
-
-```plantuml
-@startuml
-
-rectangle 1CPlatform as "Платформа 1С"
-
-package "RdKafka1C.dll" {
-    rectangle AddInNative
-    rectangle RdKafka1C [
-        <b>RdKafka1C</b>
-        Loger
-        Config
-        ...
-    ]
-    rectangle LibRdKafka as "librdkafka"
-}
-
-note bottom of AddInNative
-    Интерфейс
-    компоненты
-end note
-
-note bottom of RdKafka1C
-    Основная
-    логика
-    компоененты
-end note
-
-note bottom of LibRdKafka
-    Библиотека 
-    confluentinc/librdkafka
-end note
-
-rectangle Kafka as "Kafka"
-
-1CPlatform <-> AddInNative
-AddInNative <-> RdKafka1C
-RdKafka1C <-> LibRdKafka
-LibRdKafka <-> Kafka
-
-@enduml
-```
+![Структура компоненты](doc/res/structure.png)
 
 ## Использование
 

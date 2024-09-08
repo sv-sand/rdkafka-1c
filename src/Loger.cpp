@@ -36,7 +36,7 @@ bool Loger::Init(std::string FileName, std::string &ErrorDescription)
 
 void Loger::Debug(std::string Message)
 {
-	if (level > Levels::DEBUG || fileName.empty())
+	if (level > Levels::DEBUG || level == Levels::NONE || fileName.empty())
 		return;
 
     std::stringstream stream;
@@ -48,7 +48,7 @@ void Loger::Debug(std::string Message)
 
 void Loger::Info(std::string Message)
 {
-    if (level > Levels::INFO || fileName.empty())
+    if (level > Levels::INFO || level == Levels::NONE || fileName.empty())
         return;
 
     std::stringstream stream;
@@ -59,7 +59,7 @@ void Loger::Info(std::string Message)
 
 void Loger::Warn(std::string Message)
 {
-    if (level > Levels::WARN || fileName.empty())
+    if (level > Levels::WARN || level == Levels::NONE || fileName.empty())
         return;
 
     std::stringstream stream;
@@ -70,7 +70,7 @@ void Loger::Warn(std::string Message)
 
 void Loger::Error(std::string Message)
 {
-    if (level > Levels::ERRORS || fileName.empty())
+    if (level > Levels::ERRORS || level == Levels::NONE || fileName.empty())
         return;
 
     std::stringstream stream;

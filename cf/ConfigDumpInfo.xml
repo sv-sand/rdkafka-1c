@@ -28,18 +28,18 @@
 		<Metadata name="Catalog.НастройкиКафки.Form.ФормаЭлемента" id="f9956951-e2b0-4656-86d5-e7876579608c" configVersion="406375b81ff97c4f957c0df564c4a2a100000000"/>
 		<Metadata name="Catalog.НастройкиКафки.Form.ФормаЭлемента.Form" id="f9956951-e2b0-4656-86d5-e7876579608c.0" configVersion="867490df04003d438261c1d9c88e4cf700000000"/>
 		<Metadata name="Catalog.НастройкиКафки.ManagerModule" id="081ee7e7-666b-45d9-b732-d78f4615a20f.3" configVersion="bef7f7532a02ea43b16c4c2ececfe13900000000"/>
-		<Metadata name="Configuration.ТестКомпонентыRdKafka1C" id="40558979-2cf8-4f6b-8d9b-510e7356b77f" configVersion="3fc9f2824307da44b1d6084d1646666400000000"/>
+		<Metadata name="CommonTemplate.RdKafka1C" id="18454d4f-85e6-43ea-9793-9c7c3bd1eebc" configVersion="0297741c495ab14cb8ec19e5629c822e00000000"/>
+		<Metadata name="CommonTemplate.RdKafka1C.Template" id="18454d4f-85e6-43ea-9793-9c7c3bd1eebc.0" configVersion="71272dcaef182a4e91cdbd63c8aea35900000000"/>
+		<Metadata name="Configuration.ТестКомпонентыRdKafka1C" id="40558979-2cf8-4f6b-8d9b-510e7356b77f" configVersion="6e83f4dbb99a2444bc53f526e775f35a00000000"/>
 		<Metadata name="Configuration.ТестКомпонентыRdKafka1C.ClientApplicationInterface" id="b0b7ca2f-305d-4577-87fb-a1a9db0b069f.b" configVersion="53cb66568c328d4eb996083e6090711c00000000"/>
 		<Metadata name="Configuration.ТестКомпонентыRdKafka1C.HomePageWorkArea" id="b0b7ca2f-305d-4577-87fb-a1a9db0b069f.8" configVersion="b3c2336d74cda548826790a7fc34383d00000000"/>
-		<Metadata name="DataProcessor.КафкаКоннектор" id="b3a7d386-5bd9-49fc-bede-c7d217e76673" configVersion="754e23349e40d440bb83e023db3bc13900000000">
+		<Metadata name="DataProcessor.КафкаКоннектор" id="b3a7d386-5bd9-49fc-bede-c7d217e76673" configVersion="eafbe0ae5cf2844398dd89149d9f4e1a00000000">
 			<Metadata name="DataProcessor.КафкаКоннектор.Attribute.ВерсияRdKafka" id="397ccddd-e8a9-4357-ab5f-e63ea9ad1242"/>
 			<Metadata name="DataProcessor.КафкаКоннектор.Attribute.ВерсияКомпоненты" id="8a6a2e29-de36-4a08-bb55-54bfdae1a0e7"/>
 		</Metadata>
-		<Metadata name="DataProcessor.КафкаКоннектор.Form.Форма" id="f8818ba5-df2c-4393-8fbe-887a09dc1166" configVersion="462c7daef62a2b46bc95e4c5683f321400000000"/>
-		<Metadata name="DataProcessor.КафкаКоннектор.Form.Форма.Form" id="f8818ba5-df2c-4393-8fbe-887a09dc1166.0" configVersion="8d51c27b83ee2c43b2a98d74571f243000000000"/>
-		<Metadata name="DataProcessor.КафкаКоннектор.ObjectModule" id="b3a7d386-5bd9-49fc-bede-c7d217e76673.0" configVersion="5b325b81ce59374b904bb7599dbbe8d200000000"/>
-		<Metadata name="DataProcessor.КафкаКоннектор.Template.RdKafka1C" id="2cd92760-09fd-4d72-b7dc-cadd76fcdaad" configVersion="baf44d61d8dccf429bf0aff161c137bb00000000"/>
-		<Metadata name="DataProcessor.КафкаКоннектор.Template.RdKafka1C.Template" id="2cd92760-09fd-4d72-b7dc-cadd76fcdaad.0" configVersion="4b6ba74415b0374e9ecd78c3f79f2dcc00000000"/>
+		<Metadata name="DataProcessor.КафкаКоннектор.Form.Форма" id="f8818ba5-df2c-4393-8fbe-887a09dc1166" configVersion="148c6b3eb339444a8143ea46d8097d3d00000000"/>
+		<Metadata name="DataProcessor.КафкаКоннектор.Form.Форма.Form" id="f8818ba5-df2c-4393-8fbe-887a09dc1166.0" configVersion="1ab7cc1aa3469b4aa7f8341753b76acb00000000"/>
+		<Metadata name="DataProcessor.КафкаКоннектор.ObjectModule" id="b3a7d386-5bd9-49fc-bede-c7d217e76673.0" configVersion="a8dde59c6e825b4899d489a136996e8000000000"/>
 		<Metadata name="Language.Русский" id="8949bed8-6446-43f1-9870-86bb6940f079" configVersion="dc23efddaa147549935f7419479fba6a00000000"/>
 		<Metadata name="Subsystem.Кафка" id="a0835f48-697c-4f9c-8c0d-b37486d10b97" configVersion="9af45286807df044bd4abd4cd4322b5e00000000"/>
 	</ConfigVersions>

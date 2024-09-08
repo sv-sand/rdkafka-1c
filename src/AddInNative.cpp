@@ -160,7 +160,8 @@ bool CAddInNative::setMemManager(void* mem)
 
 bool CAddInNative::RegisterExtensionAs(WCHAR_T** wsExtensionName)
 { 
-    return ToShortWchar(wsExtensionName, EXTENSION_NAME, wcslen(EXTENSION_NAME)) > 0;
+    ToShortWchar(wsExtensionName, EXTENSION_NAME);
+    return true;
 }
 
 long CAddInNative::GetNProps()
@@ -172,7 +173,7 @@ long CAddInNative::GetNProps()
 long CAddInNative::FindProp(const WCHAR_T* wsPropName)
 { 
     long plPropNum = -1;
-    wchar_t* propName = Strings::ToWchar(wsPropName, Strings::GetLength(wsPropName));
+    wchar_t* propName = Strings::ToWchar(wsPropName);
     plPropNum = findName(g_PropNames, propName, ePropLast);
 
     if (plPropNum == -1)
@@ -203,7 +204,7 @@ const WCHAR_T* CAddInNative::GetPropName(long lPropNum, long lPropAlias)
         return NULL;
     }
     
-    ToShortWchar(&wsPropName, wsCurrentName, wcslen(wsCurrentName));
+    ToShortWchar(&wsPropName, wsCurrentName);
 
     return wsPropName;
 }
@@ -296,7 +297,7 @@ long CAddInNative::GetNMethods()
 long CAddInNative::FindMethod(const WCHAR_T* wsMethodName)
 { 
     long plMethodNum = -1;
-    wchar_t* name = Strings::ToWchar(wsMethodName, Strings::GetLength(wsMethodName));
+    wchar_t* name = Strings::ToWchar(wsMethodName);
 
     plMethodNum = findName(g_MethodNames, name, eMethLast);
 
@@ -328,7 +329,7 @@ const WCHAR_T* CAddInNative::GetMethodName(const long lMethodNum, const long lMe
         return 0;
     }
 
-    ToShortWchar(&wsMethodName, wsCurrentName, wcslen(wsCurrentName));
+    ToShortWchar(&wsMethodName, wsCurrentName);
 
     return wsMethodName;
 }
@@ -924,8 +925,8 @@ std::string CAddInNative::ToString(tVariant* Source)
         return "";
     }
 
-    wchar_t* wcstr = Strings::ToWchar(Source->pwstrVal, Source->wstrLen);
-    char* cstr = Strings::ToChar(wcstr, Source->wstrLen);
+    wchar_t* wcstr = Strings::ToWchar(Source->pwstrVal);
+    char* cstr = Strings::ToChar(wcstr);
 
     std::string result = std::string(cstr);
 
@@ -938,19 +939,23 @@ std::string CAddInNative::ToString(tVariant* Source)
 void CAddInNative::SetVariant(tVariant* Dest, std::string Source)
 {
     TV_VT(Dest) = VTYPE_PWSTR;
-    Dest->wstrLen = ToShortWchar(&TV_WSTR(Dest), Source.c_str(), Source.length());
+
+    ToShortWchar(&TV_WSTR(Dest), Source.c_str());
+    Dest->wstrLen = Strings::GetLength(TV_WSTR(Dest));
 }
 
 void CAddInNative::SetVariant(tVariant* Dest, const wchar_t* Source)
 {
     TV_VT(Dest) = VTYPE_PWSTR;
-    Dest->wstrLen = ToShortWchar(&TV_WSTR(Dest), Source, wcslen(Source));
+    ToShortWchar(&TV_WSTR(Dest), Source);
+    Dest->wstrLen = Strings::GetLength(TV_WSTR(Dest));
 }
 
 void CAddInNative::SetVariant(tVariant* Dest, const char* Source)
 {
     TV_VT(Dest) = VTYPE_PWSTR;
-    Dest->wstrLen = ToShortWchar(&TV_WSTR(Dest), Source, strlen(Source));
+    ToShortWchar(&TV_WSTR(Dest), Source);
+    Dest->wstrLen = Strings::GetLength(TV_WSTR(Dest));
 }
 
 void CAddInNative::SetVariant(tVariant* Dest, int Source)
@@ -968,26 +973,24 @@ void CAddInNative::SetVariant(tVariant* Dest, bool Source)
 // Conversion with memory allocation
 // Platform 1C control memory via garbage collector m_iMemory
 
-uint32_t CAddInNative::ToShortWchar(WCHAR_T** Dest, const char* Source, uint32_t Length)
+void CAddInNative::ToShortWchar(WCHAR_T** Dest, const char* Source)
 {
-    wchar_t* wcstr = Strings::ToWchar(Source, Length);
-    uint32_t result = ToShortWchar(Dest, wcstr, Length);
-
+    wchar_t* wcstr = Strings::ToWchar(Source);
+    ToShortWchar(Dest, wcstr);
     delete[] wcstr;
-
-    return result;
 }
 
-uint32_t CAddInNative::ToShortWchar(WCHAR_T** Dest, const wchar_t* Source, uint32_t Length)
+void CAddInNative::ToShortWchar(WCHAR_T** Dest, const wchar_t* Source)
 {
     if (!m_iMemory)
-        return 0;
+        return;
+    
+    uint32_t length = wcslen(Source);
+    size_t size = sizeof(WCHAR_T) * (length + 1);
 
-    size_t size = Length + 1;
+    if (!m_iMemory->AllocMemory((void**)Dest, size))
+        return;
 
-    if (!m_iMemory->AllocMemory((void**)Dest, size * sizeof(WCHAR_T)))
-        return 0;
-
-    return Strings::ConvertToShortWchar(Dest, Source, Length);
+    Strings::ConvertToShortWchar(Dest, Source);
 }
 

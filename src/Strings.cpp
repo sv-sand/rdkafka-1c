@@ -2,31 +2,33 @@
 
 uint32_t Strings::GetLength(const WCHAR_T* Source)
 {
-    uint32_t res = 0;
-    WCHAR_T* tmpShort = (WCHAR_T*)Source;
+    uint32_t length = 0;
+    WCHAR_T* ptr = (WCHAR_T*)Source;
 
-    while (*tmpShort++)
-        ++res;
+    while (*ptr++)
+        ++length;
 
-    return res;
+    return length;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // String conversion without memory allocation
 // You must allcate memory before for Dest before invoke this methods
 
-uint32_t Strings::ConvertToShortWchar(WCHAR_T** Dest, const wchar_t* Source, uint32_t Length)
+uint32_t Strings::ConvertToShortWchar(WCHAR_T** Dest, const wchar_t* Source)
 {
-    size_t size = Length + 1;
-
+    uint32_t length = wcslen(Source);
     WCHAR_T* tmpShort = *Dest;
     wchar_t* tmpWChar = (wchar_t*)Source;
-    uint32_t res = 0;
+    size_t size = sizeof(WCHAR_T) * (length + 1);
 
-    ::memset(*Dest, 0, size * sizeof(WCHAR_T));
+    ::memset(*Dest, 0, size);
+
 #ifdef __linux__
     size_t succeed = (size_t)-1;
-    size_t f = size * sizeof(wchar_t), t = size * sizeof(WCHAR_T);
+    size_t f = (length + 1) * sizeof(wchar_t);
+    size_t t = (length + 1) * sizeof(WCHAR_T);
+
     const char* fromCode = sizeof(wchar_t) == 2 ? "UTF-16" : "UTF-32";
     iconv_t cd = iconv_open("UTF-16LE", fromCode);
     if (cd != (iconv_t)-1)
@@ -37,25 +39,27 @@ uint32_t Strings::ConvertToShortWchar(WCHAR_T** Dest, const wchar_t* Source, uin
             return (uint32_t)succeed;
     }
 #endif //__linux__
-    for (; size; --size, ++res, ++tmpWChar, ++tmpShort)
+
+    for (size_t i = length; i; --i, ++tmpWChar, ++tmpShort)
         *tmpShort = (WCHAR_T)*tmpWChar;
 
-    return res - 1;
+    return length;
 }
 
-uint32_t Strings::ConvertToWchar(wchar_t** Dest, const WCHAR_T* Source, uint32_t Length)
+uint32_t Strings::ConvertToWchar(wchar_t** Dest, const WCHAR_T* Source)
 {
-    size_t size = Length + 1;
-
+    uint32_t length = GetLength(Source);
     wchar_t* tmpWChar = *Dest;
     WCHAR_T* tmpShort = (WCHAR_T*)Source;
-    uint32_t res = 0;
+    size_t size = sizeof(wchar_t) * (length + 1);
 
-    ::memset(*Dest, 0, size * sizeof(wchar_t));
+    ::memset(*Dest, 0, size);
+
 #ifdef __linux__
-    size_t succeed = (size_t)-1;
+    size_t succeed = (size_t) - 1;
     const char* fromCode = sizeof(wchar_t) == 2 ? "UTF-16" : "UTF-32";
-    size_t f = size * sizeof(WCHAR_T), t = size * sizeof(wchar_t);
+    size_t f = (length + 1) * sizeof(WCHAR_T);
+    size_t t = (length + 1) * sizeof(wchar_t);
     iconv_t cd = iconv_open("UTF-32LE", fromCode);
     if (cd != (iconv_t)-1)
     {
@@ -65,64 +69,71 @@ uint32_t Strings::ConvertToWchar(wchar_t** Dest, const WCHAR_T* Source, uint32_t
             return (uint32_t)succeed;
     }
 #endif //__linux__
-    for (; size; --size, ++res, ++tmpWChar, ++tmpShort)
+
+    for (size_t i = length; i; --i, ++tmpWChar, ++tmpShort)
         *tmpWChar = (wchar_t)*tmpShort;
 
-    return res - 1;
+    return length;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // String conversion with memory allocation
 // You must delete result array after invoke this methods (delete [])
 
-wchar_t* Strings::ToWchar(const char* Source, uint32_t Length)
+wchar_t* Strings::ToWchar(const char* Source)
 {
-    size_t converted;
-    size_t size = Length + 1;
-    wchar_t* dest = new wchar_t[size];
+    // In multibyte string UTF-8 one symbol can occupy 1,2,4 bytes
+    uint32_t length = _mbstrlen(Source);
+    wchar_t* dest = new wchar_t[length + 1];
 
-    errno_t result = mbstowcs_s(&converted, dest, size, Source, Length);
+    mbstowcs_s(nullptr, dest, length + 1, Source, length);
 
     return dest;
 }
 
-wchar_t* Strings::ToWchar(const WCHAR_T* Source, uint32_t Length)
+wchar_t* Strings::ToWchar(const WCHAR_T* Source)
 {
-    size_t size = Length + 1;
-    wchar_t* dest = new wchar_t[size];
+    uint32_t length = GetLength(Source);
+    wchar_t* dest = new wchar_t[length + 1];
 
-    ConvertToWchar(&dest, Source, Length);
+    ConvertToWchar(&dest, Source);
 
     return dest;
 }
 
-WCHAR_T* Strings::ToShortWchar(const char* Source, uint32_t Length)
+WCHAR_T* Strings::ToShortWchar(const char* Source)
 {
-    wchar_t* wcstr = ToWchar(Source, Length);
-    WCHAR_T* dest = ToShortWchar(wcstr, Length);
+    // In multibyte string UTF-8 one symbol can occupy 1,2,4 bytes
+    uint32_t length = _mbstrlen(Source);
+    wchar_t* wcstr = ToWchar(Source);
+    WCHAR_T* dest = ToShortWchar(wcstr);
 
     delete[] wcstr;
 
     return dest;
 }
 
-WCHAR_T* Strings::ToShortWchar(const wchar_t* Source, uint32_t Length)
+WCHAR_T* Strings::ToShortWchar(const wchar_t* Source)
 {
-    size_t size = Length + 1;
-    WCHAR_T* dest = new WCHAR_T[size];
+    uint32_t length = wcslen(Source);
+    WCHAR_T* dest = new WCHAR_T[length + 1];
 
-    ConvertToShortWchar(&dest, Source, Length);
+    ConvertToShortWchar(&dest, Source);
 
     return dest;
 }
 
-char* Strings::ToChar(const wchar_t* Source, uint32_t Length)
+char* Strings::ToChar(const wchar_t* Source)
 {
-    size_t converted;
-    size_t size = Length + 1;
+    uint32_t length = wcslen(Source);
+    
+    // In multibyte string UTF-8 one symbol can occupy 1,2,4 bytes
+    // English symbol usualy occupy 1 bytes, russian - 2 bytes
+    int maxBytesPerSymbol = 2;
+    size_t size = maxBytesPerSymbol * sizeof(char) * (length + 1);
     char* dest = new char[size];
-
-    errno_t result = wcstombs_s(&converted, dest, size, Source, Length);
+    
+    wcstombs_s(nullptr, dest, size, Source, size - 1);
 
     return dest;
 }

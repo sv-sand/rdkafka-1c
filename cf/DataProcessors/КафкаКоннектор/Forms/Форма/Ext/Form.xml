@@ -3,16 +3,16 @@
 	<AutoSaveDataInSettings>Use</AutoSaveDataInSettings>
 	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1">
 		<ChildItems>
-			<Button name="ФормаПодключитьКомпоненту" id="9">
+			<Button name="ФормаСоздатьКоннектор" id="9">
 				<Type>CommandBarButton</Type>
 				<DefaultButton>true</DefaultButton>
-				<CommandName>Form.Command.ПодключитьКомпоненту</CommandName>
-				<ExtendedTooltip name="ФормаПодключитьКомпонентуРасширеннаяПодсказка" id="10"/>
+				<CommandName>Form.Command.СоздатьКоннектор</CommandName>
+				<ExtendedTooltip name="ФормаСоздатьКоннекторРасширеннаяПодсказка" id="10"/>
 			</Button>
-			<Button name="ФормаОтключитьКомпоненту" id="90">
+			<Button name="ФормаОстановитьКоннектор" id="90">
 				<Type>CommandBarButton</Type>
-				<CommandName>Form.Command.ОтключитьКомпоненту</CommandName>
-				<ExtendedTooltip name="ФормаОтключитьКомпонентуРасширеннаяПодсказка" id="91"/>
+				<CommandName>Form.Command.ОстановитьКоннектор</CommandName>
+				<ExtendedTooltip name="ФормаОстановитьКоннекторРасширеннаяПодсказка" id="91"/>
 			</Button>
 		</ChildItems>
 	</AutoCommandBar>
@@ -912,20 +912,20 @@
 		</Attribute>
 	</Attributes>
 	<Commands>
-		<Command name="ПодключитьКомпоненту" id="2">
+		<Command name="СоздатьКоннектор" id="2">
 			<Title>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Подключить компоненту</v8:content>
+					<v8:content>Создать коннектор</v8:content>
 				</v8:item>
 			</Title>
 			<ToolTip>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Подключить компоненту</v8:content>
+					<v8:content>Создать коннектор</v8:content>
 				</v8:item>
 			</ToolTip>
-			<Action>ПодключитьКомпоненту</Action>
+			<Action>СоздатьКоннектор</Action>
 		</Command>
 		<Command name="ПрочитатьЛоги" id="4">
 			<Title>
@@ -982,20 +982,20 @@
 			<Action>ПрочитатьСообщения</Action>
 			<Representation>TextPicture</Representation>
 		</Command>
-		<Command name="ОтключитьКомпоненту" id="1">
+		<Command name="ОстановитьКоннектор" id="1">
 			<Title>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Отключить компоненту</v8:content>
+					<v8:content>Остановить коннектор</v8:content>
 				</v8:item>
 			</Title>
 			<ToolTip>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Отключить компоненту</v8:content>
+					<v8:content>Остановить коннектор</v8:content>
 				</v8:item>
 			</ToolTip>
-			<Action>ОтключитьКомпоненту</Action>
+			<Action>ОстановитьКоннектор</Action>
 		</Command>
 		<Command name="ОчередьСообщенийПродюсера" id="3">
 			<Title>

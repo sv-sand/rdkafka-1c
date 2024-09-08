@@ -105,7 +105,6 @@
 				</Properties>
 			</Attribute>
 			<Form>Форма</Form>
-			<Template>RdKafka1C</Template>
 		</ChildObjects>
 	</DataProcessor>
 </MetaDataObject>

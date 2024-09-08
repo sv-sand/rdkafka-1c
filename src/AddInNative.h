@@ -100,7 +100,7 @@ public:
     
 private:
     const wchar_t* EXTENSION_NAME = L"RdKafka1C";
-    const wchar_t* COMPONENT_VERSION = L"0.3.1-beta";
+    const wchar_t* COMPONENT_VERSION = L"1.0.0";
     std::string errorDescription;
 
     IAddInDefBase* m_iConnect;
@@ -150,7 +150,7 @@ private:
     void SetVariant(tVariant* Dest, const char* Source);
     void SetVariant(tVariant* Dest, int Source);
     void SetVariant(tVariant* Dest, bool Source);
-    uint32_t ToShortWchar(WCHAR_T** Dest, const wchar_t* Source, uint32_t Length);
-    uint32_t ToShortWchar(WCHAR_T** Dest, const char* Source, uint32_t Length);
+    void ToShortWchar(WCHAR_T** Dest, const wchar_t* Source);
+    void ToShortWchar(WCHAR_T** Dest, const char* Source);
       
 };
