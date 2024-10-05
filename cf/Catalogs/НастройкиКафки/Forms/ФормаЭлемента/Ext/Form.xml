@@ -2,21 +2,40 @@
 <Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.18">
 	<WindowOpeningMode>LockOwnerWindow</WindowOpeningMode>
 	<UseForFoldersAndItems>Items</UseForFoldersAndItems>
-	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1"/>
+	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1">
+		<ChildItems>
+			<Button name="ФормаЗаписатьИЗакрыть" id="50">
+				<Type>CommandBarButton</Type>
+				<Representation>PictureAndText</Representation>
+				<DefaultButton>true</DefaultButton>
+				<CommandName>Form.StandardCommand.WriteAndClose</CommandName>
+				<ExtendedTooltip name="ФормаЗаписатьИЗакрытьРасширеннаяПодсказка" id="51"/>
+			</Button>
+			<Button name="ФормаЗаписать" id="52">
+				<Type>CommandBarButton</Type>
+				<Representation>Picture</Representation>
+				<CommandName>Form.StandardCommand.Write</CommandName>
+				<ExtendedTooltip name="ФормаЗаписатьРасширеннаяПодсказка" id="53"/>
+			</Button>
+			<Button name="ФормаСправочникНастройкиКафкиОткрытьЛоги" id="54">
+				<Type>CommandBarButton</Type>
+				<CommandName>Catalog.НастройкиКафки.Command.ОткрытьЛоги</CommandName>
+				<DataPath>Объект.Ref</DataPath>
+				<ExtendedTooltip name="ФормаСправочникНастройкиКафкиОткрытьЛогиРасширеннаяПодсказка" id="55"/>
+			</Button>
+		</ChildItems>
+	</AutoCommandBar>
 	<Events>
 		<Event name="OnCreateAtServer">ПриСозданииНаСервере</Event>
 	</Events>
 	<ChildItems>
-		<InputField name="Родитель" id="7">
-			<DataPath>Объект.Parent</DataPath>
-			<UserVisible>
-				<xr:Common>false</xr:Common>
-			</UserVisible>
-			<EditMode>EnterOnInput</EditMode>
-			<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
-			<ContextMenu name="РодительКонтекстноеМеню" id="8"/>
-			<ExtendedTooltip name="РодительРасширеннаяПодсказка" id="9"/>
-		</InputField>
+		<CheckBoxField name="Активна" id="42">
+			<DataPath>Объект.Активна</DataPath>
+			<TitleLocation>Right</TitleLocation>
+			<CheckBoxType>Switcher</CheckBoxType>
+			<ContextMenu name="АктивнаКонтекстноеМеню" id="43"/>
+			<ExtendedTooltip name="АктивнаРасширеннаяПодсказка" id="44"/>
+		</CheckBoxField>
 		<UsualGroup name="ГруппаКодНаименование" id="28">
 			<Title>
 				<v8:item>
@@ -95,7 +114,7 @@
 					<DataPath>Объект.Отправка</DataPath>
 					<TitleLocation>Right</TitleLocation>
 					<EditMode>EnterOnInput</EditMode>
-					<CheckBoxType>Switcher</CheckBoxType>
+					<CheckBoxType>CheckBox</CheckBoxType>
 					<ContextMenu name="ОтправкаКонтекстноеМеню" id="14"/>
 					<ExtendedTooltip name="ОтправкаРасширеннаяПодсказка" id="15"/>
 					<Events>
@@ -106,7 +125,7 @@
 					<DataPath>Объект.Получение</DataPath>
 					<TitleLocation>Right</TitleLocation>
 					<EditMode>EnterOnInput</EditMode>
-					<CheckBoxType>Switcher</CheckBoxType>
+					<CheckBoxType>CheckBox</CheckBoxType>
 					<ContextMenu name="ПолучениеКонтекстноеМеню" id="17"/>
 					<ExtendedTooltip name="ПолучениеРасширеннаяПодсказка" id="18"/>
 					<Events>
@@ -122,6 +141,108 @@
 			<ContextMenu name="ГруппаКонсюмераКонтекстноеМеню" id="26"/>
 			<ExtendedTooltip name="ГруппаКонсюмераРасширеннаяПодсказка" id="27"/>
 		</InputField>
+		<UsualGroup name="ГруппаЛоги" id="40">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Группа логи</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Группа логи</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Representation>None</Representation>
+			<ShowTitle>false</ShowTitle>
+			<ExtendedTooltip name="ГруппаЛогиРасширеннаяПодсказка" id="41"/>
+			<ChildItems>
+				<InputField name="УровеньЛогирования" id="35">
+					<DataPath>Объект.УровеньЛогирования</DataPath>
+					<AutoMaxWidth>false</AutoMaxWidth>
+					<MaxWidth>20</MaxWidth>
+					<ListChoiceMode>true</ListChoiceMode>
+					<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+					<ChoiceList>
+						<xr:Item>
+							<xr:Presentation/>
+							<xr:CheckState>0</xr:CheckState>
+							<xr:Value xsi:type="FormChoiceListDesTimeValue">
+								<Presentation>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>Отладка</v8:content>
+									</v8:item>
+								</Presentation>
+								<Value xsi:type="xs:string">debug</Value>
+							</xr:Value>
+						</xr:Item>
+						<xr:Item>
+							<xr:Presentation/>
+							<xr:CheckState>0</xr:CheckState>
+							<xr:Value xsi:type="FormChoiceListDesTimeValue">
+								<Presentation>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>Информация</v8:content>
+									</v8:item>
+								</Presentation>
+								<Value xsi:type="xs:string">info</Value>
+							</xr:Value>
+						</xr:Item>
+						<xr:Item>
+							<xr:Presentation/>
+							<xr:CheckState>0</xr:CheckState>
+							<xr:Value xsi:type="FormChoiceListDesTimeValue">
+								<Presentation>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>Предупреждения</v8:content>
+									</v8:item>
+								</Presentation>
+								<Value xsi:type="xs:string">warn</Value>
+							</xr:Value>
+						</xr:Item>
+						<xr:Item>
+							<xr:Presentation/>
+							<xr:CheckState>0</xr:CheckState>
+							<xr:Value xsi:type="FormChoiceListDesTimeValue">
+								<Presentation>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>Ошибки</v8:content>
+									</v8:item>
+								</Presentation>
+								<Value xsi:type="xs:string">error</Value>
+							</xr:Value>
+						</xr:Item>
+						<xr:Item>
+							<xr:Presentation/>
+							<xr:CheckState>0</xr:CheckState>
+							<xr:Value xsi:type="FormChoiceListDesTimeValue">
+								<Presentation>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>Нет</v8:content>
+									</v8:item>
+								</Presentation>
+								<Value xsi:type="xs:string">none</Value>
+							</xr:Value>
+						</xr:Item>
+					</ChoiceList>
+					<ContextMenu name="УровеньЛогированияКонтекстноеМеню" id="36"/>
+					<ExtendedTooltip name="УровеньЛогированияРасширеннаяПодсказка" id="37"/>
+				</InputField>
+				<InputField name="КоличествоЛогФайлов" id="45">
+					<DataPath>Объект.КоличествоХранимыхЛогФайлов</DataPath>
+					<ToolTipRepresentation>Button</ToolTipRepresentation>
+					<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+					<ContextMenu name="КоличествоЛогФайловКонтекстноеМеню" id="46"/>
+					<ExtendedTooltip name="КоличествоЛогФайловРасширеннаяПодсказка" id="47"/>
+				</InputField>
+			</ChildItems>
+		</UsualGroup>
 		<InputField name="Комментарий" id="32">
 			<DataPath>Объект.Комментарий</DataPath>
 			<Width>60</Width>
@@ -143,4 +264,17 @@
 			<SavedData>true</SavedData>
 		</Attribute>
 	</Attributes>
+	<CommandInterface>
+		<CommandBar>
+			<Item>
+				<Command>Catalog.НастройкиКафки.Command.ОткрытьЛоги</Command>
+				<Type>Auto</Type>
+				<CommandGroup>FormCommandBarImportant</CommandGroup>
+				<DefaultVisible>false</DefaultVisible>
+				<Visible>
+					<xr:Common>false</xr:Common>
+				</Visible>
+			</Item>
+		</CommandBar>
+	</CommandInterface>
 </Form>

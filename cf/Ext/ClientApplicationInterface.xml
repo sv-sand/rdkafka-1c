@@ -5,6 +5,11 @@
 			<uuid>b553047f-c9aa-4157-978d-448ecad24248</uuid>
 		</panel>
 	</top>
+	<top>
+		<panel id="7157a9c3-be47-4091-8a91-77c5c2bc7a58">
+			<uuid>cbab57f2-a0f3-4f0a-89ea-4cb19570ab75</uuid>
+		</panel>
+	</top>
 	<panelDef id="b553047f-c9aa-4157-978d-448ecad24248"/>
 	<panelDef id="13322b22-3960-4d68-93a6-fe2dd7f28ca3"/>
 	<panelDef id="c933ac92-92cd-459d-81cc-e0c8a83ced99"/>

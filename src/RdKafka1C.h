@@ -33,20 +33,22 @@ public:
 
     // Producer
     bool InitProducer(std::string Brokers);
+    bool StopProduser();
     bool Produce(std::string Topic, std::string Message, std::string Key, std::string Headers, int partition);
     bool StartProduceAsynch();
     bool ProduceAsynch(std::string Topic, std::string Message, std::string Key, std::string Headers, int partition);
     bool Flush();
-    bool StopProduser();
     int ProducerQueueLen();
 
     // Consumer
     bool InitConsumer(std::string Brokers, std::string GroupId);
+    bool StopConsumer();
     bool Consume();
     std::string GetMessageData();
     std::string GetMessageMetadata();
+    int64_t CommittedOffset(std::string Topic, int Partition);
+    bool AssignPartition(std::string Topic, int Partition);
     bool CommitOffset(std::string Topic, int Partition, int64_t Offset);
-    bool StopConsumer();
     int ConsumerQueueLen();
 
     // Subscriptions
@@ -79,6 +81,6 @@ private:
     Loger* loger;
     std::string errorDescription;
 
-    bool CreateHeaders(RdKafka::Headers* Headers, std::string StringHeaders);
+    bool FillHeaders(RdKafka::Headers* Headers, std::string StringHeaders);
 };
 

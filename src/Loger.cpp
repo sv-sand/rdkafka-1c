@@ -104,6 +104,9 @@ bool ClearFile(std::string FileName)
 void WriteFile(std::string FileName, std::string Message)
 {
     std::ofstream file(FileName, std::ios_base::app);
+    std::locale locale("ru_RU");
+    file.imbue(locale);
+
     if (file.is_open())
         file << Message << std::endl;
     

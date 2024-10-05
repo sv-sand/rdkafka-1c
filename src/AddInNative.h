@@ -40,26 +40,34 @@ public:
 
     enum Methods
     {
+        // Logging
         eMethStartLogging = 0,
         eMethStopLogging,
         eMethSetConfigProperty,
+
+        // Producer
         eMethInitProducer,
         eMethProduce,
         eMethStartProduceAsynch,
         eMethProduceAsynch,
         eMethFlush,
         eMethStopProducer,
+        eMethProducerQueueLen,
+
+        // Consumer
         eMethInitConsumer,
         eMethConsume,
         eMethGetMessageData,
         eMethGetMessageMetadata,
         eMethStopConsumer,
+        eMethAssignPartition,
+        eMethCommittedOffset,
         eMethCommitOffset,
         eMethSubscription,
         eMethSubscribe,
         eMethUnsubscribe,
-        eMethProducerQueueLen,
         eMethConsumerQueueLen,
+
         eMethLast      // Always last
     };
 
@@ -99,8 +107,9 @@ public:
     virtual void ADDIN_API SetUserInterfaceLanguageCode(const WCHAR_T* lang) override;
     
 private:
+
     const wchar_t* EXTENSION_NAME = L"RdKafka1C";
-    const wchar_t* COMPONENT_VERSION = L"1.0.0";
+    const wchar_t* COMPONENT_VERSION = L"1.1.1";
     std::string errorDescription;
 
     IAddInDefBase* m_iConnect;
@@ -118,28 +127,27 @@ private:
     
     bool SetConfigProperty(tVariant* paParams, const long lSizeArray);
     bool InitProducer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    bool StopProducer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool Produce(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool StartProduceAsynch(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool ProduceAsynch(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool Flush(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
-    bool StopProducer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
-    
+    bool ProducerQueueLen(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+
     bool InitConsumer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    bool StopConsumer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool Consume(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool GetMessageData(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool GetMessageMetadata(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    bool AssignPartition(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+    bool CommittedOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool CommitOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
-    bool StopConsumer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     
     bool Subscription(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool Subscribe(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool Unsubscribe(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
-
-    bool ProducerQueueLen(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool ConsumerQueueLen(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
 
-    long findName(const wchar_t* names[], const wchar_t* name, const uint32_t size) const;
-    
     // Variant conversion
     int ToInt(tVariant* Source);
     int ToInt(tVariant* Source, int defaultValue);
@@ -149,8 +157,11 @@ private:
     void SetVariant(tVariant* Dest, const wchar_t* Source);
     void SetVariant(tVariant* Dest, const char* Source);
     void SetVariant(tVariant* Dest, int Source);
+    void SetVariant(tVariant* Dest, int64_t Source);
     void SetVariant(tVariant* Dest, bool Source);
     void ToShortWchar(WCHAR_T** Dest, const wchar_t* Source);
     void ToShortWchar(WCHAR_T** Dest, const char* Source);
-      
+    
+    // Other
+    long findName(const wchar_t* names[], const wchar_t* name, const uint32_t size) const;
 };

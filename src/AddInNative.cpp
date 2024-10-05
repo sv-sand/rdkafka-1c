@@ -23,47 +23,63 @@ static const wchar_t *g_PropNamesRu[] = {
 };
 
 static const wchar_t *g_MethodNames[] = {
+
+    // Logging
     L"StartLogging",
     L"StopLogging",
     L"SetConfigProperty",
+
+    // Producer
     L"InitProducer",
     L"Produce",
     L"StartProduceAsynch",
     L"ProduceAsynch",
     L"Flush",
     L"StopProducer",
+    L"ProducerQueueLen",
+
+    // Consumer
     L"InitConsumer",
     L"Consume",
     L"GetMessageData",
     L"GetMessageMetadata",
     L"StopConsumer",
+    L"AssignPartition",
+    L"CommittedOffset",
     L"CommitOffset",
     L"Subscription",
     L"Subscribe",
     L"Unsubscribe",
-    L"ProducerQueueLen",
     L"ConsumerQueueLen",
 };
 static const wchar_t *g_MethodNamesRu[] = {
+    
+    // Логирование
     L"НачатьЛогирование",
     L"ОстановитьЛогирование",
     L"УстановитьПараметр",
+    
+    // Продюсер
     L"ИнициализироватьПродюсера",
     L"Отправить",
     L"НачатьАсинхроннуюОтправку",
     L"ОтправитьАсинхронно",
     L"Слить",
     L"ОстановитьПродюсера",
+    L"ОчередьСообщенийПродюсера",
+
+    // Консюмер
     L"ИнициализироватьКонсюмера",
     L"Прочитать",
     L"ДанныеСообщения",
     L"МетаданныеСообщения",
     L"ОстановитьКонсюмера",
+    L"УстановитьПартицию",
+    L"ПолучитьОффсет",
     L"ЗафиксироватьОффсет",
     L"Подписки",
     L"Подписаться",
     L"Отписаться",
-    L"ОчередьСообщенийПродюсера",
     L"ОчередьСообщенийКонсюмера",
 };
 
@@ -352,8 +368,13 @@ long CAddInNative::GetNParams(const long lMethodNum)
             return 2;
         case eMethSubscribe:
             return 1;
+        case eMethAssignPartition:
+            return 2;
+        case eMethCommittedOffset:
+            return 2;
         case eMethCommitOffset:
             return 3;
+        
     }
     
     return 0;
@@ -403,22 +424,26 @@ bool CAddInNative::HasRetVal(const long lMethodNum)
     switch(lMethodNum)
     { 
         case eMethStartLogging:
+        
         case eMethInitProducer:
         case eMethProduce:
         case eMethStartProduceAsynch:
         case eMethProduceAsynch:
         case eMethFlush:
         case eMethStopProducer:
+        case eMethProducerQueueLen:
+        
         case eMethInitConsumer:
         case eMethConsume:
         case eMethGetMessageData:
         case eMethGetMessageMetadata:
+        case eMethAssignPartition:
+        case eMethCommittedOffset:
         case eMethCommitOffset:
         case eMethStopConsumer:
         case eMethSubscription:
         case eMethSubscribe:
         case eMethUnsubscribe:
-        case eMethProducerQueueLen:
         case eMethConsumerQueueLen:
             return true;
     }
@@ -480,6 +505,12 @@ bool CAddInNative::CallAsFunc(const long lMethodNum, tVariant* pvarRetValue, tVa
 
     case eMethGetMessageMetadata:
         return GetMessageMetadata(pvarRetValue, paParams, lSizeArray);
+
+    case eMethAssignPartition:
+        return AssignPartition(pvarRetValue, paParams, lSizeArray);
+
+    case eMethCommittedOffset:
+        return CommittedOffset(pvarRetValue, paParams, lSizeArray);
 
     case eMethCommitOffset:
         return CommitOffset(pvarRetValue, paParams, lSizeArray);
@@ -787,6 +818,52 @@ bool CAddInNative::GetMessageMetadata(tVariant* pvarRetValue, tVariant* paParams
     return true;
 }
 
+bool CAddInNative::AssignPartition(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
+{
+    if (lSizeArray != 2 || !paParams || TV_VT(paParams) != VTYPE_PWSTR)
+    {
+        errorDescription = "Invalid parameters";
+        return false;
+    }
+
+    std::string topic = ToString(&paParams[0]);
+    int partition = ToInt(&paParams[1]);
+
+    if (!errorDescription.empty())
+    {
+        SetVariant(pvarRetValue, false);
+        return true;
+    }
+
+    auto result = rdk1c->AssignPartition(topic, partition);
+    SetVariant(pvarRetValue, result);
+
+    return true;
+}
+
+bool CAddInNative::CommittedOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
+{
+    if (lSizeArray != 2 || !paParams || TV_VT(paParams) != VTYPE_PWSTR)
+    {
+        errorDescription = "Invalid parameters";
+        return false;
+    }
+
+    std::string topic = ToString(&paParams[0]);
+    int partition = ToInt(&paParams[1]);
+    
+    if (!errorDescription.empty())
+    {
+        SetVariant(pvarRetValue, false);
+        return true;
+    }
+
+    auto result = rdk1c->CommittedOffset(topic, partition);
+    SetVariant(pvarRetValue, result);
+
+    return true;
+}
+
 bool CAddInNative::CommitOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
 {
     if (lSizeArray != 3 || !paParams || TV_VT(paParams) != VTYPE_PWSTR)
@@ -960,6 +1037,14 @@ void CAddInNative::SetVariant(tVariant* Dest, const char* Source)
 
 void CAddInNative::SetVariant(tVariant* Dest, int Source)
 {
+    TV_VT(Dest) = VTYPE_INT;
+    TV_INT(Dest) = Source;
+}
+
+void CAddInNative::SetVariant(tVariant* Dest, int64_t Source)
+{
+    //TV_VT(Dest) = VTYPE_I8;
+    //TV_I8(Dest) = Source;
     TV_VT(Dest) = VTYPE_INT;
     TV_INT(Dest) = Source;
 }
