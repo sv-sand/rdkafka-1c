@@ -82,6 +82,28 @@ bool RdKafka1C::InitProducer(std::string Brokers)
     return true;
 }
 
+bool RdKafka1C::StopProduser()
+{
+    errorDescription = "";
+    if (!producer)
+        return true;
+
+    loger->Info("Producer stop"); 
+    
+    loger->Debug("Flush messages"); 
+    RdKafka::ErrorCode errorCode = producer->flush(OperationTimeout);
+    if (errorCode)
+    {
+        errorDescription = "Failed to flush producer: " + RdKafka::err2str(errorCode);
+        loger->Error(errorDescription);
+    }
+    
+    loger->Debug("Delete producer");
+    delete_pointer(producer);
+
+    return true;
+}
+
 bool RdKafka1C::Produce(std::string Topic, std::string Message, std::string Key, std::string Headers, int partition)
 {
     errorDescription = "";
@@ -103,8 +125,9 @@ bool RdKafka1C::Produce(std::string Topic, std::string Message, std::string Key,
     loger->Debug("Clear message statuses");
     deliveryReport->ClearStatuses();
     
+    loger->Info("Create headers");
     RdKafka::Headers* headers = RdKafka::Headers::create();
-    if (!CreateHeaders(headers, Headers))
+    if (!FillHeaders(headers, Headers))
         return false;
 
     if (partition < 0)
@@ -115,8 +138,8 @@ bool RdKafka1C::Produce(std::string Topic, std::string Message, std::string Key,
     size_t keySize = strlen(key) + 1;
     
     const char* payload = Message.c_str();
-    size_t payloadSize = strlen(payload) + 1;
-    loger->Debug("Message payload (" + std::to_string(payloadSize) + "): " + payload);
+    size_t payloadSize = strlen(payload);
+    loger->Debug("Message payload (" + std::to_string(Message.length()) + "): " + Message);
 
     RdKafka::ErrorCode errorCode;
 
@@ -232,8 +255,9 @@ bool RdKafka1C::ProduceAsynch(std::string Topic, std::string Message, std::strin
         return false;
     }
 
+    loger->Info("Create headers");
     RdKafka::Headers* headers = RdKafka::Headers::create();
-    if (!CreateHeaders(headers, Headers))
+    if (!FillHeaders(headers, Headers))
         return false;
 
     if (partition < 0)
@@ -241,11 +265,11 @@ bool RdKafka1C::ProduceAsynch(std::string Topic, std::string Message, std::strin
 
     loger->Debug("Define data for transmit");
     const char* key = Key.c_str();    
-    size_t keySize = strlen(key) + 1;
+    size_t keySize = strlen(key);
     
     const char* payload = Message.c_str();
-    size_t payloadSize = strlen(payload) + 1;    
-    loger->Debug("Message payload (" + std::to_string(payloadSize) + "): " + payload);
+    size_t payloadSize = strlen(payload);
+    loger->Debug("Message payload (" + std::to_string(Message.length()) + "): " + Message);
 
     RdKafka::ErrorCode errorCode;
 
@@ -356,35 +380,12 @@ bool RdKafka1C::Flush()
     return true;
 }
 
-bool RdKafka1C::StopProduser()
-{
-    errorDescription = "";
-    if (!producer)
-        return true;
-
-    loger->Info("Producer stop"); 
-    
-    loger->Debug("Flush messages"); 
-    RdKafka::ErrorCode errorCode = producer->flush(OperationTimeout);
-    if (errorCode)
-    {
-        errorDescription = "Failed to flush producer: " + RdKafka::err2str(errorCode);
-        loger->Error(errorDescription);
-    }
-    
-    loger->Debug("Delete producer");
-    delete_pointer(producer);
-
-    return true;
-}
-
-bool RdKafka1C::CreateHeaders(RdKafka::Headers* Headers, std::string HeadersString)
+bool RdKafka1C::FillHeaders(RdKafka::Headers* Headers, std::string HeadersString)
 {
     if (HeadersString.empty())
         return true;
 
-    loger->Info("Create headers");
-
+    loger->Debug("Split headers string");
     std::multimap map = Strings::SplitString(HeadersString, ";", ":");
     if (map.size() == 0)
     {
@@ -393,8 +394,7 @@ bool RdKafka1C::CreateHeaders(RdKafka::Headers* Headers, std::string HeadersStri
         return false;
     }
 
-    loger->Debug("Create headers collection");
-    //headers = RdKafka::Headers::create();
+    loger->Debug("Fill headers collection");
     for (auto& [key, value] : map)
     {
         loger->Debug("Create header " + key + ":" + value);
@@ -441,6 +441,27 @@ bool RdKafka1C::InitConsumer(std::string Brokers, std::string GroupId)
 
     loger->Info("Consumer created successful: " + consumer->name());
 
+    return true;
+}
+
+bool RdKafka1C::StopConsumer()
+{
+    errorDescription = "";    
+    if (!consumer)
+        return true;
+
+    loger->Info("Consumer stop");
+
+    loger->Debug("Delete last message"); 
+    if (message)
+        delete_pointer(message);
+
+    loger->Debug("Close consumer"); 
+    consumer->close();
+
+    loger->Debug("Delete consumer"); 
+    delete_pointer(consumer);
+    
     return true;
 }
 
@@ -506,7 +527,7 @@ std::string RdKafka1C::GetMessageData()
     const char* cstr = static_cast<const char*> (message->payload());
 
     loger->Debug("Convert to string");
-    std::string result = std::string(cstr);
+    std::string result = std::string(cstr, message->len());
 
     return result;
 }
@@ -568,6 +589,68 @@ std::string RdKafka1C::GetMessageMetadata()
     return stream.str();
 }
 
+bool RdKafka1C::AssignPartition(std::string Topic, int Partition)
+{
+    errorDescription = "";
+    loger->Info("Assign partition");
+
+    if (!consumer)
+    {
+        errorDescription = "Consumer has been not initialized";
+        loger->Error("Failed to assign partition: " + errorDescription);
+        return false;
+    }
+
+    loger->Debug("Create topic partition pair");
+    RdKafka::TopicPartition* partition = RdKafka::TopicPartition::create(Topic, Partition);
+    std::vector<RdKafka::TopicPartition*> partitions;
+    partitions.push_back(partition);
+
+    RdKafka::ErrorCode errorCode = consumer->assign(partitions);
+    delete_pointer(partition);
+
+    if (errorCode != RdKafka::ERR_NO_ERROR)
+    {
+        errorDescription = RdKafka::err2str(errorCode);
+        loger->Error("Failed to assign partition: " + errorDescription);
+        return false;
+    }
+
+    return true;
+}
+
+int64_t RdKafka1C::CommittedOffset(std::string Topic, int Partition)
+{
+    errorDescription = "";
+    loger->Info("Get commited offsets for topic " + Topic + " partition " + std::to_string(Partition));
+
+    if (!consumer)
+    {
+        errorDescription = "Consumer has been not initialized";
+        loger->Error("Failed to get offset: " + errorDescription);
+        return -1;
+    }
+
+    loger->Debug("Create topic partition pair");
+    RdKafka::TopicPartition* partition = RdKafka::TopicPartition::create(Topic, Partition);
+    std::vector<RdKafka::TopicPartition*> partitions;
+    partitions.push_back(partition);
+    
+    RdKafka::ErrorCode errorCode = consumer->committed(partitions, OperationTimeout);
+    
+    int64_t offset = partition->offset();
+    delete_pointer(partition);
+
+    if (errorCode != RdKafka::ERR_NO_ERROR)
+    {
+        errorDescription = RdKafka::err2str(errorCode);
+        loger->Error("Failed to get offset: " + errorDescription);
+        return -1;
+    }
+
+    return offset;
+}
+
 bool RdKafka1C::CommitOffset(std::string Topic, int Partition, int64_t Offset)
 {
     errorDescription = "";
@@ -580,12 +663,13 @@ bool RdKafka1C::CommitOffset(std::string Topic, int Partition, int64_t Offset)
         return false;
     }
 
-    RdKafka::TopicPartition *offset = RdKafka::TopicPartition::create(Topic, Partition, Offset);
-    std::vector<RdKafka::TopicPartition *> offsets;
-    offsets.push_back(offset);
+    loger->Debug("Create topic partition pair");
+    RdKafka::TopicPartition *partition = RdKafka::TopicPartition::create(Topic, Partition, Offset);
+    std::vector<RdKafka::TopicPartition *> partitions;
+    partitions.push_back(partition);
 
-    RdKafka::ErrorCode errorCode = consumer->commitSync(offsets);
-    delete_pointer(offset);
+    RdKafka::ErrorCode errorCode = consumer->commitSync(partitions);
+    delete_pointer(partition);
 
     if (errorCode != RdKafka::ERR_NO_ERROR)
     {
@@ -594,27 +678,6 @@ bool RdKafka1C::CommitOffset(std::string Topic, int Partition, int64_t Offset)
         return false;
     }
 
-    return true;
-}
-
-bool RdKafka1C::StopConsumer()
-{
-    errorDescription = "";    
-    if (!consumer)
-        return true;
-
-    loger->Info("Consumer stop");
-
-    loger->Debug("Delete last message"); 
-    if (message)
-        delete_pointer(message);
-
-    loger->Debug("Close consumer"); 
-    consumer->close();
-
-    loger->Debug("Delete consumer"); 
-    delete_pointer(consumer);
-    
     return true;
 }
 

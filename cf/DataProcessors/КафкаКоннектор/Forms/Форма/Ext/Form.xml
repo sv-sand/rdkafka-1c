@@ -14,6 +14,12 @@
 				<CommandName>Form.Command.ОстановитьКоннектор</CommandName>
 				<ExtendedTooltip name="ФормаОстановитьКоннекторРасширеннаяПодсказка" id="91"/>
 			</Button>
+			<Button name="ФормаСправочникНастройкиКафкиОткрытьЛоги" id="145">
+				<Type>CommandBarButton</Type>
+				<CommandName>Catalog.НастройкиКафки.Command.ОткрытьЛоги</CommandName>
+				<DataPath>НастройкиКафки</DataPath>
+				<ExtendedTooltip name="ФормаСправочникНастройкиКафкиОткрытьЛогиРасширеннаяПодсказка" id="146"/>
+			</Button>
 		</ChildItems>
 	</AutoCommandBar>
 	<Events>
@@ -278,7 +284,8 @@
 										</v8:item>
 									</ToolTip>
 									<AutoMaxWidth>false</AutoMaxWidth>
-									<MaxWidth>60</MaxWidth>
+									<MaxWidth>100</MaxWidth>
+									<MaxHeight>5</MaxHeight>
 									<MultiLine>true</MultiLine>
 									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
 									<ContextMenu name="ТекстСообщенияКонтекстноеМеню" id="16"/>
@@ -323,11 +330,72 @@
 									<CommandName>Form.Command.ПрочитатьСообщения</CommandName>
 									<ExtendedTooltip name="ПрочитатьРасширеннаяПодсказка" id="26"/>
 								</Button>
-								<Button name="ЗафиксироватьОффсет" id="131">
-									<Type>CommandBarButton</Type>
-									<CommandName>Form.Command.ЗафиксироватьОффсет</CommandName>
-									<ExtendedTooltip name="ЗафиксироватьОффсетРасширеннаяПодсказка" id="132"/>
-								</Button>
+								<Popup name="ГруппаОффсет" id="133">
+									<Title>
+										<v8:item>
+											<v8:lang>ru</v8:lang>
+											<v8:content>Оффсет</v8:content>
+										</v8:item>
+									</Title>
+									<ToolTip>
+										<v8:item>
+											<v8:lang>ru</v8:lang>
+											<v8:content>Группа оффсет</v8:content>
+										</v8:item>
+									</ToolTip>
+									<ExtendedTooltip name="ГруппаОффсетРасширеннаяПодсказка" id="134"/>
+									<ChildItems>
+										<Button name="ПолучитьОффсет" id="135">
+											<Type>CommandBarButton</Type>
+											<CommandName>Form.Command.ПолучитьОффсет</CommandName>
+											<Title>
+												<v8:item>
+													<v8:lang>ru</v8:lang>
+													<v8:content>Получить</v8:content>
+												</v8:item>
+											</Title>
+											<ExtendedTooltip name="ПолучитьОффсетРасширеннаяПодсказка" id="136"/>
+										</Button>
+										<Button name="ЗафиксироватьОффсет" id="131">
+											<Type>CommandBarButton</Type>
+											<CommandName>Form.Command.ЗафиксироватьОффсет</CommandName>
+											<Title>
+												<v8:item>
+													<v8:lang>ru</v8:lang>
+													<v8:content>Зафиксировать</v8:content>
+												</v8:item>
+											</Title>
+											<ExtendedTooltip name="ЗафиксироватьОффсетРасширеннаяПодсказка" id="132"/>
+										</Button>
+									</ChildItems>
+								</Popup>
+								<Popup name="ГруппаТопик" id="137">
+									<Title>
+										<v8:item>
+											<v8:lang>ru</v8:lang>
+											<v8:content>Топик</v8:content>
+										</v8:item>
+									</Title>
+									<ToolTip>
+										<v8:item>
+											<v8:lang>ru</v8:lang>
+											<v8:content>Группа топик</v8:content>
+										</v8:item>
+									</ToolTip>
+									<ExtendedTooltip name="ГруппаТопикРасширеннаяПодсказка" id="138"/>
+									<ChildItems>
+										<Button name="Подписки" id="139">
+											<Type>CommandBarButton</Type>
+											<CommandName>Form.Command.Подписки</CommandName>
+											<ExtendedTooltip name="ПодпискиРасширеннаяПодсказка" id="140"/>
+										</Button>
+										<Button name="Подписаться" id="141">
+											<Type>CommandBarButton</Type>
+											<CommandName>Form.Command.Подписаться</CommandName>
+											<ExtendedTooltip name="ПодписатьсяРасширеннаяПодсказка" id="142"/>
+										</Button>
+									</ChildItems>
+								</Popup>
 								<Button name="ОчередьСообщенийКонсюмера" id="99">
 									<Type>CommandBarButton</Type>
 									<CommandName>Form.Command.ОчередьСообщенийКонсюмера</CommandName>
@@ -431,184 +499,6 @@
 				</Page>
 			</ChildItems>
 		</Pages>
-		<UsualGroup name="ГруппаЛоги" id="27">
-			<Title>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Логи</v8:content>
-				</v8:item>
-			</Title>
-			<ToolTip>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Группа логи</v8:content>
-				</v8:item>
-			</ToolTip>
-			<Group>Vertical</Group>
-			<ExtendedTooltip name="ГруппаЛогиРасширеннаяПодсказка" id="28"/>
-			<ChildItems>
-				<UsualGroup name="ГруппаНастройкиЛогов" id="34">
-					<Title>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Группа настройки логов</v8:content>
-						</v8:item>
-					</Title>
-					<ToolTip>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Группа настройки логов</v8:content>
-						</v8:item>
-					</ToolTip>
-					<Representation>None</Representation>
-					<ShowTitle>false</ShowTitle>
-					<ExtendedTooltip name="ГруппаНастройкиЛоговРасширеннаяПодсказка" id="35"/>
-					<ChildItems>
-						<CheckBoxField name="ВключитьЛогирование" id="64">
-							<DataPath>ВключитьЛогирование</DataPath>
-							<CheckBoxType>Switcher</CheckBoxType>
-							<ContextMenu name="ВключитьЛогированиеКонтекстноеМеню" id="65"/>
-							<ExtendedTooltip name="ВключитьЛогированиеРасширеннаяПодсказка" id="66"/>
-							<Events>
-								<Event name="OnChange">ВключитьЛогированиеПриИзменении</Event>
-							</Events>
-						</CheckBoxField>
-						<InputField name="УровеньЛогов" id="31">
-							<DataPath>УровеньЛогирования</DataPath>
-							<Title>
-								<v8:item>
-									<v8:lang>ru</v8:lang>
-									<v8:content>Уровень</v8:content>
-								</v8:item>
-							</Title>
-							<AutoMaxWidth>false</AutoMaxWidth>
-							<MaxWidth>20</MaxWidth>
-							<ListChoiceMode>true</ListChoiceMode>
-							<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
-							<ChoiceList>
-								<xr:Item>
-									<xr:Presentation/>
-									<xr:CheckState>0</xr:CheckState>
-									<xr:Value xsi:type="FormChoiceListDesTimeValue">
-										<Presentation>
-											<v8:item>
-												<v8:lang>ru</v8:lang>
-												<v8:content>Нет</v8:content>
-											</v8:item>
-										</Presentation>
-										<Value xsi:type="xs:string">none</Value>
-									</xr:Value>
-								</xr:Item>
-								<xr:Item>
-									<xr:Presentation/>
-									<xr:CheckState>0</xr:CheckState>
-									<xr:Value xsi:type="FormChoiceListDesTimeValue">
-										<Presentation>
-											<v8:item>
-												<v8:lang>ru</v8:lang>
-												<v8:content>Отладка</v8:content>
-											</v8:item>
-										</Presentation>
-										<Value xsi:type="xs:string">debug</Value>
-									</xr:Value>
-								</xr:Item>
-								<xr:Item>
-									<xr:Presentation/>
-									<xr:CheckState>0</xr:CheckState>
-									<xr:Value xsi:type="FormChoiceListDesTimeValue">
-										<Presentation>
-											<v8:item>
-												<v8:lang>ru</v8:lang>
-												<v8:content>Информация</v8:content>
-											</v8:item>
-										</Presentation>
-										<Value xsi:type="xs:string">info</Value>
-									</xr:Value>
-								</xr:Item>
-								<xr:Item>
-									<xr:Presentation/>
-									<xr:CheckState>0</xr:CheckState>
-									<xr:Value xsi:type="FormChoiceListDesTimeValue">
-										<Presentation>
-											<v8:item>
-												<v8:lang>ru</v8:lang>
-												<v8:content>Предупреждения</v8:content>
-											</v8:item>
-										</Presentation>
-										<Value xsi:type="xs:string">warn</Value>
-									</xr:Value>
-								</xr:Item>
-								<xr:Item>
-									<xr:Presentation/>
-									<xr:CheckState>0</xr:CheckState>
-									<xr:Value xsi:type="FormChoiceListDesTimeValue">
-										<Presentation>
-											<v8:item>
-												<v8:lang>ru</v8:lang>
-												<v8:content>Ошибки</v8:content>
-											</v8:item>
-										</Presentation>
-										<Value xsi:type="xs:string">error</Value>
-									</xr:Value>
-								</xr:Item>
-							</ChoiceList>
-							<ContextMenu name="УровеньЛоговКонтекстноеМеню" id="32"/>
-							<ExtendedTooltip name="УровеньЛоговРасширеннаяПодсказка" id="33"/>
-						</InputField>
-					</ChildItems>
-				</UsualGroup>
-				<UsualGroup name="ГруппаЛогФайл" id="36">
-					<Title>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Группа лог файл</v8:content>
-						</v8:item>
-					</Title>
-					<ToolTip>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Группа лог файл</v8:content>
-						</v8:item>
-					</ToolTip>
-					<Representation>None</Representation>
-					<ShowTitle>false</ShowTitle>
-					<ExtendedTooltip name="ГруппаЛогФайлРасширеннаяПодсказка" id="37"/>
-					<ChildItems>
-						<LabelField name="ЛогФайл" id="22">
-							<DataPath>ЛогФайл</DataPath>
-							<Title>
-								<v8:item>
-									<v8:lang>ru</v8:lang>
-									<v8:content>Файл</v8:content>
-								</v8:item>
-							</Title>
-							<AutoMaxWidth>false</AutoMaxWidth>
-							<MaxWidth>200</MaxWidth>
-							<ContextMenu name="ЛогФайлКонтекстноеМеню" id="23"/>
-							<ExtendedTooltip name="ЛогФайлРасширеннаяПодсказка" id="24"/>
-						</LabelField>
-						<Button name="ПрочитатьЛоги" id="29">
-							<Type>UsualButton</Type>
-							<CommandName>Form.Command.ПрочитатьЛоги</CommandName>
-							<Title>
-								<v8:item>
-									<v8:lang>ru</v8:lang>
-									<v8:content>Прочитать</v8:content>
-								</v8:item>
-							</Title>
-							<ExtendedTooltip name="ПрочитатьЛогиРасширеннаяПодсказка" id="30"/>
-						</Button>
-					</ChildItems>
-				</UsualGroup>
-				<TextDocumentField name="Логи" id="3">
-					<DataPath>Логи</DataPath>
-					<ReadOnly>true</ReadOnly>
-					<TitleLocation>None</TitleLocation>
-					<ContextMenu name="ЛогиКонтекстноеМеню" id="4"/>
-					<ExtendedTooltip name="ЛогиРасширеннаяПодсказка" id="5"/>
-				</TextDocumentField>
-			</ChildItems>
-		</UsualGroup>
 	</ChildItems>
 	<Attributes>
 		<Attribute name="Объект" id="1">
@@ -631,17 +521,6 @@
 				<Field>1/0:d40bfba9-bb29-46c9-8182-f23c964f4860</Field>
 				<Field>1/0:fa18708c-8312-41f2-be74-5f74a7ca2924</Field>
 			</Save>
-		</Attribute>
-		<Attribute name="Логи" id="2">
-			<Title>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Логи</v8:content>
-				</v8:item>
-			</Title>
-			<Type>
-				<v8:Type xmlns:d5p1="http://v8.1c.ru/8.1/data/txtedt">d5p1:TextDocument</v8:Type>
-			</Type>
 		</Attribute>
 		<Attribute name="ТекстСообщенияКОтправке" id="3">
 			<Title>
@@ -782,35 +661,6 @@
 				<Field>КоличествоСообщенийКОтправке</Field>
 			</Save>
 		</Attribute>
-		<Attribute name="ЛогФайл" id="11">
-			<Title>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Лог файл</v8:content>
-				</v8:item>
-			</Title>
-			<Type>
-				<v8:Type>xs:string</v8:Type>
-				<v8:StringQualifiers>
-					<v8:Length>0</v8:Length>
-					<v8:AllowedLength>Variable</v8:AllowedLength>
-				</v8:StringQualifiers>
-			</Type>
-		</Attribute>
-		<Attribute name="ВключитьЛогирование" id="12">
-			<Title>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Включить логирование</v8:content>
-				</v8:item>
-			</Title>
-			<Type>
-				<v8:Type>xs:boolean</v8:Type>
-			</Type>
-			<Save>
-				<Field>ВключитьЛогирование</Field>
-			</Save>
-		</Attribute>
 		<Attribute name="НастройкиКафки" id="13">
 			<Title>
 				<v8:item>
@@ -824,24 +674,6 @@
 			<FillCheck>ShowError</FillCheck>
 			<Save>
 				<Field>НастройкиКафки</Field>
-			</Save>
-		</Attribute>
-		<Attribute name="УровеньЛогирования" id="14">
-			<Title>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Уровень логирования</v8:content>
-				</v8:item>
-			</Title>
-			<Type>
-				<v8:Type>xs:string</v8:Type>
-				<v8:StringQualifiers>
-					<v8:Length>20</v8:Length>
-					<v8:AllowedLength>Variable</v8:AllowedLength>
-				</v8:StringQualifiers>
-			</Type>
-			<Save>
-				<Field>УровеньЛогирования</Field>
 			</Save>
 		</Attribute>
 		<Attribute name="ЧитатьМетаданныеСообщений" id="15">
@@ -926,21 +758,6 @@
 				</v8:item>
 			</ToolTip>
 			<Action>СоздатьКоннектор</Action>
-		</Command>
-		<Command name="ПрочитатьЛоги" id="4">
-			<Title>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Прочитать логи</v8:content>
-				</v8:item>
-			</Title>
-			<ToolTip>
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Прочитать логи</v8:content>
-				</v8:item>
-			</ToolTip>
-			<Action>ПрочитатьЛоги</Action>
 		</Command>
 		<Command name="ОтправитьСообщения" id="5">
 			<Title>
@@ -1070,12 +887,53 @@
 					<v8:content>Зафиксировать оффсет</v8:content>
 				</v8:item>
 			</ToolTip>
-			<Picture>
-				<xr:Ref>StdPicture.Rename</xr:Ref>
-				<xr:LoadTransparent>true</xr:LoadTransparent>
-			</Picture>
 			<Action>ЗафиксироватьОффсет</Action>
 			<Representation>TextPicture</Representation>
+		</Command>
+		<Command name="ПолучитьОффсет" id="10">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Получить оффсет</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Получить оффсет</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Action>ПолучитьОффсет</Action>
+		</Command>
+		<Command name="Подписки" id="11">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Подписки</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Подписки</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Action>Подписки</Action>
+		</Command>
+		<Command name="Подписаться" id="12">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Подписаться</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Подписаться</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Action>Подписаться</Action>
 		</Command>
 	</Commands>
 </Form>
