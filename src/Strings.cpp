@@ -11,6 +11,20 @@ uint32_t Strings::GetLength(const WCHAR_T* Source)
     return length;
 }
 
+uint32_t Strings::GetLength(const char* Source)
+{
+    uint32_t length = 0;
+
+#ifdef __linux__
+    for (size_t size = 0; size < strlen(Source); length++) 
+        size += mblen(&Source[size], MB_CUR_MAX);
+#else
+    length = _mbstrlen(Source);
+#endif //__linux__
+
+    return length;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // String conversion without memory allocation
 // You must allcate memory before for Dest before invoke this methods
@@ -83,10 +97,10 @@ uint32_t Strings::ConvertToWchar(wchar_t** Dest, const WCHAR_T* Source)
 wchar_t* Strings::ToWchar(const char* Source)
 {
     // In multibyte string UTF-8 one symbol can occupy 1,2,4 bytes
-    uint32_t length = _mbstrlen(Source);
+    uint32_t length = GetLength(Source);
     wchar_t* dest = new wchar_t[length + 1];
 
-    mbstowcs_s(nullptr, dest, length + 1, Source, length);
+    mbstowcs(dest, Source, length);
 
     return dest;
 }
@@ -104,7 +118,6 @@ wchar_t* Strings::ToWchar(const WCHAR_T* Source)
 WCHAR_T* Strings::ToShortWchar(const char* Source)
 {
     // In multibyte string UTF-8 one symbol can occupy 1,2,4 bytes
-    uint32_t length = _mbstrlen(Source);
     wchar_t* wcstr = ToWchar(Source);
     WCHAR_T* dest = ToShortWchar(wcstr);
 
@@ -133,7 +146,7 @@ char* Strings::ToChar(const wchar_t* Source)
     size_t size = maxBytesPerSymbol * sizeof(char) * (length + 1);
     char* dest = new char[size];
     
-    wcstombs_s(nullptr, dest, size, Source, size - 1);
+    wcstombs(dest, Source, size - 1);
 
     return dest;
 }

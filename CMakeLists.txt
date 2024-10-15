@@ -88,7 +88,7 @@ enable_testing()
 add_executable(testing 
 	test/main.cpp
 	test/RdKafka1CTest.cpp
-	src/RdKafka1c.cpp
+	src/RdKafka1C.cpp
 	src/Loger.cpp
 	src/Config.cpp
 	src/DeliveryReport.cpp

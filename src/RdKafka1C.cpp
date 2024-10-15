@@ -12,9 +12,9 @@ RdKafka1C::RdKafka1C()
     event = new Event(loger);
     
     config = new Config(loger);
-    config->DeliveryReport = deliveryReport;
-    config->Rebalance = rebalance;
-    config->Event = event;
+    config->deliveryReport = deliveryReport;
+    config->rebalance = rebalance;
+    config->event = event;
 }
 
 RdKafka1C::~RdKafka1C()
@@ -699,7 +699,7 @@ std::string RdKafka1C::Subscription()
     {
         errorDescription = RdKafka::err2str(errorCode);
         loger->Error("Failed to get subscriptions: " + errorDescription);
-        return false;
+        return "";
     }
 
     loger->Debug("Print topics to string");

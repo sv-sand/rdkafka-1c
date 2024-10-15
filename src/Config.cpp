@@ -4,9 +4,9 @@ Config::Config(Loger* Loger)
 {
     loger = Loger;
 
-    Rebalance = nullptr;
-    Event = nullptr;
-    DeliveryReport = nullptr;
+    rebalance = nullptr;
+    event = nullptr;
+    deliveryReport = nullptr;
     
     loger->Info("Create config");
     conf = RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL);
@@ -28,7 +28,7 @@ bool Config::Build(Purposes Purpose, std::string& ErrorDescription)
     if (!SetProperty("client.id", "rdkafka-1c", ErrorDescription))
         return false;
 
-    if (Rebalance && Purpose == Purposes::CONSUME)
+    if (rebalance && Purpose == Purposes::CONSUME)
         if (!SetProperty("enable.partition.eof", "true", ErrorDescription))
             return false;
 
@@ -39,10 +39,10 @@ bool Config::Build(Purposes Purpose, std::string& ErrorDescription)
 
     loger->Debug("Set callbacks");
 
-    if (Event)
+    if (event)
     {
         loger->Debug("Set event callback in config property 'event_cb'");
-        RdKafka::Conf::ConfResult result = conf->set("event_cb", Event, ErrorDescription);
+        RdKafka::Conf::ConfResult result = conf->set("event_cb", event, ErrorDescription);
         if (result != RdKafka::Conf::CONF_OK)
         {
             loger->Error("Failed to set config property: " + ErrorDescription);
@@ -50,10 +50,10 @@ bool Config::Build(Purposes Purpose, std::string& ErrorDescription)
         }
     }
     
-    if (DeliveryReport && Purpose == Purposes::PRODUCE)
+    if (deliveryReport && Purpose == Purposes::PRODUCE)
     {
         loger->Debug("Set delivery report in config property 'dr_cb'");
-        RdKafka::Conf::ConfResult result = conf->set("dr_cb", DeliveryReport, ErrorDescription);
+        RdKafka::Conf::ConfResult result = conf->set("dr_cb", deliveryReport, ErrorDescription);
         if (result != RdKafka::Conf::CONF_OK)
         {
             loger->Error("Failed to set config property: " + ErrorDescription);
@@ -61,11 +61,11 @@ bool Config::Build(Purposes Purpose, std::string& ErrorDescription)
         }
     }    
     
-    if (Rebalance && Purpose == Purposes::CONSUME)
+    if (rebalance && Purpose == Purposes::CONSUME)
     {
         loger->Debug("Set rebalance callback in config property 'rebalance_cb'");
 
-        RdKafka::Conf::ConfResult result = conf->set("rebalance_cb", Rebalance, ErrorDescription);
+        RdKafka::Conf::ConfResult result = conf->set("rebalance_cb", rebalance, ErrorDescription);
         if (result != RdKafka::Conf::CONF_OK)
         {
             loger->Error("Failed to set config property: " + ErrorDescription);

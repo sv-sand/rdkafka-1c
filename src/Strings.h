@@ -14,9 +14,15 @@
 #include <boost/algorithm/string/trim_all.hpp>
 #include "types.h"
 
+#ifdef __linux__
+#include <iconv.h>
+#include <stdlib.h>
+#endif //__linux__
+
 namespace Strings
 {
 	uint32_t GetLength(const WCHAR_T* Source);
+	uint32_t GetLength(const char* Source);
 	
 	// String conversion without memory allocation
 	// You must allcate memory before for Dest before invoke this methods	
