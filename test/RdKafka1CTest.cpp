@@ -235,7 +235,7 @@ void RdKafka1CTest::StopConsumer()
 
 void RdKafka1CTest::StartLogging()
 {
-    bool initLogs = rdk1c->StartLogging(LOG_FILE);
+    bool initLogs = rdk1c->StartLogging(LOG_FILE, Loger::Levels::DEBUG);
     ASSERT_TRUE(initLogs);     
 }
 
