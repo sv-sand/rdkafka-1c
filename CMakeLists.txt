@@ -14,15 +14,11 @@ endif()
 # DLL 
 project(RdKafka1C) 
 
-find_package(Boost 1.85 REQUIRED COMPONENTS filesystem iostreams program_options regex system json uuid)
+find_package(Boost 1.85 CONFIG REQUIRED COMPONENTS filesystem iostreams program_options regex system json uuid)
 find_package(RdKafka CONFIG REQUIRED)
 
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 add_definitions("-DLIBRDKAFKA_STATICLIB")
-
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -flto -s -O3 -DNDEBUG")
-endif()
 
 add_library(RdKafka1C SHARED    
 	include/dllmain.cpp
@@ -61,8 +57,8 @@ if(WIN32)
 
 else()
 	target_include_directories(RdKafka1C PRIVATE include 
-		${CMAKE_CURRENT_SOURCE_DIR}/include 
 		${Boost_INCLUDE_DIRS} 
+		${CMAKE_CURRENT_SOURCE_DIR}/include 
 		${RdKafka_INCLUDE_DIRS})
 
 	target_link_libraries(RdKafka1C 
@@ -70,14 +66,6 @@ else()
 		RdKafka::rdkafka
 		RdKafka::rdkafka++
 		)
-
-	if(NOT CMAKE_BUILD_TYPE)
-		set (CMAKE_BUILD_TYPE Release CACHE STRING
-			"Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
-			FORCE)
-	        message("CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}")
-	endif (NOT CMAKE_BUILD_TYPE)
-
 endif()
 
 # Testing

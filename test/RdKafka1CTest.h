@@ -49,10 +49,10 @@ class RdKafka1CTest : public testing::Test
         
     private:
 
-        const std::string BROKERS = "localhost";
+        const std::string BROKERS = "kafka";
         const std::string TOPIC = "test";
         const std::string CONSUMER_GROUP_ID = "testgroup";
-        const std::string LOG_FILE = "../../build/testing.log";
+        const std::string LOG_FILE = "testing.log";
 
         std::string DATA;       
         std::string KEY;

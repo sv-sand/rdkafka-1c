@@ -130,8 +130,6 @@ TEST_F(RdKafka1CTest, SetProperty)
 TEST_F(RdKafka1CTest, SASL_SSL)
 {
     SetProperty("security.protocol", "sasl_ssl");
-    //SetProperty("ssl.ca.location", "ca-cert");
-    //SetProperty("ssl.certificate.location", "c:/");
     SetProperty("sasl.mechanism", "SCRAM-SHA-512");
     SetProperty("sasl.username", "user");
     SetProperty("sasl.password", "password");
@@ -236,6 +234,7 @@ void RdKafka1CTest::StopConsumer()
 void RdKafka1CTest::StartLogging()
 {
     bool initLogs = rdk1c->StartLogging(LOG_FILE);
+    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), ""); 
     ASSERT_TRUE(initLogs);     
 }
 
