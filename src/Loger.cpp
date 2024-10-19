@@ -90,12 +90,18 @@ std::string Loger::GetLogFile()
 bool ClearFile(std::string FileName)
 {
     bool result;
-    std::ofstream file(FileName, std::ios_base::app);
+    std::ofstream file(FileName, std::ios::out | std::ios::trunc);
 
     result = file.is_open();
     if (result)
-        file.clear();
-   
+        file 
+            << "####--####---#--#--####--###--#--#--####----------#--####" << std::endl
+            << "#--#--#--##--#-#---#--#--#----#-#---#--#---------##--#---" << std::endl
+            << "####--#--##--##----####--###--##----####---###----#--#---" << std::endl
+            << "#-#---#--##--#-#---#--#--#----#-#---#--#----------#--#---" << std::endl
+            << "#-#---####---#--#--#--#--#----#--#--#--#----------#--####" << std::endl
+            << std::endl;
+
     file.close();
 
     return result;
@@ -103,7 +109,7 @@ bool ClearFile(std::string FileName)
 
 void WriteFile(std::string FileName, std::string Message)
 {
-    std::ofstream file(FileName, std::ios_base::app);
+    std::ofstream file(FileName, std::ios::app);
     std::locale locale("ru_RU");
     file.imbue(locale);
 

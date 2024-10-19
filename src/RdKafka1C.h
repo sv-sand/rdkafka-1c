@@ -25,6 +25,7 @@ public:
     ~RdKafka1C();
 
     std::string RdKafkaVersion();
+    bool Error();
     std::string ErrorDescription();
 
     // Set RdKafka config property https://github.com/confluentinc/librdkafka/blob/master/CONFIGURATION.md
@@ -57,7 +58,6 @@ public:
     bool Unsubscribe();
 
     // Logging
-    bool StartLogging(std::string FileName);
     bool StartLogging(std::string FileName, Loger::Levels Level);
     void StopLogging();
     Loger::Levels GetLogerLevel();
@@ -79,7 +79,11 @@ private:
     DeliveryReport* deliveryReport;
 
     Loger* loger;
+
+    bool error;
     std::string errorDescription;
+    void SetError(std::string ErrorDescription);
+    void ClearErrors();
 
     bool FillHeaders(RdKafka::Headers* Headers, std::string StringHeaders);
 };
