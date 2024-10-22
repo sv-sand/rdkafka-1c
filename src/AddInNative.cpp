@@ -150,8 +150,6 @@ CAddInNative::~CAddInNative()
 
 bool CAddInNative::Init(void* pConnection)
 { 
-    setlocale(LC_ALL, "ru_RU");
-
     rdk1c = new RdKafka1C();
 
     m_iConnect = (IAddInDefBase*)pConnection;
@@ -558,13 +556,12 @@ void ADDIN_API CAddInNative::SetUserInterfaceLanguageCode(const WCHAR_T * lang)
 /////////////////////////////////////////////////////////////////////////////
 // LocaleBase
 
-void CAddInNative::SetLocale(const WCHAR_T* loc)
+void CAddInNative::SetLocale(const WCHAR_T* locale)
 {
 #ifdef WIN32
-    _wsetlocale(LC_ALL, (wchar_t*)loc);
+    _wsetlocale(LC_ALL, L"ru_RU");
 #else
-    // We convert in char* char_locale, also we establish locale
-    setlocale(LC_ALL, (wchar_t*)loc);
+    setlocale(LC_ALL, "ru_RU");
 #endif
 }
 

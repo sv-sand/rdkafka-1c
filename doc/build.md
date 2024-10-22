@@ -9,7 +9,16 @@
 - [vcpkg](https://github.com/microsoft/vcpkg)
 - [Docker](https://www.docker.com)
 
-## Сборка под Windows
+> Внимание! Перед использованием на Linux проверьте наличие русской локали `locale -a`
+> 
+> Если нет локали, её можно добавить:
+> ```
+> sudo locale-gen ru_RU
+> sudo locale-gen ru_RU.UTF-8
+> sudo update-locale 
+> ```
+
+## Сборка
 
 Чтобы собрать проект необходимо:
 
@@ -18,7 +27,7 @@
 3. Выполнить первоначальную [настройку vcpkg](./doc/vcpkg.md)
 3. Запустить скрипт сборки `/build.bat`
 
-Результатом сборки будет динамическая библиотека `/build/Release/RdKafka1C.dll` скомпилированная в режиме Relese, которую можно подключить к 1С, но нельзя отлаживать.
+Результатом сборки будет динамическая библиотека для Windows `/build/Release/RdKafka1C.dll` или для Linux `/build/Release/libRdKafka1C.so`  скомпилированная в режиме Relese, которую можно подключить к 1С, но нельзя отлаживать.
 
 ## Разработка
 

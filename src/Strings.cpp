@@ -68,7 +68,7 @@ uint32_t Strings::ConvertToWchar(wchar_t** Dest, const WCHAR_T* Source)
     size_t size = sizeof(wchar_t) * (length + 1);
 
     ::memset(*Dest, 0, size);
-
+/*
 #ifdef __linux__
     size_t succeed = (size_t) - 1;
     const char* fromCode = sizeof(wchar_t) == 2 ? "UTF-16" : "UTF-32";
@@ -83,7 +83,7 @@ uint32_t Strings::ConvertToWchar(wchar_t** Dest, const WCHAR_T* Source)
             return (uint32_t)succeed;
     }
 #endif //__linux__
-
+*/
     for (size_t i = length; i; --i, ++tmpWChar, ++tmpShort)
         *tmpWChar = (wchar_t)*tmpShort;
 
@@ -138,11 +138,12 @@ WCHAR_T* Strings::ToShortWchar(const wchar_t* Source)
 
 char* Strings::ToChar(const wchar_t* Source)
 {
+    setlocale(LC_ALL, "ru_RU");
+    
     uint32_t length = wcslen(Source);
     
     // In multibyte string UTF-8 one symbol can occupy 1,2,4 bytes
-    // English symbol usualy occupy 1 bytes, russian - 2 bytes
-    int maxBytesPerSymbol = 2;
+    int maxBytesPerSymbol = 4;
     size_t size = maxBytesPerSymbol * sizeof(char) * (length + 1);
     char* dest = new char[size];
     

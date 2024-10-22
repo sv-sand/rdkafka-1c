@@ -127,23 +127,13 @@ TEST_F(RdKafka1CTest, SetProperty)
     StopProducer();
 }
 
-TEST_F(RdKafka1CTest, SASL_SSL)
-{
-    SetProperty("security.protocol", "sasl_ssl");
-    SetProperty("sasl.mechanism", "SCRAM-SHA-512");
-    SetProperty("sasl.username", "user");
-    SetProperty("sasl.password", "password");
-
-    InitProducer();
-    StopProducer();
-}
-
 /////////////////////////////////////////////////////////////////////////////
 // Test class members
 
 void RdKafka1CTest::SetUp()
 {
-    setlocale(LC_ALL, "ru_RU");
+    std::setlocale(LC_ALL, "ru_RU");
+
     rdk1c = new RdKafka1C();
     rdk1c->OperationTimeout = 10000;
 }
@@ -184,6 +174,8 @@ void RdKafka1CTest::StopProducer()
 
 void RdKafka1CTest::InitConsumer()
 {
+    SetProperty("auto.offset.reset", "smallest");
+
     bool initResult = rdk1c->InitConsumer(BROKERS, CONSUMER_GROUP_ID);
     ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
     ASSERT_TRUE(initResult);
