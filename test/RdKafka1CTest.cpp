@@ -53,7 +53,7 @@ TEST_F(RdKafka1CTest, ProduceConsume)
 
 TEST_F(RdKafka1CTest, ProduceConsumeWithKey)
 {
-    SetKey("Key (ключ) 1 ");    
+    SetKey("Key (ключ) 1");    
     ConsumeAll();
     Produce();
     SetKey("");    
@@ -63,7 +63,7 @@ TEST_F(RdKafka1CTest, ProduceConsumeWithKey)
     std::string key = GetKeyFromMessage();    
     StopConsumer();
 
-    ASSERT_STREQ(key.c_str(), "Key (ключ) 1 ");
+    ASSERT_STREQ(key.c_str(), "Key (ключ) 1");
 }
 
 TEST_F(RdKafka1CTest, ProduceConsumeWithHeader)

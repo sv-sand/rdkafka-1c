@@ -36,7 +36,7 @@ uint32_t Strings::ConvertToShortWchar(WCHAR_T** Dest, const wchar_t* Source)
     wchar_t* tmpWChar = (wchar_t*)Source;
     size_t size = sizeof(WCHAR_T) * (length + 1);
 
-    ::memset(*Dest, 0, size);
+    std::memset(*Dest, 0, size);
 
 #ifdef __linux__
     size_t succeed = (size_t)-1;
@@ -67,7 +67,7 @@ uint32_t Strings::ConvertToWchar(wchar_t** Dest, const WCHAR_T* Source)
     WCHAR_T* tmpShort = (WCHAR_T*)Source;
     size_t size = sizeof(wchar_t) * (length + 1);
 
-    ::memset(*Dest, 0, size);
+    std::memset(*Dest, 0, size);
 /*
 #ifdef __linux__
     size_t succeed = (size_t) - 1;
@@ -100,7 +100,9 @@ wchar_t* Strings::ToWchar(const char* Source)
     uint32_t length = GetLength(Source);
     wchar_t* dest = new wchar_t[length + 1];
 
-    mbstowcs(dest, Source, length);
+    size_t size = sizeof(wchar_t) * (length + 1);
+    std::memset(dest, 0, size);
+    std::mbstowcs(dest, Source, length);
 
     return dest;
 }
@@ -138,16 +140,15 @@ WCHAR_T* Strings::ToShortWchar(const wchar_t* Source)
 
 char* Strings::ToChar(const wchar_t* Source)
 {
-    setlocale(LC_ALL, "ru_RU");
-    
     uint32_t length = wcslen(Source);
     
     // In multibyte string UTF-8 one symbol can occupy 1,2,4 bytes
     int maxBytesPerSymbol = 4;
     size_t size = maxBytesPerSymbol * sizeof(char) * (length + 1);
     char* dest = new char[size];
-    
-    wcstombs(dest, Source, size - 1);
+
+    std::memset(dest, 0, size);    
+    std::wcstombs(dest, Source, size);
 
     return dest;
 }

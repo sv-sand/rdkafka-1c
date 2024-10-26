@@ -152,10 +152,11 @@ bool RdKafka1C::Produce(std::string Topic, std::string Message, std::string Key,
     
     loger->Debug("Define data for transmit");
     const char* key = Key.c_str();
-    size_t keySize = strlen(key) + 1;
+    size_t keySize = strlen(key);
+    loger->Debug("Message key (" + std::to_string(Key.length()) + "): " + Key);
     
     const char* payload = Message.c_str();
-    size_t payloadSize = strlen(payload) + 1;
+    size_t payloadSize = strlen(payload);
     loger->Debug("Message payload (" + std::to_string(Message.length()) + "): " + Message);
 
     RdKafka::ErrorCode errorCode;
@@ -275,10 +276,11 @@ bool RdKafka1C::ProduceAsynch(std::string Topic, std::string Message, std::strin
 
     loger->Debug("Define data for transmit");
     const char* key = Key.c_str();    
-    size_t keySize = strlen(key) + 1;
+    size_t keySize = strlen(key);
+    loger->Debug("Message key (" + std::to_string(Key.length()) + "): " + Key);
     
     const char* payload = Message.c_str();
-    size_t payloadSize = strlen(payload) + 1;
+    size_t payloadSize = strlen(payload);
     loger->Debug("Message payload (" + std::to_string(Message.length()) + "): " + Message);
 
     RdKafka::ErrorCode errorCode;
