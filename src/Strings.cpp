@@ -68,22 +68,7 @@ uint32_t Strings::ConvertToWchar(wchar_t** Dest, const WCHAR_T* Source)
     size_t size = sizeof(wchar_t) * (length + 1);
 
     std::memset(*Dest, 0, size);
-/*
-#ifdef __linux__
-    size_t succeed = (size_t) - 1;
-    const char* fromCode = sizeof(wchar_t) == 2 ? "UTF-16" : "UTF-32";
-    size_t f = (length + 1) * sizeof(WCHAR_T);
-    size_t t = (length + 1) * sizeof(wchar_t);
-    iconv_t cd = iconv_open("UTF-32LE", fromCode);
-    if (cd != (iconv_t)-1)
-    {
-        succeed = iconv(cd, (char**)&tmpShort, &f, (char**)&tmpWChar, &t);
-        iconv_close(cd);
-        if (succeed != (size_t)-1)
-            return (uint32_t)succeed;
-    }
-#endif //__linux__
-*/
+
     for (size_t i = length; i; --i, ++tmpWChar, ++tmpShort)
         *tmpWChar = (wchar_t)*tmpShort;
 

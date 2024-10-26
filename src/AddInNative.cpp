@@ -135,12 +135,7 @@ const WCHAR_T* GetClassNames()
 
 CAddInNative::CAddInNative()
 {
-
-#ifdef WIN32
-    _wsetlocale(LC_ALL, L"ru_RU");
-#else
-    std::setlocale(LC_ALL, "ru_RU.utf8");
-#endif
+    SetLocale(nullptr);
     
     error = false;
     errorDescription = "";
@@ -568,9 +563,9 @@ void CAddInNative::SetLocale(const WCHAR_T* locale)
     // Method doesn't call 1C Enterprise
 
 #ifdef WIN32
-    _wsetlocale(LC_ALL, (const wchar_t*) locale);
+    std::setlocale(LC_ALL, "ru-RU");
 #else
-    std::setlocale(LC_ALL, "ru_RU.utf8");
+    std::setlocale(LC_ALL, "ru_RU");
 #endif
 }
 

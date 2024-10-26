@@ -11,7 +11,7 @@
 #include "Strings.h"
 #include "RdKafka1C.h"
 
-#if defined( __linux__ ) || defined(__APPLE__)
+#if defined( __linux__ )
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>

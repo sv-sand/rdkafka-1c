@@ -132,7 +132,12 @@ TEST_F(RdKafka1CTest, SetProperty)
 
 void RdKafka1CTest::SetUp()
 {
+    
+#ifdef WIN32
+    std::setlocale(LC_ALL, "ru-RU");
+#else
     std::setlocale(LC_ALL, "ru_RU");
+#endif
 
     rdk1c = new RdKafka1C();
     rdk1c->OperationTimeout = 10000;
