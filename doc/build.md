@@ -25,13 +25,13 @@
 1. Установить требуемое программное обеспечение
 2. Собрать [тестовый инстанс Apache Kafka](./doc/kafka.md)
 3. Выполнить первоначальную [настройку vcpkg](./doc/vcpkg.md)
-3. Запустить скрипт сборки `/build.bat`
+3. Запустить скрипт сборки `/build.bat` или `/build.sh` для Linux
 
-Результатом сборки будет динамическая библиотека для Windows `/build/Release/RdKafka1C.dll` или для Linux `/build/Release/libRdKafka1C.so`  скомпилированная в режиме Relese, которую можно подключить к 1С, но нельзя отлаживать.
+Результатом сборки будет динамическая библиотека для Windows `/build/Release/RdKafka1C.dll` или для Linux `/build/Release/libRdKafka1C.so` скомпилированная в режиме Relese, которую можно подключить к 1С, но нельзя отлаживать. Для отладки тредуется собрать библиотеку с параметром `--config "Release"` через IDE или скрипт cmake.
 
 ## Разработка
 
-Для разработки в основном использовалась [MS Visual Studio C++](https://visualstudio.microsoft.com/) для отладки компоненты при запуске из 1С [MS Visual Studio C++](https://visualstudio.microsoft.com/)
+Для разработки на Windows и Linux использовалась [MS VSCode](https://code.visualstudio.com/) для отладки на Windows из 1С [MS Visual Studio C++](https://visualstudio.microsoft.com/).
 
 ## Тесты
 
