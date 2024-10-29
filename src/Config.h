@@ -19,9 +19,9 @@ public:
     Config(Loger* Loger);
     ~Config();
 
-    DeliveryReport* DeliveryReport;
-    Rebalance* Rebalance;
-    Event* Event;
+    DeliveryReport* deliveryReport;
+    Rebalance* rebalance;
+    Event* event;
     
     void AddProperty(std::string Name, std::string Value);
     bool Build(Purposes Purpose, std::string& ErrorDescription);    

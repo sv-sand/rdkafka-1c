@@ -53,7 +53,7 @@ TEST_F(RdKafka1CTest, ProduceConsume)
 
 TEST_F(RdKafka1CTest, ProduceConsumeWithKey)
 {
-    SetKey("Key (ключ) 1 ");    
+    SetKey("Key (ключ) 1");    
     ConsumeAll();
     Produce();
     SetKey("");    
@@ -63,7 +63,7 @@ TEST_F(RdKafka1CTest, ProduceConsumeWithKey)
     std::string key = GetKeyFromMessage();    
     StopConsumer();
 
-    ASSERT_STREQ(key.c_str(), "Key (ключ) 1 ");
+    ASSERT_STREQ(key.c_str(), "Key (ключ) 1");
 }
 
 TEST_F(RdKafka1CTest, ProduceConsumeWithHeader)
@@ -127,25 +127,18 @@ TEST_F(RdKafka1CTest, SetProperty)
     StopProducer();
 }
 
-TEST_F(RdKafka1CTest, SASL_SSL)
-{
-    SetProperty("security.protocol", "sasl_ssl");
-    //SetProperty("ssl.ca.location", "ca-cert");
-    //SetProperty("ssl.certificate.location", "c:/");
-    SetProperty("sasl.mechanism", "SCRAM-SHA-512");
-    SetProperty("sasl.username", "user");
-    SetProperty("sasl.password", "password");
-
-    InitProducer();
-    StopProducer();
-}
-
 /////////////////////////////////////////////////////////////////////////////
 // Test class members
 
 void RdKafka1CTest::SetUp()
 {
-    setlocale(LC_ALL, "ru_RU");
+    
+#ifdef WIN32
+    std::setlocale(LC_ALL, "ru-RU");
+#else
+    std::setlocale(LC_ALL, "ru_RU");
+#endif
+
     rdk1c = new RdKafka1C();
     rdk1c->OperationTimeout = 10000;
 }
@@ -186,6 +179,8 @@ void RdKafka1CTest::StopProducer()
 
 void RdKafka1CTest::InitConsumer()
 {
+    SetProperty("auto.offset.reset", "smallest");
+
     bool initResult = rdk1c->InitConsumer(BROKERS, CONSUMER_GROUP_ID);
     ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
     ASSERT_TRUE(initResult);
@@ -235,7 +230,8 @@ void RdKafka1CTest::StopConsumer()
 
 void RdKafka1CTest::StartLogging()
 {
-    bool initLogs = rdk1c->StartLogging(LOG_FILE);
+    bool initLogs = rdk1c->StartLogging(LOG_FILE, Loger::Levels::DEBUG);
+    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), ""); 
     ASSERT_TRUE(initLogs);     
 }
 

@@ -49,7 +49,6 @@
 					<ChildItems>
 						<Table name="Файлы" id="7">
 							<Representation>List</Representation>
-							<ReadOnly>true</ReadOnly>
 							<Width>25</Width>
 							<AutoMaxWidth>false</AutoMaxWidth>
 							<MaxWidth>25</MaxWidth>
@@ -117,6 +116,7 @@
 							<ChildItems>
 								<InputField name="ФайлыИмя" id="20">
 									<DataPath>Файлы.Имя</DataPath>
+									<ReadOnly>true</ReadOnly>
 									<EditMode>EnterOnInput</EditMode>
 									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
 									<ContextMenu name="ФайлыИмяКонтекстноеМеню" id="21"/>

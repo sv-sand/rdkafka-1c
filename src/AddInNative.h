@@ -11,7 +11,7 @@
 #include "Strings.h"
 #include "RdKafka1C.h"
 
-#if defined( __linux__ ) || defined(__APPLE__)
+#if defined( __linux__ )
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -34,6 +34,7 @@ public:
         ePropLogFile,
         ePropLogLevel,
         ePropOperationTimeout,
+        ePropError,
         ePropErrorDescription,
         ePropLast      // Always last
     };
@@ -110,21 +111,29 @@ private:
 
     const wchar_t* EXTENSION_NAME = L"RdKafka1C";
     const wchar_t* COMPONENT_VERSION = L"1.1.1";
-    std::string errorDescription;
-
+    
     IAddInDefBase* m_iConnect;
     IMemoryManager* m_iMemory;
     std::u16string m_userLang;
     RdKafka1C* rdk1c;
 
-    // General action
+    // Error handling
+    bool error;
+    std::string errorDescription;    
+    bool Error();
+    bool NoError();
     std::string ErrorDescription();
-    
+    void SetError(std::string Description);
+    void ClearError();
+
+    // Logging
     bool StartLogging(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool StopLogging();
     bool SetLogLevel(tVariant* varPropVal);
     std::string GetLogLevel();
+    Loger::Levels StringToLogLevel(std::string String);
     
+    // General action
     bool SetConfigProperty(tVariant* paParams, const long lSizeArray);
     bool InitProducer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool StopProducer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
