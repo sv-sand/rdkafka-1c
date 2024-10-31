@@ -5,18 +5,9 @@
 - [Платформа 1С Предприятие](https://1c.ru)
 - [MS Visual Studio C++](https://visualstudio.microsoft.com/)
 - [MS VSCode](https://code.visualstudio.com/)
-- [CMake](https://cmake.org/download/)
+- [CMake](https://github.com/Kitware/CMake/releases)
 - [vcpkg](https://github.com/microsoft/vcpkg)
 - [Docker](https://www.docker.com)
-
-> Внимание! Перед использованием на Linux проверьте наличие русской локали `locale -a`
-> 
-> Если нет локали, её можно добавить:
-> ```
-> sudo locale-gen ru_RU
-> sudo locale-gen ru_RU.UTF-8
-> sudo update-locale 
-> ```
 
 ## Сборка
 
@@ -31,7 +22,7 @@
 
 ## Разработка
 
-Для разработки на Windows и Linux использовалась [MS VSCode](https://code.visualstudio.com/) для отладки на Windows из 1С [MS Visual Studio C++](https://visualstudio.microsoft.com/).
+Для разработки на Windows и Linux использовался [MS VSCode](https://code.visualstudio.com/) для отладки на Windows из 1С [MS Visual Studio C++](https://visualstudio.microsoft.com/).
 
 ## Тесты
 
@@ -71,4 +62,14 @@ RdKafka1C <-> LibRdKafka
 LibRdKafka <-> Kafka
 
 @enduml
+```
+
+## Известные проблемы
+
+### Ошибка "No such file or directory"
+
+При сборке на Ubuntu Server может появиться ошибка `uuid/uuid.h: No such file or directory`. Необходимо установить пакет uuid.
+
+```sh
+sudo apt install uuid-dev
 ```

@@ -14,5 +14,3 @@ vcpkg install boost-json --overlay-triplets=static-triplets --triplet x64-linux
 vcpkg install boost-uuid --overlay-triplets=static-triplets --triplet x64-linux
 vcpkg install snappy --overlay-triplets=static-triplets --triplet x64-linux
 vcpkg install gtest
-
-pause
