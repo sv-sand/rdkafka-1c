@@ -3,7 +3,8 @@
 ## Требуемое программное обеспечение
 
 - [Платформа 1С Предприятие](https://1c.ru)
-- [MS Visual Studio C++](https://visualstudio.microsoft.com/)
+- [MS Visual Studio C++](https://visualstudio.microsoft.com/) - для Windows
+- Компилятор g++ - для Linux
 - [MS VSCode](https://code.visualstudio.com/)
 - [CMake](https://github.com/Kitware/CMake/releases)
 - [vcpkg](https://github.com/microsoft/vcpkg)
@@ -15,8 +16,14 @@
 
 1. Установить требуемое программное обеспечение
 2. Собрать [тестовый инстанс Apache Kafka](./doc/kafka.md)
-3. Выполнить первоначальную [настройку vcpkg](./doc/vcpkg.md)
-3. Запустить скрипт сборки `/build.bat` или `/build.sh` для Linux
+3. Выполнить первоначальную [настройку cmake](./doc/cmake.md)
+4. Выполнить первоначальную [настройку vcpkg](./doc/vcpkg.md)
+5. Запустить скрипт сборки `/build.bat` или `/build.sh` для Linux
+
+[*] Компилятор g++ в Linux можно установить командой:
+```sh
+sudo apt install g++
+```
 
 Результатом сборки будет динамическая библиотека для Windows `/build/Release/RdKafka1C.dll` или для Linux `/build/Release/libRdKafka1C.so` скомпилированная в режиме Relese, которую можно подключить к 1С, но нельзя отлаживать. Для отладки тредуется собрать библиотеку с параметром `--config "Release"` через IDE или скрипт cmake.
 
