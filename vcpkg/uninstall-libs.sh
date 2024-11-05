@@ -10,5 +10,3 @@ vcpkg remove boost-uuid:x64-linux
 vcpkg remove snappy:x64-linux
 vcpkg remove openssl:x64-linux
 vcpkg remove gtest
-
-pause
