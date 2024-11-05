@@ -3,35 +3,33 @@
 ## Требуемое программное обеспечение
 
 - [Платформа 1С Предприятие](https://1c.ru)
-- [MS Visual Studio C++](https://visualstudio.microsoft.com/)
+- [MS Visual Studio C++](https://visualstudio.microsoft.com/) - для Windows
+- Компилятор g++ - для Linux
 - [MS VSCode](https://code.visualstudio.com/)
-- [CMake](https://cmake.org/download/)
+- [CMake](https://github.com/Kitware/CMake/releases)
 - [vcpkg](https://github.com/microsoft/vcpkg)
 - [Docker](https://www.docker.com)
-
-> Внимание! Перед использованием на Linux проверьте наличие русской локали `locale -a`
-> 
-> Если нет локали, её можно добавить:
-> ```
-> sudo locale-gen ru_RU
-> sudo locale-gen ru_RU.UTF-8
-> sudo update-locale 
-> ```
 
 ## Сборка
 
 Чтобы собрать проект необходимо:
 
 1. Установить требуемое программное обеспечение
-2. Собрать [тестовый инстанс Apache Kafka](./doc/kafka.md)
+2. Выполнить первоначальную [настройку cmake](./doc/cmake.md)
 3. Выполнить первоначальную [настройку vcpkg](./doc/vcpkg.md)
-3. Запустить скрипт сборки `/build.bat` или `/build.sh` для Linux
+4. Запустить скрипт сборки `/build.bat` или `/build.sh` для Linux
+5. Собрать [тестовый инстанс Apache Kafka](./doc/kafka.md)
+
+[*] Компилятор g++ в Linux можно установить командой:
+```sh
+sudo apt install g++
+```
 
 Результатом сборки будет динамическая библиотека для Windows `/build/Release/RdKafka1C.dll` или для Linux `/build/Release/libRdKafka1C.so` скомпилированная в режиме Relese, которую можно подключить к 1С, но нельзя отлаживать. Для отладки тредуется собрать библиотеку с параметром `--config "Release"` через IDE или скрипт cmake.
 
 ## Разработка
 
-Для разработки на Windows и Linux использовалась [MS VSCode](https://code.visualstudio.com/) для отладки на Windows из 1С [MS Visual Studio C++](https://visualstudio.microsoft.com/).
+Для разработки на Windows и Linux использовался [MS VSCode](https://code.visualstudio.com/) для отладки на Windows из 1С [MS Visual Studio C++](https://visualstudio.microsoft.com/).
 
 ## Тесты
 
@@ -71,4 +69,27 @@ RdKafka1C <-> LibRdKafka
 LibRdKafka <-> Kafka
 
 @enduml
+```
+
+## Известные проблемы
+
+### Ошибка "No such file or directory"
+
+При сборке на Ubuntu Server может появиться ошибка `uuid/uuid.h: No such file or directory`. Необходимо установить пакет uuid.
+
+```sh
+sudo apt install uuid-dev
+```
+
+### Ошибка "CMake was unable to find a build program corresponding to "Unix Makefiles"
+
+При сборке на Ubuntu Server может появиться ошибка:
+
+CMake Error: CMake was unable to find a build program corresponding to "Unix Makefiles".  CMAKE_MAKE_PROGRAM is not set.  You probably need to select a different build tool.
+-- Configuring incomplete, errors occurred!
+
+Необходимо установить утилиту make:
+
+```sh
+sudo apt install make
 ```
