@@ -1,5 +1,4 @@
-cmake_minimum_required (VERSION 3.30)
-
+cmake_minimum_required (VERSION 3.31)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)

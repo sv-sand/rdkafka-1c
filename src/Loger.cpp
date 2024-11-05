@@ -1,11 +1,5 @@
 ﻿#include "Loger.h"
 
-bool ClearFile(std::string FileName);
-void WriteFile(std::string FileName, std::string Message);
-
-/////////////////////////////////////////////////////////////////////////////
-// Class members
-
 Loger::Loger()
 {   
 }
@@ -23,6 +17,15 @@ bool Loger::Init(std::string FileName)
 
 bool Loger::Init(std::string FileName, std::string &ErrorDescription)
 {
+    try
+    {
+        std::locale locale(DEFAULT_LOCALE);
+    } catch(std::runtime_error e)
+    {
+        ErrorDescription = "OS doesn't support locale " + DEFAULT_LOCALE;
+        return false;
+    }
+    
     fileName = FileName;
 
     if (!ClearFile(fileName))
@@ -87,7 +90,7 @@ std::string Loger::GetLogFile()
 /////////////////////////////////////////////////////////////////////////////
 // File operations
 
-bool ClearFile(std::string FileName)
+bool Loger::ClearFile(std::string FileName)
 {
     bool result;
     std::ofstream file(FileName, std::ios::out | std::ios::trunc);
@@ -107,10 +110,10 @@ bool ClearFile(std::string FileName)
     return result;
 }
 
-void WriteFile(std::string FileName, std::string Message)
+void Loger::WriteFile(std::string FileName, std::string Message)
 {
     std::ofstream file(FileName, std::ios::app);
-    std::locale locale("ru_RU");
+    std::locale locale(DEFAULT_LOCALE);
     file.imbue(locale);
 
     if (file.is_open())
