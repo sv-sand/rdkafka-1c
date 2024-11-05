@@ -3,8 +3,9 @@
 Версия 1.1.1
 
 [Сборка внешней компоненты](./doc/build.md)
-- [Тестовый Apache Kafka и веб интерфейс](./doc/kafka.md)
 - [Менеджер пакетов vcpkg](./doc/vcpkg.md)
+- [Настройка cmake](./doc/cmake.md)
+- [Тестовый Apache Kafka и веб интерфейс](./doc/kafka.md)
 
 [Использование](./doc/how-to-use.md)
 
@@ -18,3 +19,4 @@ Rdkafka-1c - это внешняя компонента разработанна
 - [librdkafka](https://github.com/confluentinc/librdkafka)
 - [googletest](https://github.com/google/googletest)
 - [vcpkg](https://github.com/microsoft/vcpkg)
+- [cmake](https://cmake.org)

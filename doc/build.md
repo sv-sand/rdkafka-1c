@@ -15,10 +15,10 @@
 Чтобы собрать проект необходимо:
 
 1. Установить требуемое программное обеспечение
-2. Собрать [тестовый инстанс Apache Kafka](./doc/kafka.md)
-3. Выполнить первоначальную [настройку cmake](./doc/cmake.md)
-4. Выполнить первоначальную [настройку vcpkg](./doc/vcpkg.md)
-5. Запустить скрипт сборки `/build.bat` или `/build.sh` для Linux
+2. Выполнить первоначальную [настройку cmake](./doc/cmake.md)
+3. Выполнить первоначальную [настройку vcpkg](./doc/vcpkg.md)
+4. Запустить скрипт сборки `/build.bat` или `/build.sh` для Linux
+5. Собрать [тестовый инстанс Apache Kafka](./doc/kafka.md)
 
 [*] Компилятор g++ в Linux можно установить командой:
 ```sh
@@ -79,4 +79,17 @@ LibRdKafka <-> Kafka
 
 ```sh
 sudo apt install uuid-dev
+```
+
+### Ошибка "CMake was unable to find a build program corresponding to "Unix Makefiles"
+
+При сборке на Ubuntu Server может появиться ошибка:
+
+CMake Error: CMake was unable to find a build program corresponding to "Unix Makefiles".  CMAKE_MAKE_PROGRAM is not set.  You probably need to select a different build tool.
+-- Configuring incomplete, errors occurred!
+
+Необходимо установить утилиту make:
+
+```sh
+sudo apt install make
 ```
