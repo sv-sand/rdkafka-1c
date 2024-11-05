@@ -802,9 +802,6 @@ std::string RdKafka1C::GetCurrentLogFile()
 
 std::string RdKafka1C::MessageStatusToString(RdKafka::Message::Status Status)
 {
-    loger->Info("Message status " + std::to_string(Status) + " to string");
-    ClearErrors();
-    
     std::string status;
     switch (Status)
     {

@@ -3,6 +3,4 @@
 /logs
 
 *.zip
-*.dll
-*.so
 *.cf
