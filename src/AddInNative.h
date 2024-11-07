@@ -31,6 +31,7 @@ public:
     {
         ePropComponentVersion = 0,
         ePropRdKafkaVersion,
+        ePropLocale,
         ePropLogFile,
         ePropLogLevel,
         ePropOperationTimeout,
@@ -112,9 +113,9 @@ private:
     const wchar_t* EXTENSION_NAME = L"RdKafka1C";
     const wchar_t* COMPONENT_VERSION = L"1.1.1";
     
+    std::string currentLocale;
     IAddInDefBase* m_iConnect;
     IMemoryManager* m_iMemory;
-    std::u16string m_userLang;
     RdKafka1C* rdk1c;
 
     // Error handling
@@ -126,6 +127,9 @@ private:
     void SetError(std::string Description);
     void ClearError();
 
+    bool SetLocale(tVariant* varPropVal);
+    bool SetLocale(std::string LocaleName);
+    
     // Logging
     bool StartLogging(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
     bool StopLogging();

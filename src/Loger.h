@@ -35,8 +35,6 @@ public:
     std::string GetLogFile();
 
 private:
-    const std::string DEFAULT_LOCALE = "ru_RU";
-    
     std::string fileName;
 
     bool ClearFile(std::string FileName);
