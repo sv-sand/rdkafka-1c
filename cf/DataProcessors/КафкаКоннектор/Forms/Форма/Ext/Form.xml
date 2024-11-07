@@ -59,6 +59,11 @@
 					<ContextMenu name="ВерсияRdKafkaКонтекстноеМеню" id="46"/>
 					<ExtendedTooltip name="ВерсияRdKafkaРасширеннаяПодсказка" id="47"/>
 				</LabelField>
+				<LabelField name="Локаль" id="147">
+					<DataPath>Объект.Локаль</DataPath>
+					<ContextMenu name="ЛокальКонтекстноеМеню" id="148"/>
+					<ExtendedTooltip name="ЛокальРасширеннаяПодсказка" id="149"/>
+				</LabelField>
 			</ChildItems>
 		</UsualGroup>
 		<UsualGroup name="ГруппаПараметры" id="50">
