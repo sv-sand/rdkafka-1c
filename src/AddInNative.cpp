@@ -563,7 +563,17 @@ bool CAddInNative::CallAsFunc(const long lMethodNum, tVariant* pvarRetValue, tVa
 
 void ADDIN_API CAddInNative::SetUserInterfaceLanguageCode(const WCHAR_T * lang)
 {
-    //SetLocale(lang);
+    wchar_t* wstr = Strings::ToWchar(lang);
+    char* cstr = Strings::ToChar(wstr);
+
+    std::string language(cstr);
+    std::string country(cstr);
+    std::transform(country.begin(), country.end(), country.begin(), ::toupper);
+
+    SetLocale(language + "_" + country);
+
+    delete[] wstr;
+    delete[] cstr;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -571,15 +581,7 @@ void ADDIN_API CAddInNative::SetUserInterfaceLanguageCode(const WCHAR_T * lang)
 
 void ADDIN_API CAddInNative::SetLocale(const WCHAR_T* locale)
 {
-    // Method doesn't call 1C Enterprise
-
-    wchar_t * wstr = Strings::ToWchar(locale);
-    char * cstr = Strings::ToChar(wstr);
-
-    SetLocale(cstr);
-
-    delete [] wstr;
-    delete [] cstr;
+    // Deprecated its.1c.ru/db/metod8dev#content:3221:hdoc 
 }
 
 bool CAddInNative::SetLocale(tVariant* varPropVal)
@@ -589,14 +591,17 @@ bool CAddInNative::SetLocale(tVariant* varPropVal)
     if (Error())
         return true;    
 
-    SetLocale(localeName);
-
-    return true;
+    return SetLocale(localeName);
 }
 
 bool CAddInNative::SetLocale(std::string LocaleName)
 {
-    currentLocale = std::setlocale(LC_ALL, LocaleName.c_str());
+    char * cstr = std::setlocale(LC_ALL, LocaleName.c_str());
+
+    if (cstr)
+        currentLocale = std::string(cstr);
+
+    return true;
 }
 
 long CAddInNative::findName(const wchar_t* names[], const wchar_t* name, const uint32_t size) const
