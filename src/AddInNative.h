@@ -111,7 +111,7 @@ public:
 private:
 
     const wchar_t* EXTENSION_NAME = L"RdKafka1C";
-    const wchar_t* COMPONENT_VERSION = L"1.1.1";
+    const wchar_t* COMPONENT_VERSION = L"1.1.2";
     
     std::string currentLocale;
     IAddInDefBase* m_iConnect;
