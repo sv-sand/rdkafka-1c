@@ -25,8 +25,10 @@ add_library(RdKafka1C SHARED
 	include/md5.cpp
 	src/RdKafka1C.cpp
 	src/AddInNative.cpp
+	src/ErrorHandler.cpp
 	src/Loger.cpp
-	src/Config.cpp
+	src/ConfigBuilder.cpp
+	src/MessageStatusCollector.cpp
 	src/DeliveryReport.cpp
 	src/Event.cpp
 	src/Rebalance.cpp
@@ -76,8 +78,10 @@ add_executable(testing
 	test/main.cpp
 	test/RdKafka1CTest.cpp
 	src/RdKafka1C.cpp
+	src/ErrorHandler.cpp
 	src/Loger.cpp
-	src/Config.cpp
+	src/ConfigBuilder.cpp
+	src/MessageStatusCollector.cpp
 	src/DeliveryReport.cpp
 	src/Event.cpp
 	src/Rebalance.cpp)

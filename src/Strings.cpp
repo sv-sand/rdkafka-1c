@@ -1,4 +1,4 @@
-#include "Strings.h"
+#include "strings.h"
 
 uint32_t Strings::GetLength(const WCHAR_T* Source)
 {

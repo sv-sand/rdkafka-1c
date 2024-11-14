@@ -37,7 +37,7 @@ public:
 private:
     std::string fileName;
 
-    bool ClearFile(std::string FileName);
+    bool StartNewFile(std::string FileName);
     void WriteFile(std::string FileName, std::string Message);
 };
 

@@ -21,7 +21,7 @@ TEST_F(RdKafka1CTest, InitProducer_Twice)
     InitProducer();
     
     bool initResult = rdk1c->InitProducer("some-broker");
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "Failed to create producer: producer has been initialized already"); 
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "Failed to create producer: producer has been initialized already"); 
     ASSERT_FALSE(initResult);
     
     StopProducer();
@@ -38,7 +38,7 @@ TEST_F(RdKafka1CTest, InitConsumer_Twice)
     InitConsumer();
 
     bool initResult = rdk1c->InitConsumer("some-broker", "some-consumer-id");
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "Failed to create consumer: consumer has been initialized already");
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "Failed to create consumer: consumer has been initialized already");
     ASSERT_FALSE(initResult);
     
     StopConsumer();
@@ -87,15 +87,15 @@ TEST_F(RdKafka1CTest, ConsumeFromEmptyTopic)
     InitConsumer();    
 
     bool consumeResult = rdk1c->Consume();
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     ASSERT_FALSE(consumeResult);
     
     std::string data = rdk1c->GetMessageData();
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     ASSERT_STREQ(data.substr(0, 17).c_str(), "Fetch from broker");
 
     std::string metadata = rdk1c->GetMessageMetadata();
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     
     StopConsumer();
 }
@@ -139,19 +139,23 @@ void RdKafka1CTest::SetUp()
     std::setlocale(LC_ALL, "ru_RU");
 #endif
 
-    rdk1c = new RdKafka1C();
+    loger = new Loger(); 
+    error = new ErrorHandler(loger);    
+    rdk1c = new RdKafka1C(loger, error);
     rdk1c->OperationTimeout = 10000;
 }
 
 void RdKafka1CTest::TearDown()
 {
-    delete rdk1c;
+    delete_pointer(rdk1c);
+    delete_pointer(error);
+    delete_pointer(loger);
 }
 
 void RdKafka1CTest::InitProducer()
 {   
     bool initResult = rdk1c->InitProducer(BROKERS);
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");   
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");   
     ASSERT_TRUE(initResult);
 }
 
@@ -166,14 +170,14 @@ void RdKafka1CTest::Produce()
 void RdKafka1CTest::ProduceMessage()
 {   
     bool sendResult = rdk1c->Produce(TOPIC, DATA, KEY, HEADERS, 0);
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     ASSERT_TRUE(sendResult);
 }
 
 void RdKafka1CTest::StopProducer()
 {   
     bool stopResult = rdk1c->StopProduser();
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     ASSERT_TRUE(stopResult);
 }
 
@@ -182,11 +186,11 @@ void RdKafka1CTest::InitConsumer()
     SetProperty("auto.offset.reset", "smallest");
 
     bool initResult = rdk1c->InitConsumer(BROKERS, CONSUMER_GROUP_ID);
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     ASSERT_TRUE(initResult);
 
     bool subscribeResult = rdk1c->Subscribe(TOPIC);
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     ASSERT_TRUE(subscribeResult);
 }
 
@@ -200,11 +204,11 @@ void RdKafka1CTest::Consume()
 void RdKafka1CTest::ConsumeMessage()
 {
     bool consumeResult = rdk1c->Consume();
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     ASSERT_TRUE(consumeResult);
     
     std::string data = rdk1c->GetMessageData();
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     ASSERT_STREQ(DATA.c_str(), data.c_str());
 }
 
@@ -216,7 +220,7 @@ void RdKafka1CTest::ConsumeAll()
     {
         // Read all messages from topic       
     }    
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");
 
     StopConsumer();
 }
@@ -224,22 +228,25 @@ void RdKafka1CTest::ConsumeAll()
 void RdKafka1CTest::StopConsumer()
 {
     bool stopResult = rdk1c->StopConsumer();
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), "");
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     ASSERT_TRUE(stopResult);
 }
 
 void RdKafka1CTest::StartLogging()
 {
-    bool initLogs = rdk1c->StartLogging(LOG_FILE, Loger::Levels::DEBUG);
-    ASSERT_STREQ(rdk1c->ErrorDescription().c_str(), ""); 
-    ASSERT_TRUE(initLogs);     
+    loger->level = Loger::Levels::DEBUG;
+    std::string errorDescription;    
+    bool result = loger->Init(LOG_FILE, errorDescription);
+
+    ASSERT_STREQ(errorDescription.c_str(), ""); 
+    ASSERT_TRUE(result);     
 }
 
 void RdKafka1CTest::StopLogging()
 {
-    rdk1c->StopLogging();
+    loger->level = Loger::Levels::NONE;
 
-    std::string logfile = rdk1c->GetCurrentLogFile();
+    std::string logfile = loger->GetLogFile();
     ASSERT_STRNE(logfile.c_str(), "");
     ASSERT_TRUE(std::filesystem::exists(logfile));
 }

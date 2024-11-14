@@ -8,8 +8,11 @@
 #include "ComponentBase.h"
 #include "AddInDefBase.h"
 #include "IMemoryManager.h"
-#include "Strings.h"
+#include "Loger.h"
+#include "ErrorHandler.h"
 #include "RdKafka1C.h"
+#include "strings.h"
+#include "utils.h"
 
 #if defined( __linux__ )
 #include <unistd.h>
@@ -115,18 +118,11 @@ private:
     
     std::string currentLocale;
     IAddInDefBase* m_iConnect;
-    IMemoryManager* m_iMemory;
+    IMemoryManager* m_iMemory;    
+    Loger* loger;
+    ErrorHandler* error;
     RdKafka1C* rdk1c;
-
-    // Error handling
-    bool error;
-    std::string errorDescription;    
-    bool Error();
-    bool NoError();
-    std::string ErrorDescription();
-    void SetError(std::string Description);
-    void ClearError();
-
+    
     bool SetLocale(tVariant* varPropVal);
     bool SetLocale(std::string LocaleName);
     
@@ -135,6 +131,7 @@ private:
     bool StopLogging();
     bool SetLogLevel(tVariant* varPropVal);
     std::string GetLogLevel();
+    std::string GetLogFile();
     Loger::Levels StringToLogLevel(std::string String);
     
     // General action

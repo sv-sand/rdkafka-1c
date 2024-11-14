@@ -19,7 +19,7 @@ bool Loger::Init(std::string FileName, std::string &ErrorDescription)
 {    
     fileName = FileName;
 
-    if (!ClearFile(fileName))
+    if (!StartNewFile(fileName))
     {
         ErrorDescription = "Failed to open file " + fileName;
         return false;
@@ -81,7 +81,7 @@ std::string Loger::GetLogFile()
 /////////////////////////////////////////////////////////////////////////////
 // File operations
 
-bool Loger::ClearFile(std::string FileName)
+bool Loger::StartNewFile(std::string FileName)
 {
     bool result;
     std::ofstream file(FileName, std::ios::out | std::ios::trunc |std::ios::binary);

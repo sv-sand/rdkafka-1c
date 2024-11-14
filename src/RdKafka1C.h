@@ -4,16 +4,16 @@
 #pragma comment(lib, "bcrypt.lib")
 #endif
 
-#include <map>
 #include <sstream>
 #include <librdkafka/rdkafkacpp.h>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include "Config.h"
 #include "Loger.h"
-#include "Strings.h"
-
-#define delete_pointer(ptr) {delete ptr; ptr = nullptr;}
+#include "ErrorHandler.h"
+#include "ConfigBuilder.h"
+#include "MessageStatusCollector.h"
+#include "strings.h"
+#include "utils.h"
 
 class RdKafka1C
 {
@@ -21,13 +21,11 @@ public:
 
     int OperationTimeout = 10000; // ms
 
-    RdKafka1C();
+    RdKafka1C(Loger* Loger, ErrorHandler* Error);
     ~RdKafka1C();
 
     std::string RdKafkaVersion();
-    bool Error();
-    std::string ErrorDescription();
-
+    
     // Set RdKafka config property https://github.com/confluentinc/librdkafka/blob/master/CONFIGURATION.md
     // Invoke this method before InitProducer(), InitConsumer()
     void SetConfigProperty(std::string Name, std::string Value);
@@ -57,34 +55,20 @@ public:
     bool Subscribe(std::string Topic);
     bool Unsubscribe();
 
-    // Logging
-    bool StartLogging(std::string FileName, Loger::Levels Level);
-    void StopLogging();
-    Loger::Levels GetLogerLevel();
-    void SetLogerLevel(Loger::Levels Level);
-    std::string GetCurrentLogFile();
-
     // Other
     std::string MessageStatusToString(RdKafka::Message::Status Status);
     
 private:
     
+    Loger* loger;
+    ErrorHandler* error;
+
     RdKafka::Producer* producer;
     RdKafka::KafkaConsumer* consumer;
-    RdKafka::Message* message;
+    RdKafka::Message* message;    
+    ConfigBuilder* config;
+    MessageStatusCollector* messageStatusCollector;            
     
-    Config* config;
-    Rebalance* rebalance;
-    Event* event;
-    DeliveryReport* deliveryReport;
-
-    Loger* loger;
-
-    bool error;
-    std::string errorDescription;
-    void SetError(std::string ErrorDescription);
-    void ClearErrors();
-
     bool FillHeaders(RdKafka::Headers* Headers, std::string StringHeaders);
 };
 

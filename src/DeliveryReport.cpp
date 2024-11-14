@@ -1,8 +1,9 @@
 #include "DeliveryReport.h"
 
-DeliveryReport::DeliveryReport(Loger* Loger)
+DeliveryReport::DeliveryReport(Loger* Loger, MessageStatusCollector* MessageStatusCollector)
 {
     loger = Loger;
+    messageStatusCollector = MessageStatusCollector;
 }
 
 void DeliveryReport::dr_cb(RdKafka::Message& Message) 
@@ -51,37 +52,5 @@ void DeliveryReport::AddMessageStatus(RdKafka::Message& Message)
     if (uuid.empty())
         return;
 
-    statuses[uuid] = Message.status();    
-}
-
-void DeliveryReport::ClearStatuses()
-{
-    statuses.clear();
-}
-
-RdKafka::Message::Status DeliveryReport::GetStatus(std::string Uuid)
-{
-    RdKafka::Message::Status status;
-
-    try
-    {
-        status = statuses.at(Uuid);
-    }
-    catch (const std::out_of_range& e)
-    {
-        return RdKafka::Message::MSG_STATUS_NOT_PERSISTED;
-    }
-
-    return status;
-}
-
-int DeliveryReport::CountUndelivered()
-{
-    int count = 0;
-    
-    for (const auto& [key, value] : statuses)
-        if (value != RdKafka::Message::MSG_STATUS_PERSISTED)
-            count++;
-
-    return count;
+    messageStatusCollector->Add(uuid, Message.status());
 }

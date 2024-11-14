@@ -139,23 +139,25 @@ CAddInNative::CAddInNative()
     SetLocale("ru_RU");
 #endif
     
-    error = false;
-    errorDescription = "";
-    
     m_iMemory = nullptr; 
     m_iConnect = nullptr;
+    loger = nullptr;
+    error = nullptr;
     rdk1c = nullptr;
 }
 
 CAddInNative::~CAddInNative()
 {
-    delete rdk1c;
+    delete_pointer(rdk1c);
+    delete_pointer(error);
+    delete_pointer(loger);
 }
 
 bool CAddInNative::Init(void* pConnection)
 { 
-    rdk1c = new RdKafka1C();
-
+    loger = new Loger(); 
+    error = new ErrorHandler(loger); 
+    rdk1c = new RdKafka1C(loger, error);
     m_iConnect = (IAddInDefBase*)pConnection;
     return m_iConnect != nullptr;
 }
@@ -169,7 +171,7 @@ long CAddInNative::GetInfo()
 
 void CAddInNative::Done()
 {
-    
+
 }
 
 bool CAddInNative::setMemManager(void* mem)
@@ -234,7 +236,7 @@ const WCHAR_T* CAddInNative::GetPropName(long lPropNum, long lPropAlias)
 
 bool CAddInNative::GetPropVal(const long lPropNum, tVariant* pvarPropVal)
 { 
-    ClearError();
+    error->Clear();
     
     switch(lPropNum)
     {
@@ -251,7 +253,7 @@ bool CAddInNative::GetPropVal(const long lPropNum, tVariant* pvarPropVal)
         return true;
 
     case ePropLogFile:
-        SetVariant(pvarPropVal, rdk1c->GetCurrentLogFile());
+        SetVariant(pvarPropVal, GetLogFile());
         return true;
 
     case ePropLogLevel:
@@ -263,11 +265,11 @@ bool CAddInNative::GetPropVal(const long lPropNum, tVariant* pvarPropVal)
         return true;
 
     case ePropError:
-        SetVariant(pvarPropVal, Error());
+        SetVariant(pvarPropVal, error->Error());
         return true;
 
     case ePropErrorDescription:
-        SetVariant(pvarPropVal, ErrorDescription());
+        SetVariant(pvarPropVal, error->ErrorDescription());
         return true;
 
     }
@@ -277,7 +279,7 @@ bool CAddInNative::GetPropVal(const long lPropNum, tVariant* pvarPropVal)
 
 bool CAddInNative::SetPropVal(const long lPropNum, tVariant *varPropVal)
 { 
-    ClearError();
+    error->Clear();
 
     switch (lPropNum)
     {
@@ -474,7 +476,7 @@ bool CAddInNative::HasRetVal(const long lMethodNum)
 
 bool CAddInNative::CallAsProc(const long lMethodNum, tVariant* paParams, const long lSizeArray)
 { 
-    ClearError();
+    error->Clear();
 
     switch (lMethodNum)
     {
@@ -490,7 +492,7 @@ bool CAddInNative::CallAsProc(const long lMethodNum, tVariant* paParams, const l
 
 bool CAddInNative::CallAsFunc(const long lMethodNum, tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
 { 
-    ClearError();
+    error->Clear();
 
     switch(lMethodNum)
     {
@@ -588,7 +590,7 @@ bool CAddInNative::SetLocale(tVariant* varPropVal)
 {
     std::string localeName = ToString(varPropVal);
     
-    if (Error())
+    if (error->Error())
         return true;    
 
     return SetLocale(localeName);
@@ -619,66 +621,36 @@ long CAddInNative::findName(const wchar_t* names[], const wchar_t* name, const u
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// Error handling
-
-bool CAddInNative::Error()
-{
-    return error || rdk1c->Error();
-}
-
-bool CAddInNative::NoError()
-{
-    return !Error();
-}
-
-std::string CAddInNative::ErrorDescription()
-{
-    if (!errorDescription.empty())
-        return errorDescription;
-
-    return rdk1c->ErrorDescription();
-}
-
-void CAddInNative::ClearError()
-{
-    error = false;
-    errorDescription = "";
-}
-
-void CAddInNative::SetError(std::string Description)
-{
-    error = true;
-    errorDescription = Description;
-}
-
-/////////////////////////////////////////////////////////////////////////////
 // Logging
 
 bool CAddInNative::StartLogging(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
 {
+    error->Clear(); 
+    
     if (lSizeArray != 2 || !paParams)
     {
-        SetError("Invalid parameters");
+        error->Set("Invalid parameters");
         return false;
     }
 
     std::string fileName = ToString(&paParams[0]);
-    std::string level = ToString(&paParams[1]);
+    std::string levelName = ToString(&paParams[1]);
+    Loger::Levels level = StringToLogLevel(levelName);
 
-    if (Error())
-    {
-        SetVariant(pvarRetValue, false); 
-        return true;
-    }
-
-    Loger::Levels logLevel = StringToLogLevel(level);
-    if (Error())
+    if (error->Error())
     {
         SetVariant(pvarRetValue, false);
         return true;
     }
     
-    auto result = rdk1c->StartLogging(fileName, logLevel);
+    loger->level = level;
+    std::string errorDescription;    
+    bool result = loger->Init(fileName, errorDescription);
+    if (result)
+        loger->Info("Start loging");
+    else
+        error->Set("Failed to init loger: " + errorDescription);
+
     SetVariant(pvarRetValue, result);
 
     return true;
@@ -686,24 +658,38 @@ bool CAddInNative::StartLogging(tVariant* pvarRetValue, tVariant* paParams, cons
 
 bool CAddInNative::StopLogging()
 {
-    rdk1c->StopLogging();
+    loger->Info("Stop logging");
+    error->Clear();
+    
+    loger->level = Loger::Levels::NONE;
     return true;
 }
 
 bool CAddInNative::SetLogLevel(tVariant* varPropVal)
 {
+    loger->Info("Set loger level");
+    error->Clear();
+
     std::string level = ToString(varPropVal);
     
-    if (Error())
+    if (error->Error())
         return true;    
 
     Loger::Levels logLevel = StringToLogLevel(level);
-    if (Error())
+    if (error->Error())
         return true;
 
-    rdk1c->SetLogerLevel(logLevel);
+    loger->level = logLevel;    
 
     return true;
+}
+
+std::string CAddInNative::GetLogFile()
+{
+    loger->Info("Get current log file");
+    error->Clear();
+
+    return loger->GetLogFile();
 }
 
 Loger::Levels CAddInNative::StringToLogLevel(std::string String)
@@ -722,7 +708,7 @@ Loger::Levels CAddInNative::StringToLogLevel(std::string String)
         Level = Loger::Levels::ERRORS;
     else
     {
-        SetError("Faled to convert value '" + String + "' to log level. Valid values: none, debug, info, warn, error");
+        error->Set("Faled to convert value '" + String + "' to log level. Valid values: none, debug, info, warn, error");
         return Level;
     }
 
@@ -731,7 +717,10 @@ Loger::Levels CAddInNative::StringToLogLevel(std::string String)
 
 std::string CAddInNative::GetLogLevel()
 {
-    switch (rdk1c->GetLogerLevel())
+    loger->Info("Get loger level");
+    error->Clear();
+    
+    switch (loger->level)
     {
     case Loger::Levels::NONE:
         return "none";
@@ -755,14 +744,14 @@ bool CAddInNative::SetConfigProperty(tVariant* paParams, const long lSizeArray)
 {
     if (lSizeArray != 2 || !paParams )
     {
-        SetError("Invalid parameters");
+        error->Set("Invalid parameters");
         return false;
     }
     
     std::string paramName = ToString(&paParams[0]);
     std::string paramValue = ToString(&paParams[1]);
 
-    if (Error())
+    if (error->Error())
         return true;
 
     rdk1c->SetConfigProperty(paramName, paramValue);
@@ -774,13 +763,13 @@ bool CAddInNative::InitProducer(tVariant* pvarRetValue, tVariant* paParams, cons
 {
     if (lSizeArray != 1 || !paParams)
     {
-        SetError("Invalid parameters");
+        error->Set("Invalid parameters");
         return false;
     }
 
     std::string brokers = ToString(&paParams[0]);
         
-    if (Error())
+    if (error->Error())
     {
         SetVariant(pvarRetValue, false);
         return true;
@@ -796,7 +785,7 @@ bool CAddInNative::Produce(tVariant* pvarRetValue, tVariant* paParams, const lon
 {
     if (lSizeArray != 5 || !paParams)
     {
-        SetError("Invalid parameters");
+        error->Set("Invalid parameters");
         return false;
     }
 
@@ -806,7 +795,7 @@ bool CAddInNative::Produce(tVariant* pvarRetValue, tVariant* paParams, const lon
     std::string headers = ToString(&paParams[3]);
     int partition = ToInt(&paParams[4], -1);
 
-    if (Error())
+    if (error->Error())
     {
         SetVariant(pvarRetValue, false);
         return true;
@@ -830,7 +819,7 @@ bool CAddInNative::ProduceAsynch(tVariant* pvarRetValue, tVariant* paParams, con
 {
     if (lSizeArray != 5 || !paParams)
     {
-        SetError("Invalid parameters");
+        error->Set("Invalid parameters");
         return false;
     }
 
@@ -840,7 +829,7 @@ bool CAddInNative::ProduceAsynch(tVariant* pvarRetValue, tVariant* paParams, con
     std::string headers = ToString(&paParams[3]);
     int partition = ToInt(&paParams[4], -1);
 
-    if (Error())
+    if (error->Error())
     {
         SetVariant(pvarRetValue, false);
         return true;
@@ -872,14 +861,14 @@ bool CAddInNative::InitConsumer(tVariant* pvarRetValue, tVariant* paParams, cons
 {
     if (lSizeArray != 2 || !paParams)
     {
-        SetError("Invalid parameters");
+        error->Set("Invalid parameters");
         return false;
     }
 
     std::string brokers = ToString(&paParams[0]);
     std::string groupId = ToString(&paParams[1]);
 
-    if (Error())
+    if (error->Error())
     {
         SetVariant(pvarRetValue, false);
         return true;
@@ -916,14 +905,14 @@ bool CAddInNative::AssignPartition(tVariant* pvarRetValue, tVariant* paParams, c
 {
     if (lSizeArray != 2 || !paParams)
     {
-        SetError("Invalid parameters");
+        error->Set("Invalid parameters");
         return false;
     }
 
     std::string topic = ToString(&paParams[0]);
     int partition = ToInt(&paParams[1]);
 
-    if (Error())
+    if (error->Error())
     {
         SetVariant(pvarRetValue, false);
         return true;
@@ -939,14 +928,14 @@ bool CAddInNative::CommittedOffset(tVariant* pvarRetValue, tVariant* paParams, c
 {
     if (lSizeArray != 2 || !paParams)
     {
-        SetError("Invalid parameters");
+        error->Set("Invalid parameters");
         return false;
     }
 
     std::string topic = ToString(&paParams[0]);
     int partition = ToInt(&paParams[1]);
     
-    if (Error())
+    if (error->Error())
     {
         SetVariant(pvarRetValue, false);
         return true;
@@ -962,7 +951,7 @@ bool CAddInNative::CommitOffset(tVariant* pvarRetValue, tVariant* paParams, cons
 {
     if (lSizeArray != 3 || !paParams)
     {
-        SetError("Invalid parameters");
+        error->Set("Invalid parameters");
         return false;
     }
 
@@ -970,7 +959,7 @@ bool CAddInNative::CommitOffset(tVariant* pvarRetValue, tVariant* paParams, cons
     int partition = ToInt(&paParams[1]);
     int64_t offset = ToLongInt(&paParams[2]);
 
-    if (Error())
+    if (error->Error())
     {
         SetVariant(pvarRetValue, false);
         return true;
@@ -1000,13 +989,13 @@ bool CAddInNative::Subscribe(tVariant* pvarRetValue, tVariant* paParams, const l
 {
     if (lSizeArray != 1 || !paParams)
     {
-        SetError("Invalid parameters");
+        error->Set("Invalid parameters");
         return false;
     }
 
     std::string topic = ToString(&paParams[0]);
 
-    if (Error())
+    if (error->Error())
     {
         SetVariant(pvarRetValue, false);
         return true;
@@ -1062,7 +1051,7 @@ int CAddInNative::ToInt(tVariant* Source)
         && TV_VT(Source) != VTYPE_INT
         && TV_VT(Source) != VTYPE_UINT)
     {
-        SetError("Value isn't integer");
+        error->Set("Value isn't integer");
         return 0;
     }
 
@@ -1081,7 +1070,7 @@ int64_t CAddInNative::ToLongInt(tVariant* Source)
         && TV_VT(Source) != VTYPE_INT
         && TV_VT(Source) != VTYPE_UINT)
     {
-        SetError("Value isn't integer");
+        error->Set("Value isn't integer");
         return 0;
     }
 
@@ -1092,7 +1081,7 @@ std::string CAddInNative::ToString(tVariant* Source)
 {
     if (TV_VT(Source) != VTYPE_PWSTR)
     {
-        SetError("Value isn't string");
+        error->Set("Value isn't string");
         return "";
     }
 
