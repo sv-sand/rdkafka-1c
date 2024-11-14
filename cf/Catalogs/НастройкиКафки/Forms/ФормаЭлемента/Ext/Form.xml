@@ -134,13 +134,39 @@
 				</CheckBoxField>
 			</ChildItems>
 		</UsualGroup>
-		<InputField name="ГруппаКонсюмера" id="25">
-			<DataPath>Объект.ГруппаКонсюмера</DataPath>
-			<EditMode>EnterOnInput</EditMode>
-			<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
-			<ContextMenu name="ГруппаКонсюмераКонтекстноеМеню" id="26"/>
-			<ExtendedTooltip name="ГруппаКонсюмераРасширеннаяПодсказка" id="27"/>
-		</InputField>
+		<UsualGroup name="ГруппаКонсюмер" id="56">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Консюмер</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Группа консюмер</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Group>Vertical</Group>
+			<Representation>NormalSeparation</Representation>
+			<ExtendedTooltip name="ГруппаКонсюмерРасширеннаяПодсказка" id="57"/>
+			<ChildItems>
+				<InputField name="ГруппаКонсюмера" id="25">
+					<DataPath>Объект.ГруппаКонсюмера</DataPath>
+					<EditMode>EnterOnInput</EditMode>
+					<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+					<ContextMenu name="ГруппаКонсюмераКонтекстноеМеню" id="26"/>
+					<ExtendedTooltip name="ГруппаКонсюмераРасширеннаяПодсказка" id="27"/>
+				</InputField>
+				<CheckBoxField name="АвтоКоммит" id="58">
+					<DataPath>Объект.АвтоКоммит</DataPath>
+					<ToolTipRepresentation>ShowRight</ToolTipRepresentation>
+					<CheckBoxType>Auto</CheckBoxType>
+					<ContextMenu name="АвтоКоммитКонтекстноеМеню" id="59"/>
+					<ExtendedTooltip name="АвтоКоммитРасширеннаяПодсказка" id="60"/>
+				</CheckBoxField>
+			</ChildItems>
+		</UsualGroup>
 		<UsualGroup name="ГруппаЛоги" id="40">
 			<Title>
 				<v8:item>

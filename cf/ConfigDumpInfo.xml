@@ -14,8 +14,9 @@
 		<Metadata name="Catalog.БрокерыКафка.Form.ФормаСписка.Form" id="eaf7d73c-4828-459a-8396-4fdaa423fdde.0" configVersion="207df37be31dcd4ebd60c4a14247cca500000000"/>
 		<Metadata name="Catalog.БрокерыКафка.Form.ФормаЭлемента" id="61939ab0-c488-4709-a19d-b03a043e29aa" configVersion="3efbb2761451994692656a9b5cfbd28200000000"/>
 		<Metadata name="Catalog.БрокерыКафка.Form.ФормаЭлемента.Form" id="61939ab0-c488-4709-a19d-b03a043e29aa.0" configVersion="3c90ce89cfa12d42ae90e764184ea21e00000000"/>
-		<Metadata name="Catalog.НастройкиКафки" id="081ee7e7-666b-45d9-b732-d78f4615a20f" configVersion="1ab1c655a7db0c4f9903f6ac04ff0ae900000000">
+		<Metadata name="Catalog.НастройкиКафки" id="081ee7e7-666b-45d9-b732-d78f4615a20f" configVersion="3ae4a2343e64b94794e8aba5554d103800000000">
 			<Metadata name="Catalog.НастройкиКафки.Attribute.Топик" id="02c02798-3754-48e2-8281-3d6d545c66d4"/>
+			<Metadata name="Catalog.НастройкиКафки.Attribute.АвтоКоммит" id="1042f8aa-461b-4190-81c9-8a535746f7df"/>
 			<Metadata name="Catalog.НастройкиКафки.Attribute.Идентификатор" id="1e1f898e-0372-475e-b3ef-c0649b06bc90"/>
 			<Metadata name="Catalog.НастройкиКафки.Attribute.Активна" id="652f3c8d-1176-4931-af9f-2107e496e4d0"/>
 			<Metadata name="Catalog.НастройкиКафки.Attribute.Отправка" id="903fb459-f760-496d-966b-b56c2d870826"/>
@@ -32,27 +33,27 @@
 		<Metadata name="Catalog.НастройкиКафки.Form.ФормаЛоги.Form" id="709d7ebe-dc1c-42f5-b1e5-ea5bb08e5dca.0" configVersion="6f6de79dff7a84428b6f9a468cd1716300000000"/>
 		<Metadata name="Catalog.НастройкиКафки.Form.ФормаСписка" id="c40983ef-827b-4b0f-915d-bd0b3e61df69" configVersion="8bba17a7dfa11046bd074c9dd72abdcf00000000"/>
 		<Metadata name="Catalog.НастройкиКафки.Form.ФормаСписка.Form" id="c40983ef-827b-4b0f-915d-bd0b3e61df69.0" configVersion="9f65f58f2a0fd547bd6485c759a0261a00000000"/>
-		<Metadata name="Catalog.НастройкиКафки.Form.ФормаЭлемента" id="f9956951-e2b0-4656-86d5-e7876579608c" configVersion="dad4f1a57d45974fa9cddf08be80f18500000000"/>
-		<Metadata name="Catalog.НастройкиКафки.Form.ФормаЭлемента.Form" id="f9956951-e2b0-4656-86d5-e7876579608c.0" configVersion="68ab960e9d339e44a610fae57f3c6bdb00000000"/>
+		<Metadata name="Catalog.НастройкиКафки.Form.ФормаЭлемента" id="f9956951-e2b0-4656-86d5-e7876579608c" configVersion="b7b961dee5f80b40b5b38ad9a0b8345800000000"/>
+		<Metadata name="Catalog.НастройкиКафки.Form.ФормаЭлемента.Form" id="f9956951-e2b0-4656-86d5-e7876579608c.0" configVersion="7a75506d4506c34a8303f1baeb18500f00000000"/>
 		<Metadata name="Catalog.НастройкиКафки.ManagerModule" id="081ee7e7-666b-45d9-b732-d78f4615a20f.3" configVersion="4644b6a4210ccf4bae4bec6f2205f23900000000"/>
 		<Metadata name="Catalog.НастройкиКафки.ObjectModule" id="081ee7e7-666b-45d9-b732-d78f4615a20f.0" configVersion="7ec236469e615c4dbafb1fc93a777bca00000000"/>
 		<Metadata name="CommonModule.ОбменДаннымиВМоделиСервиса" id="ece6799b-7d43-4cb7-829f-d49524c2a7a7" configVersion="3cd4bd6e4682244ab84a640a2d9d953e00000000"/>
 		<Metadata name="CommonModule.ОбменДаннымиВМоделиСервиса.Module" id="ece6799b-7d43-4cb7-829f-d49524c2a7a7.0" configVersion="550d9dbc78720f43aafb8d701bfa1d6e00000000"/>
 		<Metadata name="CommonModule.ОбщегоНазначения" id="f7676b91-d737-4eda-a569-a0de84137de6" configVersion="e56ba24630965043b4356749c927343e00000000"/>
 		<Metadata name="CommonModule.ОбщегоНазначения.Module" id="f7676b91-d737-4eda-a569-a0de84137de6.0" configVersion="a803960ad39e1f439891d121654fd61000000000"/>
-		<Metadata name="CommonTemplate.RdKafka1C" id="18454d4f-85e6-43ea-9793-9c7c3bd1eebc" configVersion="f206ff4dfecb5547b18a25b33d39644b00000000"/>
-		<Metadata name="CommonTemplate.RdKafka1C.Template" id="18454d4f-85e6-43ea-9793-9c7c3bd1eebc.0" configVersion="22266eda6b6a5748ba0a6f443bf3647d00000000"/>
+		<Metadata name="CommonTemplate.RdKafka1C" id="18454d4f-85e6-43ea-9793-9c7c3bd1eebc" configVersion="02abda1def5fe04bb90a2625cbb57e7500000000"/>
+		<Metadata name="CommonTemplate.RdKafka1C.Template" id="18454d4f-85e6-43ea-9793-9c7c3bd1eebc.0" configVersion="7a8c2a07bc409941b640978da6cb5c9b00000000"/>
 		<Metadata name="Configuration.ТестКомпонентыRdKafka1C" id="40558979-2cf8-4f6b-8d9b-510e7356b77f" configVersion="79018f102170cf49b8582694c2aef91100000000"/>
 		<Metadata name="Configuration.ТестКомпонентыRdKafka1C.ClientApplicationInterface" id="b0b7ca2f-305d-4577-87fb-a1a9db0b069f.b" configVersion="b289d9fb96830640b722edb57ed0926a00000000"/>
 		<Metadata name="Configuration.ТестКомпонентыRdKafka1C.HomePageWorkArea" id="b0b7ca2f-305d-4577-87fb-a1a9db0b069f.8" configVersion="d2dab6cb488e1d4481201488ce46109800000000"/>
-		<Metadata name="DataProcessor.КафкаКоннектор" id="b3a7d386-5bd9-49fc-bede-c7d217e76673" configVersion="2e685490b5d80b4ca90c76b1f146b84300000000">
+		<Metadata name="DataProcessor.КафкаКоннектор" id="b3a7d386-5bd9-49fc-bede-c7d217e76673" configVersion="a438b7c9f6ae274a907d7615921429ee00000000">
 			<Metadata name="DataProcessor.КафкаКоннектор.Attribute.ВерсияRdKafka" id="397ccddd-e8a9-4357-ab5f-e63ea9ad1242"/>
 			<Metadata name="DataProcessor.КафкаКоннектор.Attribute.ВерсияКомпоненты" id="8a6a2e29-de36-4a08-bb55-54bfdae1a0e7"/>
 			<Metadata name="DataProcessor.КафкаКоннектор.Attribute.Локаль" id="95e57452-0568-4754-a1b5-6962a218f4ee"/>
 		</Metadata>
 		<Metadata name="DataProcessor.КафкаКоннектор.Form.Форма" id="f8818ba5-df2c-4393-8fbe-887a09dc1166" configVersion="3d25741328dfc446b476f31fbe77844600000000"/>
 		<Metadata name="DataProcessor.КафкаКоннектор.Form.Форма.Form" id="f8818ba5-df2c-4393-8fbe-887a09dc1166.0" configVersion="7a53b1d095b15f4f9334b3b76481ea4d00000000"/>
-		<Metadata name="DataProcessor.КафкаКоннектор.ObjectModule" id="b3a7d386-5bd9-49fc-bede-c7d217e76673.0" configVersion="3315bc956d57044aa9897d873e085c0a00000000"/>
+		<Metadata name="DataProcessor.КафкаКоннектор.ObjectModule" id="b3a7d386-5bd9-49fc-bede-c7d217e76673.0" configVersion="5f96f544aaf9a445bb24f968951e6d1f00000000"/>
 		<Metadata name="Language.Русский" id="8949bed8-6446-43f1-9870-86bb6940f079" configVersion="32bc4ef3debeb943879b2a74ec5a4ac500000000"/>
 		<Metadata name="Subsystem.Кафка" id="a0835f48-697c-4f9c-8c0d-b37486d10b97" configVersion="ced0134528a3a24d83f41e70218bb68d00000000"/>
 	</ConfigVersions>
