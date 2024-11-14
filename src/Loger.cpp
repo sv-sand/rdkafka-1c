@@ -16,16 +16,7 @@ bool Loger::Init(std::string FileName)
 }
 
 bool Loger::Init(std::string FileName, std::string &ErrorDescription)
-{
-    try
-    {
-        std::locale locale(DEFAULT_LOCALE);
-    } catch(std::runtime_error e)
-    {
-        ErrorDescription = "OS doesn't support locale " + DEFAULT_LOCALE;
-        return false;
-    }
-    
+{    
     fileName = FileName;
 
     if (!ClearFile(fileName))
@@ -93,7 +84,7 @@ std::string Loger::GetLogFile()
 bool Loger::ClearFile(std::string FileName)
 {
     bool result;
-    std::ofstream file(FileName, std::ios::out | std::ios::trunc);
+    std::ofstream file(FileName, std::ios::out | std::ios::trunc |std::ios::binary);
 
     result = file.is_open();
     if (result)
@@ -113,8 +104,6 @@ bool Loger::ClearFile(std::string FileName)
 void Loger::WriteFile(std::string FileName, std::string Message)
 {
     std::ofstream file(FileName, std::ios::app);
-    std::locale locale(DEFAULT_LOCALE);
-    file.imbue(locale);
 
     if (file.is_open())
         file << Message << std::endl;

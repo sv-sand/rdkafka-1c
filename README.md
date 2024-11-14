@@ -13,6 +13,10 @@ Rdkafka-1c - это внешняя компонента разработанна
 
 ![Структура компоненты](doc/res/structure.png)
 
+## Контрибьюторам
+
+Разработка ведется по [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow), любой вклад в проект приветствуется. Чтобы задать вопрос или для своих предложений по развитию вы можете открывать [issue](https://github.com/sv-sand/rdkafka-1c/issues). Если вы можете сделать pull request и решить [issue](https://github.com/sv-sand/rdkafka-1c/issues) - это будет в двойне круто.
+
 ## Ссылки
 
 - [Технология создания внешних компонент](https://its.1c.ru/db/metod8dev/content/3221/hdoc)
