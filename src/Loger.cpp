@@ -1,26 +1,21 @@
 ﻿#include "Loger.h"
 
-Loger::Loger()
-{   
+Loger::Loger() {
 }
 
-Loger::~Loger()
-{
+Loger::~Loger() {
     Info("Stop logging");
 }
 
-bool Loger::Init(std::string FileName)
-{
+bool Loger::Init(std::string FileName) {
     std::string ErrorDescription = "";
     return Init(FileName, ErrorDescription);
 }
 
-bool Loger::Init(std::string FileName, std::string &ErrorDescription)
-{    
+bool Loger::Init(std::string FileName, std::string &ErrorDescription) {
     fileName = FileName;
 
-    if (!ClearFile(fileName))
-    {
+    if (!StartNewFile(fileName)) {
         ErrorDescription = "Failed to open file " + fileName;
         return false;
     }
@@ -28,8 +23,7 @@ bool Loger::Init(std::string FileName, std::string &ErrorDescription)
     return true;
 }
 
-void Loger::Debug(std::string Message)
-{
+void Loger::Debug(std::string Message) {
 	if (level > Levels::DEBUG || level == Levels::NONE || fileName.empty())
 		return;
 
@@ -37,11 +31,9 @@ void Loger::Debug(std::string Message)
     stream << Strings::TimeStamp() << " [DEBUG] " << Message;
 
     WriteFile(fileName, stream.str());
-
 }
 
-void Loger::Info(std::string Message)
-{
+void Loger::Info(std::string Message) {
     if (level > Levels::INFO || level == Levels::NONE || fileName.empty())
         return;
 
@@ -62,8 +54,7 @@ void Loger::Warn(std::string Message)
     WriteFile(fileName, stream.str());
 }
 
-void Loger::Error(std::string Message)
-{
+void Loger::Error(std::string Message) {
     if (level > Levels::ERRORS || level == Levels::NONE || fileName.empty())
         return;
 
@@ -73,16 +64,14 @@ void Loger::Error(std::string Message)
     WriteFile(fileName, stream.str());
 }
 
-std::string Loger::GetLogFile()
-{
+std::string Loger::GetLogFile() {
     return fileName;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // File operations
 
-bool Loger::ClearFile(std::string FileName)
-{
+bool Loger::StartNewFile(std::string FileName) {
     bool result;
     std::ofstream file(FileName, std::ios::out | std::ios::trunc |std::ios::binary);
 
@@ -101,8 +90,7 @@ bool Loger::ClearFile(std::string FileName)
     return result;
 }
 
-void Loger::WriteFile(std::string FileName, std::string Message)
-{
+void Loger::WriteFile(std::string FileName, std::string Message) {
     std::ofstream file(FileName, std::ios::app);
 
     if (file.is_open())

@@ -2,5 +2,6 @@
 /build
 /logs
 
-*.zip
+*.so
+*.dll
 *.cf

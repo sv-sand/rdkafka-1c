@@ -4,87 +4,70 @@
 #pragma comment(lib, "bcrypt.lib")
 #endif
 
-#include <map>
 #include <sstream>
 #include <librdkafka/rdkafkacpp.h>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include "Config.h"
 #include "Loger.h"
-#include "Strings.h"
+#include "ErrorHandler.h"
+#include "ConfigBuilder.h"
+#include "strings.h"
+#include "utils.h"
 
-#define delete_pointer(ptr) {delete ptr; ptr = nullptr;}
+class RdKafka1C {
+    public:
 
-class RdKafka1C
-{
-public:
+        int OperationTimeout = 10000; // ms
 
-    int OperationTimeout = 10000; // ms
+        RdKafka1C(Loger* Loger, ErrorHandler* Error);
+        ~RdKafka1C();
 
-    RdKafka1C();
-    ~RdKafka1C();
+        std::string RdKafkaVersion();
+        
+        // Set RdKafka config property https://github.com/confluentinc/librdkafka/blob/master/CONFIGURATION.md
+        // Invoke this method before InitProducer(), InitConsumer()
+        void SetConfigProperty(std::string Name, std::string Value);
 
-    std::string RdKafkaVersion();
-    bool Error();
-    std::string ErrorDescription();
+        // Producer
+        bool InitProducer();
+        bool StopProduser();
+        bool StartProduce();
+        bool Produce(std::string Topic, std::string Message, std::string Key, std::string Headers, int Partition, std::string MessageId);
+        bool Flush();
+        int ProducerQueueLen();
+        int CountUndeliveredMessages();
+        std::string MessageStatus(std::string MessageId);
 
-    // Set RdKafka config property https://github.com/confluentinc/librdkafka/blob/master/CONFIGURATION.md
-    // Invoke this method before InitProducer(), InitConsumer()
-    void SetConfigProperty(std::string Name, std::string Value);
+        // Consumer
+        bool InitConsumer();
+        bool StopConsumer();
+        bool Consume();
+        std::string MessageData();
+        std::string MessageMetadata();
+        int64_t CommittedOffset(std::string Topic, int Partition);
+        bool AssignPartition(std::string Topic, int Partition);
+        bool CommitOffset();
+        bool ChangeOffset(std::string Topic, int Partition, int64_t Offset);
+        int ConsumerQueueLen();
 
-    // Producer
-    bool InitProducer(std::string Brokers);
-    bool StopProduser();
-    bool Produce(std::string Topic, std::string Message, std::string Key, std::string Headers, int partition);
-    bool StartProduceAsynch();
-    bool ProduceAsynch(std::string Topic, std::string Message, std::string Key, std::string Headers, int partition);
-    bool Flush();
-    int ProducerQueueLen();
+        // Subscriptions
+        std::string Subscription();
+        bool Subscribe(std::string Topic);
+        bool Unsubscribe();
 
-    // Consumer
-    bool InitConsumer(std::string Brokers, std::string GroupId);
-    bool StopConsumer();
-    bool Consume();
-    std::string GetMessageData();
-    std::string GetMessageMetadata();
-    int64_t CommittedOffset(std::string Topic, int Partition);
-    bool AssignPartition(std::string Topic, int Partition);
-    bool CommitOffset(std::string Topic, int Partition, int64_t Offset);
-    int ConsumerQueueLen();
+        // Other
+        std::string MessageStatusToString(RdKafka::Message::Status Status);
+        
+    private:
+        
+        Loger* loger;
+        ErrorHandler* error;
 
-    // Subscriptions
-    std::string Subscription();
-    bool Subscribe(std::string Topic);
-    bool Unsubscribe();
-
-    // Logging
-    bool StartLogging(std::string FileName, Loger::Levels Level);
-    void StopLogging();
-    Loger::Levels GetLogerLevel();
-    void SetLogerLevel(Loger::Levels Level);
-    std::string GetCurrentLogFile();
-
-    // Other
-    std::string MessageStatusToString(RdKafka::Message::Status Status);
-    
-private:
-    
-    RdKafka::Producer* producer;
-    RdKafka::KafkaConsumer* consumer;
-    RdKafka::Message* message;
-    
-    Config* config;
-    Rebalance* rebalance;
-    Event* event;
-    DeliveryReport* deliveryReport;
-
-    Loger* loger;
-
-    bool error;
-    std::string errorDescription;
-    void SetError(std::string ErrorDescription);
-    void ClearErrors();
-
-    bool FillHeaders(RdKafka::Headers* Headers, std::string StringHeaders);
+        RdKafka::Producer* producer;
+        RdKafka::KafkaConsumer* consumer;
+        RdKafka::Message* message;    
+        ConfigBuilder* config;
+        
+        bool SetHeaders(RdKafka::Headers* Headers, std::string StringHeaders);
 };
 
