@@ -31,7 +31,7 @@ add_library(RdKafka1C SHARED
 	src/DeliveryReport.cpp
 	src/Event.cpp
 	src/Rebalance.cpp
-	src/Strings.cpp) 
+	src/strings.cpp) 
 
 if(WIN32)
 	if(NOT MSVC)

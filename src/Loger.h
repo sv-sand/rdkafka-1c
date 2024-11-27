@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <filesystem>
-#include "Strings.h"
+#include "strings.h"
 
 class Loger {
 
