@@ -9,31 +9,32 @@
 #include "Event.h" 
 #include "utils.h"
 
-class ConfigBuilder
-{
-public:
+class ConfigBuilder {
     
-    ConfigBuilder(Loger* Loger, ErrorHandler* Error, MessageStatusCollector* MessageStatusCollector);
-    ~ConfigBuilder();
+    public:        
+        ConfigBuilder(Loger* Loger, ErrorHandler* Error);
+        ~ConfigBuilder();
 
-    void AddProperty(std::string Name, std::string Value);
-    bool BuildProducerConfig();    
-    bool BuildConsumerConfig();    
-    RdKafka::Conf* GetConf();    
-    
-private:
-    Loger* loger;
-    ErrorHandler* error;
-    RdKafka::Conf* conf;   
-    Rebalance* rebalance;
-    Event* event;
-    DeliveryReport* deliveryReport;
-    
-    std::map<std::string, std::string> properties;
+        void AddProperty(std::string Name, std::string Value);
+        bool BuildProducerConfig();    
+        bool BuildConsumerConfig();    
+        RdKafka::Conf* GetConf();
 
-    void LogConfigDump();
-    bool SetProperty(std::string Name, std::string Value);
-    bool SetEventCb();
-    bool SetDeliveryReportCb();
-    bool SetRebalanceCb();
+        DeliveryReport* GetDeliveryReport();
+        
+    private:
+        Loger* loger;
+        ErrorHandler* error;    
+        RdKafka::Conf* conf;   
+        Rebalance* rebalance;
+        Event* event;
+        DeliveryReport* deliveryReport;
+        
+        std::map<std::string, std::string> properties;
+
+        void LogConfigDump();
+        bool SetProperty(std::string Name, std::string Value);
+        bool SetEventCb();
+        bool SetDeliveryReportCb();
+        bool SetRebalanceCb();
 };

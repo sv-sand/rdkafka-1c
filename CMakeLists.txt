@@ -13,7 +13,7 @@ endif()
 # DLL 
 project(RdKafka1C) 
 
-find_package(Boost 1.85 CONFIG REQUIRED COMPONENTS filesystem iostreams program_options regex system json uuid)
+find_package(Boost 1.85 CONFIG REQUIRED COMPONENTS filesystem iostreams program_options regex system json)
 find_package(RdKafka CONFIG REQUIRED)
 
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
@@ -28,7 +28,6 @@ add_library(RdKafka1C SHARED
 	src/ErrorHandler.cpp
 	src/Loger.cpp
 	src/ConfigBuilder.cpp
-	src/MessageStatusCollector.cpp
 	src/DeliveryReport.cpp
 	src/Event.cpp
 	src/Rebalance.cpp
@@ -81,7 +80,6 @@ add_executable(testing
 	src/ErrorHandler.cpp
 	src/Loger.cpp
 	src/ConfigBuilder.cpp
-	src/MessageStatusCollector.cpp
 	src/DeliveryReport.cpp
 	src/Event.cpp
 	src/Rebalance.cpp)

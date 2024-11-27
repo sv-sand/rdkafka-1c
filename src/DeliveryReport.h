@@ -1,23 +1,27 @@
 #pragma once
 
-#include <librdkafka/rdkafkacpp.h>
+#include <map>
 #include <sstream>
+#include <librdkafka/rdkafkacpp.h>
 #include "Loger.h"
-#include "MessageStatusCollector.h"
-#include "utils.h"
 
-class DeliveryReport : public RdKafka::DeliveryReportCb 
-{
+class DeliveryReport : public RdKafka::DeliveryReportCb  {
 
-public:
-	DeliveryReport(Loger* Loger, MessageStatusCollector* MessageStatusCollector);
+	public:
+		DeliveryReport(Loger* Loger);
 
-	void dr_cb(RdKafka::Message& Message);
+		void dr_cb(RdKafka::Message& Message);
 
-private:
-	Loger* loger;
-	MessageStatusCollector* messageStatusCollector;
+		void ClearStatuses();
+		const std::string* AddEmptyStatus(std::string MessageId);
+		RdKafka::Message::Status GetStatus(std::string MessageId);
+		int CountUndelivered();
 
-	void LogMessageStatus(RdKafka::Message& Message);
-	void AddMessageStatus(RdKafka::Message& Message);
+	private:
+		Loger* loger;
+		std::map<std::string, RdKafka::Message::Status> statuses;
+
+		void LogMessageStatus(RdKafka::Message& Message);
+		std::string ExtractMessageId(RdKafka::Message& Message);
+		void SetStatus(std::string MessageId, RdKafka::Message::Status Status);
 };

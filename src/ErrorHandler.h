@@ -3,8 +3,8 @@
 #include <string>
 #include "Loger.h"
 
-class ErrorHandler
-{
+class ErrorHandler {
+    
     public:
         ErrorHandler(Loger* Loger);
 

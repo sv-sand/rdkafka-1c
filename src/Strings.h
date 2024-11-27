@@ -19,8 +19,8 @@
 #include <stdlib.h>
 #endif //__linux__
 
-namespace Strings
-{
+namespace Strings {
+	
 	uint32_t GetLength(const WCHAR_T* Source);
 	uint32_t GetLength(const char* Source);
 	

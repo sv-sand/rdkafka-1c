@@ -1,22 +1,18 @@
 #include "ErrorHandler.h"
 
-ErrorHandler::ErrorHandler(Loger* Loger)
-{
+ErrorHandler::ErrorHandler(Loger* Loger) {
     loger = Loger;
 }
 
-bool ErrorHandler::Error()
-{
+bool ErrorHandler::Error() {
     return error;
 }
 
-std::string ErrorHandler::ErrorDescription()
-{
+std::string ErrorHandler::ErrorDescription() {
     return errorDescription;
 }
 
-void ErrorHandler::Set(std::string ErrorDescription)
-{
+void ErrorHandler::Set(std::string ErrorDescription) {
     error = true;
     errorDescription = ErrorDescription;
 
@@ -24,8 +20,7 @@ void ErrorHandler::Set(std::string ErrorDescription)
         loger->Error(errorDescription);
 }
 
-void ErrorHandler::Clear()
-{
+void ErrorHandler::Clear() {
     error = false;
     errorDescription = "";
 }

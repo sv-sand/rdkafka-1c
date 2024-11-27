@@ -1,7 +1,6 @@
 #include "strings.h"
 
-uint32_t Strings::GetLength(const WCHAR_T* Source)
-{
+uint32_t Strings::GetLength(const WCHAR_T* Source) {
     uint32_t length = 0;
     WCHAR_T* ptr = (WCHAR_T*)Source;
 
@@ -11,8 +10,7 @@ uint32_t Strings::GetLength(const WCHAR_T* Source)
     return length;
 }
 
-uint32_t Strings::GetLength(const char* Source)
-{
+uint32_t Strings::GetLength(const char* Source) {
     uint32_t length = 0;
 
 #ifdef __linux__
@@ -29,8 +27,7 @@ uint32_t Strings::GetLength(const char* Source)
 // String conversion without memory allocation
 // You must allcate memory before for Dest before invoke this methods
 
-uint32_t Strings::ConvertToShortWchar(WCHAR_T** Dest, const wchar_t* Source)
-{
+uint32_t Strings::ConvertToShortWchar(WCHAR_T** Dest, const wchar_t* Source) {
     uint32_t length = wcslen(Source);
     WCHAR_T* tmpShort = *Dest;
     wchar_t* tmpWChar = (wchar_t*)Source;
@@ -60,8 +57,7 @@ uint32_t Strings::ConvertToShortWchar(WCHAR_T** Dest, const wchar_t* Source)
     return length;
 }
 
-uint32_t Strings::ConvertToWchar(wchar_t** Dest, const WCHAR_T* Source)
-{
+uint32_t Strings::ConvertToWchar(wchar_t** Dest, const WCHAR_T* Source) {
     uint32_t length = GetLength(Source);
     wchar_t* tmpWChar = *Dest;
     WCHAR_T* tmpShort = (WCHAR_T*)Source;
@@ -79,8 +75,7 @@ uint32_t Strings::ConvertToWchar(wchar_t** Dest, const WCHAR_T* Source)
 // String conversion with memory allocation
 // You must delete result array after invoke this methods (delete [])
 
-wchar_t* Strings::ToWchar(const char* Source)
-{
+wchar_t* Strings::ToWchar(const char* Source) {
     // In multibyte string UTF-8 one symbol can occupy 1,2,4 bytes
     uint32_t length = GetLength(Source);
     wchar_t* dest = new wchar_t[length + 1];
@@ -92,8 +87,7 @@ wchar_t* Strings::ToWchar(const char* Source)
     return dest;
 }
 
-wchar_t* Strings::ToWchar(const WCHAR_T* Source)
-{
+wchar_t* Strings::ToWchar(const WCHAR_T* Source) {
     uint32_t length = GetLength(Source);
     wchar_t* dest = new wchar_t[length + 1];
 
@@ -102,8 +96,7 @@ wchar_t* Strings::ToWchar(const WCHAR_T* Source)
     return dest;
 }
 
-WCHAR_T* Strings::ToShortWchar(const char* Source)
-{
+WCHAR_T* Strings::ToShortWchar(const char* Source) {
     // In multibyte string UTF-8 one symbol can occupy 1,2,4 bytes
     wchar_t* wcstr = ToWchar(Source);
     WCHAR_T* dest = ToShortWchar(wcstr);
@@ -113,8 +106,7 @@ WCHAR_T* Strings::ToShortWchar(const char* Source)
     return dest;
 }
 
-WCHAR_T* Strings::ToShortWchar(const wchar_t* Source)
-{
+WCHAR_T* Strings::ToShortWchar(const wchar_t* Source) {
     uint32_t length = wcslen(Source);
     WCHAR_T* dest = new WCHAR_T[length + 1];
 
@@ -123,8 +115,7 @@ WCHAR_T* Strings::ToShortWchar(const wchar_t* Source)
     return dest;
 }
 
-char* Strings::ToChar(const wchar_t* Source)
-{
+char* Strings::ToChar(const wchar_t* Source) {
     uint32_t length = wcslen(Source);
     
     // In multibyte string UTF-8 one symbol can occupy 1,2,4 bytes
@@ -141,8 +132,7 @@ char* Strings::ToChar(const wchar_t* Source)
 /////////////////////////////////////////////////////////////////////////////
 //  Date & Time
 
-const std::string Strings::TimeStamp()
-{
+const std::string Strings::TimeStamp() {
     std::chrono::time_point now = std::chrono::high_resolution_clock::now();
     tm current{};
 
@@ -163,8 +153,7 @@ const std::string Strings::TimeStamp()
     return stream.str();
 }
 
-std::string Strings::ToString(int64_t timestamp)
-{
+std::string Strings::ToString(int64_t timestamp) {
     int milliseconds = timestamp % 1000;
     time_t seconds = (time_t)(timestamp / 1000);
     
@@ -182,26 +171,22 @@ std::string Strings::ToString(int64_t timestamp)
 /////////////////////////////////////////////////////////////////////////////
 //  Other methods
 
-std::string Strings::NewUuid()
-{
+std::string Strings::NewUuid() {
     boost::uuids::uuid uuid = boost::uuids::random_generator()();
     return boost::uuids::to_string(uuid);
 }
 
-std::multimap<std::string, std::string> Strings::SplitString(std::string String, std::string PairSeporator, std::string KeyValueSeporator)
-{
+std::multimap<std::string, std::string> Strings::SplitString(std::string String, std::string PairSeporator, std::string KeyValueSeporator) {
     std::multimap<std::string, std::string> map;
 
     std::vector<std::string> pairs;
     boost::algorithm::split(pairs, String, boost::is_any_of(PairSeporator));
 
-    for (auto& pair : pairs)
-    {
+    for (auto& pair : pairs) {
         std::vector<std::string> keyValue;
         boost::algorithm::split(keyValue, pair, boost::is_any_of(KeyValueSeporator));
 
-        if (keyValue.size() == 2)
-        {
+        if (keyValue.size() == 2) {
             std::string key = keyValue[0];
             std::string value = keyValue[1];
             boost::algorithm::trim_all(key);
