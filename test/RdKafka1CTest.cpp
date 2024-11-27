@@ -167,7 +167,7 @@ void RdKafka1CTest::InitProducer()
 
 void RdKafka1CTest::Produce()
 {   
-    InitProducer();    
+    InitProducer();
     GenerateNewData();
     ProduceMessage();
     StopProducer();
@@ -178,6 +178,10 @@ void RdKafka1CTest::ProduceMessage()
     bool sendResult = rdk1c->Produce(TOPIC, DATA, KEY, HEADERS, 0, "");
     ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     ASSERT_TRUE(sendResult);
+
+    bool flushResult = rdk1c->Flush();
+    ASSERT_STREQ(error->ErrorDescription().c_str(), "");
+    ASSERT_TRUE(flushResult);
 }
 
 void RdKafka1CTest::StopProducer()

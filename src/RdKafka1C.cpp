@@ -114,7 +114,7 @@ bool RdKafka1C::Produce(std::string Topic, std::string Message, std::string Key,
     loger->Debug("Message payload (" + std::to_string(Message.length()) + "): " + Message);
 
     const std::string* opaque = config->GetDeliveryReport()->AddEmptyStatus(MessageId);
-    loger->Debug("Message id: " + *opaque);
+    loger->Debug("Message id: " + MessageId);
 
     RdKafka::ErrorCode errorCode;
 
