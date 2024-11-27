@@ -1,5 +1,7 @@
 #include "ConfigBuilder.h"
 
+std::string CoverPaswords(std::string name, std::string value);
+
 ConfigBuilder::ConfigBuilder(Loger* Loger, ErrorHandler* Error) {
     loger = Loger;
     error = Error;
@@ -102,6 +104,12 @@ DeliveryReport* ConfigBuilder::GetDeliveryReport() {
 /////////////////////////////////////////////////////////////////////////////
 // Support methods
 
+std::string CoverPaswords(std::string name, std::string value) {
+    if (name == "sasl.password")
+        return "***";
+    return value;
+}
+
 void ConfigBuilder::LogConfigDump() {
     std::list<std::string>* dump = conf->dump();
     std::stringstream stream;
@@ -109,16 +117,21 @@ void ConfigBuilder::LogConfigDump() {
     stream << "Config dump:";
 
     for (auto it = dump->begin(); it != dump->end();) {
-        stream << std::endl << *it << " = ";
+        std::string name = std::string(*it);
         it++;
-        stream << *it;
+        std::string value = std::string(*it);
         it++;
+
+        if (name == "sasl.password")
+            value = "***";
+
+        stream << std::endl << name << " = " << CoverPaswords(name, value);        
     }
     loger->Debug(stream.str());
 }
 
 bool ConfigBuilder::SetProperty(std::string Name, std::string Value) {
-    loger->Debug("Set config property '" + Name + "' in value '" + Value + "'");
+    loger->Debug("Set config property '" + Name + "' in value '" + CoverPaswords(Name, Value) + "'");
 
     std::string errorDescription;
     RdKafka::Conf::ConfResult result = conf->set(Name, Value, errorDescription);
