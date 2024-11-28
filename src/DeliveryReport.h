@@ -5,23 +5,23 @@
 #include <librdkafka/rdkafkacpp.h>
 #include "Loger.h"
 
-class DeliveryReport : public RdKafka::DeliveryReportCb 
-{
+class DeliveryReport : public RdKafka::DeliveryReportCb  {
 
-public:
-	DeliveryReport(Loger* Loger);
+	public:
+		DeliveryReport(Loger* Loger);
 
-	void dr_cb(RdKafka::Message& Message);
+		void dr_cb(RdKafka::Message& Message);
 
-	void ClearStatuses();
-	RdKafka::Message::Status GetStatus(std::string Uuid);
-	int CountUndelivered();
+		void ClearStatuses();
+		const std::string* AddEmptyStatus(std::string MessageId);
+		RdKafka::Message::Status GetStatus(std::string MessageId);
+		int CountUndelivered();
 
-private:
-	Loger* loger;
-	std::map<std::string, RdKafka::Message::Status> statuses;
+	private:
+		Loger* loger;
+		std::map<std::string, RdKafka::Message::Status> statuses;
 
-	void LogMessageStatus(RdKafka::Message& Message);
-	void AddMessageStatus(RdKafka::Message& Message);
-
+		void LogMessageStatus(RdKafka::Message& Message);
+		std::string ExtractMessageId(RdKafka::Message& Message);
+		void SetStatus(std::string MessageId, RdKafka::Message::Status Status);
 };

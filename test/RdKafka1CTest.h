@@ -8,10 +8,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include "RdKafka1C.h"
-
-#ifdef WIN32
-#pragma setlocale("ru-RU")
-#endif
+#include "utils.h"
 
 class RdKafka1CTest : public testing::Test 
 {
@@ -22,6 +19,8 @@ class RdKafka1CTest : public testing::Test
 
     protected:
 
+        Loger* loger;
+        ErrorHandler* error;
         RdKafka1C* rdk1c;
 
         void CreateRdKafka1C();
@@ -48,7 +47,7 @@ class RdKafka1CTest : public testing::Test
         void SetProperty(std::string name, std::string value);
         
     private:
-
+        
         const std::string BROKERS = "localhost";
         const std::string TOPIC = "test";
         const std::string CONSUMER_GROUP_ID = "testgroup";

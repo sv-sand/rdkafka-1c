@@ -30,26 +30,30 @@ static const wchar_t *g_MethodNames[] = {
 
     // Producer
     L"InitProducer",
+    L"StartProduce",
     L"Produce",
-    L"StartProduceAsynch",
-    L"ProduceAsynch",
     L"Flush",
     L"StopProducer",
     L"ProducerQueueLen",
-
+    L"CountUndeliveredMessages",
+    L"MessageStatus",
+    
     // Consumer
     L"InitConsumer",
     L"Consume",
-    L"GetMessageData",
-    L"GetMessageMetadata",
+    L"MessageData",
+    L"MessageMetadata",
     L"StopConsumer",
     L"AssignPartition",
-    L"CommittedOffset",
     L"CommitOffset",
-    L"Subscription",
+    L"ChangeOffset",
+    L"CommittedOffset",
+    L"ConsumerQueueLen",
+
+    // Subscriptions
     L"Subscribe",
     L"Unsubscribe",
-    L"ConsumerQueueLen",
+    L"Subscription",
 };
 static const wchar_t *g_MethodNamesRu[] = {
     
@@ -60,13 +64,14 @@ static const wchar_t *g_MethodNamesRu[] = {
     
     // Продюсер
     L"ИнициализироватьПродюсера",
+    L"НачатьОтправку",
     L"Отправить",
-    L"НачатьАсинхроннуюОтправку",
-    L"ОтправитьАсинхронно",
     L"Слить",
     L"ОстановитьПродюсера",
     L"ОчередьСообщенийПродюсера",
-
+    L"КоличествоНеДоставленныхСообщений",
+    L"СтатусСообщения",
+    
     // Консюмер
     L"ИнициализироватьКонсюмера",
     L"Прочитать",
@@ -74,12 +79,15 @@ static const wchar_t *g_MethodNamesRu[] = {
     L"МетаданныеСообщения",
     L"ОстановитьКонсюмера",
     L"УстановитьПартицию",
-    L"ПолучитьОффсет",
     L"ЗафиксироватьОффсет",
-    L"Подписки",
+    L"ИзменитьОффсет",
+    L"ПолучитьОффсет",
+    L"ОчередьСообщенийКонсюмера",
+
+    // Подписки
     L"Подписаться",
     L"Отписаться",
-    L"ОчередьСообщенийКонсюмера",
+    L"Подписки",
 };
 
 static const WCHAR_T g_kClassNames[] = u"RdKafka1C"; //"|OtherClass1|OtherClass2";
@@ -91,8 +99,7 @@ static std::u16string s_names(g_kClassNames);
 /////////////////////////////////////////////////////////////////////////////
 // IComponentBase
 
-long GetClassObject(const WCHAR_T* wsName, IComponentBase** pInterface)
-{
+long GetClassObject(const WCHAR_T* wsName, IComponentBase** pInterface) {
     if(!*pInterface)
     {
         *pInterface= new CAddInNative;
@@ -101,19 +108,16 @@ long GetClassObject(const WCHAR_T* wsName, IComponentBase** pInterface)
     return 0;
 }
 
-AppCapabilities SetPlatformCapabilities(const AppCapabilities capabilities)
-{
+AppCapabilities SetPlatformCapabilities(const AppCapabilities capabilities) {
     g_capabilities = capabilities;
     return eAppCapabilitiesLast;
 }
 
-AttachType GetAttachType()
-{
+AttachType GetAttachType() {
     return eCanAttachAny;
 }
 
-long DestroyObject(IComponentBase** pIntf)
-{
+long DestroyObject(IComponentBase** pIntf) {
     if(!*pIntf)
         return -1;
 
@@ -122,16 +126,14 @@ long DestroyObject(IComponentBase** pIntf)
     return 0;
 }
 
-const WCHAR_T* GetClassNames()
-{
+const WCHAR_T* GetClassNames() {
     return s_names.c_str();
 } 
 
 /////////////////////////////////////////////////////////////////////////////
 // CAddInNative
 
-CAddInNative::CAddInNative()
-{
+CAddInNative::CAddInNative() {
 
 #ifdef WIN32
     SetLocale("ru-RU");
@@ -139,41 +141,37 @@ CAddInNative::CAddInNative()
     SetLocale("ru_RU");
 #endif
     
-    error = false;
-    errorDescription = "";
-    
     m_iMemory = nullptr; 
     m_iConnect = nullptr;
+    loger = nullptr;
+    error = nullptr;
     rdk1c = nullptr;
 }
 
-CAddInNative::~CAddInNative()
-{
-    delete rdk1c;
+CAddInNative::~CAddInNative() {
+    delete_pointer(rdk1c);
+    delete_pointer(error);
+    delete_pointer(loger);
 }
 
-bool CAddInNative::Init(void* pConnection)
-{ 
-    rdk1c = new RdKafka1C();
-
+bool CAddInNative::Init(void* pConnection) {
+    loger = new Loger(); 
+    error = new ErrorHandler(loger); 
+    rdk1c = new RdKafka1C(loger, error);
     m_iConnect = (IAddInDefBase*)pConnection;
     return m_iConnect != nullptr;
 }
 
-long CAddInNative::GetInfo()
-{ 
+long CAddInNative::GetInfo() {
     // Component should put supported component technology version 
     // This component supports 2.0 version
     return 2000; 
 }
 
-void CAddInNative::Done()
-{
-    
+void CAddInNative::Done() {
 }
 
-bool CAddInNative::setMemManager(void* mem)
-{
+bool CAddInNative::setMemManager(void* mem) {
     m_iMemory = (IMemoryManager*)mem;
     return m_iMemory != 0;
 }
@@ -181,20 +179,17 @@ bool CAddInNative::setMemManager(void* mem)
 /////////////////////////////////////////////////////////////////////////////
 // ILanguageExtenderBase
 
-bool CAddInNative::RegisterExtensionAs(WCHAR_T** wsExtensionName)
-{ 
+bool CAddInNative::RegisterExtensionAs(WCHAR_T** wsExtensionName) {
     ToShortWchar(wsExtensionName, EXTENSION_NAME);
     return true;
 }
 
-long CAddInNative::GetNProps()
-{ 
+long CAddInNative::GetNProps() {
     // You may delete next lines and add your own implementation code here
     return ePropLast;
 }
 
-long CAddInNative::FindProp(const WCHAR_T* wsPropName)
-{ 
+long CAddInNative::FindProp(const WCHAR_T* wsPropName) {
     long plPropNum = -1;
     wchar_t* propName = Strings::ToWchar(wsPropName);
     plPropNum = findName(g_PropNames, propName, ePropLast);
@@ -207,24 +202,22 @@ long CAddInNative::FindProp(const WCHAR_T* wsPropName)
     return plPropNum;
 }
 
-const WCHAR_T* CAddInNative::GetPropName(long lPropNum, long lPropAlias)
-{ 
+const WCHAR_T* CAddInNative::GetPropName(long lPropNum, long lPropAlias) {
     if (lPropNum >= ePropLast)
         return NULL;
 
     wchar_t *wsCurrentName = nullptr;
     WCHAR_T *wsPropName = nullptr;
     
-    switch(lPropAlias)
-    {
-    case 0: // First language
-        wsCurrentName = (wchar_t*)g_PropNames[lPropNum];
-        break;
-    case 1: // Second language
-        wsCurrentName = (wchar_t*)g_PropNamesRu[lPropNum];
-        break;
-    default:
-        return NULL;
+    switch(lPropAlias) {
+        case 0: // First language
+            wsCurrentName = (wchar_t*)g_PropNames[lPropNum];
+            break;
+        case 1: // Second language
+            wsCurrentName = (wchar_t*)g_PropNamesRu[lPropNum];
+            break;
+        default:
+            return NULL;
     }
     
     ToShortWchar(&wsPropName, wsCurrentName);
@@ -232,55 +225,48 @@ const WCHAR_T* CAddInNative::GetPropName(long lPropNum, long lPropAlias)
     return wsPropName;
 }
 
-bool CAddInNative::GetPropVal(const long lPropNum, tVariant* pvarPropVal)
-{ 
-    ClearError();
-    
-    switch(lPropNum)
-    {
-    case ePropComponentVersion:
-        SetVariant(pvarPropVal, COMPONENT_VERSION);
-        return true;
+bool CAddInNative::GetPropVal(const long lPropNum, tVariant* pvarPropVal) {
+        
+    switch(lPropNum) {
+        case ePropComponentVersion:
+            SetVariant(pvarPropVal, COMPONENT_VERSION);
+            return true;
 
-    case ePropRdKafkaVersion:
-        SetVariant(pvarPropVal, rdk1c->RdKafkaVersion());
-        return true;
+        case ePropRdKafkaVersion:
+            SetVariant(pvarPropVal, rdk1c->RdKafkaVersion());
+            return true;
 
-    case ePropLocale:
-        SetVariant(pvarPropVal, currentLocale);
-        return true;
+        case ePropLocale:
+            SetVariant(pvarPropVal, currentLocale);
+            return true;
 
-    case ePropLogFile:
-        SetVariant(pvarPropVal, rdk1c->GetCurrentLogFile());
-        return true;
+        case ePropLogFile:
+            SetVariant(pvarPropVal, GetLogFile());
+            return true;
 
-    case ePropLogLevel:
-        SetVariant(pvarPropVal, GetLogLevel());
-        return true;
+        case ePropLogLevel:
+            SetVariant(pvarPropVal, GetLogLevel());
+            return true;
 
-    case ePropOperationTimeout:
-        SetVariant(pvarPropVal, rdk1c->OperationTimeout);
-        return true;
+        case ePropOperationTimeout:
+            SetVariant(pvarPropVal, rdk1c->OperationTimeout);
+            return true;
 
-    case ePropError:
-        SetVariant(pvarPropVal, Error());
-        return true;
+        case ePropError:
+            SetVariant(pvarPropVal, error->Error());
+            return true;
 
-    case ePropErrorDescription:
-        SetVariant(pvarPropVal, ErrorDescription());
-        return true;
-
+        case ePropErrorDescription:
+            SetVariant(pvarPropVal, error->ErrorDescription());
+            return true;
     }
 
     return false;
 }
 
-bool CAddInNative::SetPropVal(const long lPropNum, tVariant *varPropVal)
-{ 
-    ClearError();
+bool CAddInNative::SetPropVal(const long lPropNum, tVariant *varPropVal) {
 
-    switch (lPropNum)
-    {
+    switch (lPropNum) {
         case ePropLocale:
             return SetLocale(varPropVal);
 
@@ -295,44 +281,40 @@ bool CAddInNative::SetPropVal(const long lPropNum, tVariant *varPropVal)
     return false;
 }
 
-bool CAddInNative::IsPropReadable(const long lPropNum)
-{ 
-    switch(lPropNum)
-    { 
-    case ePropComponentVersion:
-    case ePropRdKafkaVersion:
-    case ePropLocale:
-    case ePropLogFile:
-    case ePropLogLevel:
-    case ePropOperationTimeout:
-    case ePropError:
-    case ePropErrorDescription:
-        return true;
+bool CAddInNative::IsPropReadable(const long lPropNum) {
+    
+    switch(lPropNum){ 
+        case ePropComponentVersion:
+        case ePropRdKafkaVersion:
+        case ePropLocale:
+        case ePropLogFile:
+        case ePropLogLevel:
+        case ePropOperationTimeout:
+        case ePropError:
+        case ePropErrorDescription:
+            return true;
     }
 
     return false;
 }
 
-bool CAddInNative::IsPropWritable(const long lPropNum)
-{
-    switch (lPropNum)
-    {
-    case ePropLocale:
-    case ePropLogLevel:
-    case ePropOperationTimeout:
-        return true;
+bool CAddInNative::IsPropWritable(const long lPropNum) {
+    
+    switch (lPropNum) {
+        case ePropLocale:
+        case ePropLogLevel:
+        case ePropOperationTimeout:
+            return true;
     }
 
     return false;
 }
 
-long CAddInNative::GetNMethods()
-{ 
+long CAddInNative::GetNMethods() {
     return eMethLast;
 }
 
-long CAddInNative::FindMethod(const WCHAR_T* wsMethodName)
-{ 
+long CAddInNative::FindMethod(const WCHAR_T* wsMethodName) {
     long plMethodNum = -1;
     wchar_t* name = Strings::ToWchar(wsMethodName);
 
@@ -346,24 +328,22 @@ long CAddInNative::FindMethod(const WCHAR_T* wsMethodName)
     return plMethodNum;
 }
 
-const WCHAR_T* CAddInNative::GetMethodName(const long lMethodNum, const long lMethodAlias)
-{ 
+const WCHAR_T* CAddInNative::GetMethodName(const long lMethodNum, const long lMethodAlias) {
     if (lMethodNum >= eMethLast)
         return NULL;
 
     WCHAR_T* wsMethodName = nullptr;
     wchar_t *wsCurrentName = nullptr;
     
-    switch(lMethodAlias)
-    {
-    case 0: // First language
-        wsCurrentName = (wchar_t*)g_MethodNames[lMethodNum];
-        break;
-    case 1: // Second language
-        wsCurrentName = (wchar_t*)g_MethodNamesRu[lMethodNum];
-        break;
-    default: 
-        return 0;
+    switch(lMethodAlias) {
+        case 0: // First language
+            wsCurrentName = (wchar_t*)g_MethodNames[lMethodNum];
+            break;
+        case 1: // Second language
+            wsCurrentName = (wchar_t*)g_MethodNamesRu[lMethodNum];
+            break;
+        default: 
+            return 0;
     }
 
     ToShortWchar(&wsMethodName, wsCurrentName);
@@ -371,198 +351,181 @@ const WCHAR_T* CAddInNative::GetMethodName(const long lMethodNum, const long lMe
     return wsMethodName;
 }
 
-long CAddInNative::GetNParams(const long lMethodNum)
-{ 
+long CAddInNative::GetNParams(const long lMethodNum) {
     switch(lMethodNum)
     { 
         case eMethStartLogging:
             return 2;
         case eMethSetConfigProperty:
             return 2;
-        case eMethInitProducer:
-            return 1;
         case eMethProduce:
-            return 5;
-        case eMethProduceAsynch:
-            return 5;
-        case eMethInitConsumer:
-            return 2;
+            return 6;
         case eMethSubscribe:
             return 1;
         case eMethAssignPartition:
             return 2;
         case eMethCommittedOffset:
             return 2;
-        case eMethCommitOffset:
+        case eMethChangeOffset:
             return 3;
-        
-    }
-    
+        case eMethMessageStatus:
+            return 1;        
+    }    
     return 0;
 }
 
-bool CAddInNative::GetParamDefValue(const long lMethodNum, const long lParamNum, tVariant *pvarParamDefValue)
-{ 
-    switch (lMethodNum)
-    {
-    case eMethProduce:
-        switch (lParamNum)
-        {
-        case 2:
-            SetVariant(pvarParamDefValue, "");
-            return true;
-        case 3:
-            SetVariant(pvarParamDefValue, "");
-            return true;
-        case 4:
-            SetVariant(pvarParamDefValue, -1);
-            return true;
-        }
-        break;
-
-    case eMethProduceAsynch:
-        switch (lParamNum)
-        {
-        case 2:
-            SetVariant(pvarParamDefValue, "");
-            return true;
-        case 3:
-            SetVariant(pvarParamDefValue, "");
-            return true;
-        case 4:
-            SetVariant(pvarParamDefValue, -1);
-            return true;
-        }
-        break;
+bool CAddInNative::GetParamDefValue(const long lMethodNum, const long lParamNum, tVariant *pvarParamDefValue) {
+    
+    switch (lMethodNum) {
+        case eMethProduce:
+            switch (lParamNum) {
+                case 2:
+                    SetVariant(pvarParamDefValue, "");
+                    return true;
+                case 3:
+                    SetVariant(pvarParamDefValue, "");
+                    return true;
+                case 4:
+                    SetVariant(pvarParamDefValue, -1);
+                    return true;
+                case 5:
+                    SetVariant(pvarParamDefValue, "");
+                    return true;
+            }
+            break;
     }   
     
     TV_VT(pvarParamDefValue) = VTYPE_EMPTY;
     return false;
 } 
 
-bool CAddInNative::HasRetVal(const long lMethodNum)
-{ 
+bool CAddInNative::HasRetVal(const long lMethodNum) {
     switch(lMethodNum)
     { 
-        case eMethStartLogging:
-        
-        case eMethInitProducer:
-        case eMethProduce:
-        case eMethStartProduceAsynch:
-        case eMethProduceAsynch:
-        case eMethFlush:
-        case eMethStopProducer:
+        // Producer
+        case eMethCountUndeliveredMessages:
+        case eMethMessageStatus:
         case eMethProducerQueueLen:
-        
-        case eMethInitConsumer:
+
+        // Consumer
         case eMethConsume:
-        case eMethGetMessageData:
-        case eMethGetMessageMetadata:
-        case eMethAssignPartition:
+        case eMethMessageData:
+        case eMethMessageMetadata:
         case eMethCommittedOffset:
         case eMethCommitOffset:
-        case eMethStopConsumer:
-        case eMethSubscription:
-        case eMethSubscribe:
-        case eMethUnsubscribe:
+        case eMethChangeOffset:
         case eMethConsumerQueueLen:
+        
+        // Subscriptions
+        case eMethSubscription:
             return true;
     }
-
     return false;
 }
 
-bool CAddInNative::CallAsProc(const long lMethodNum, tVariant* paParams, const long lSizeArray)
-{ 
-    ClearError();
+bool CAddInNative::CallAsProc(const long lMethodNum, tVariant* paParams, const long lSizeArray) {
+    error->Clear();
 
-    switch (lMethodNum)
-    {
-    case eMethStopLogging:        
-        return StopLogging();
+    switch (lMethodNum) {
 
-    case eMethSetConfigProperty:        
-        return SetConfigProperty(paParams, lSizeArray);
+        // Logging
+        case eMethStartLogging:
+            return StartLogging(paParams, lSizeArray);
+
+        case eMethStopLogging:        
+            return StopLogging(paParams, lSizeArray);
+
+        case eMethSetConfigProperty:        
+            return SetConfigProperty(paParams, lSizeArray);
+
+        // Producer
+        case eMethInitProducer:
+            return InitProducer(paParams, lSizeArray);
+
+        case eMethStopProducer:
+            return StopProducer(paParams, lSizeArray);
+
+        case eMethStartProduce:
+            return StartProduce(paParams, lSizeArray);
+        
+        case eMethProduce:
+            return Produce(paParams, lSizeArray);
+
+        case eMethFlush:
+            return Flush(paParams, lSizeArray);
+
+        // Consumer
+        case eMethInitConsumer:
+            return InitConsumer(paParams, lSizeArray);
+
+        case eMethStopConsumer:
+            return StopConsumer(paParams, lSizeArray);
+
+        case eMethAssignPartition:
+            return AssignPartition(paParams, lSizeArray);
+
+        // Subscription
+        case eMethSubscribe:
+            return Subscribe(paParams, lSizeArray);
+
+        case eMethUnsubscribe:
+            return Unsubscribe(paParams, lSizeArray);
+
+
     }
 
     return false;
 }
 
-bool CAddInNative::CallAsFunc(const long lMethodNum, tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{ 
-    ClearError();
+bool CAddInNative::CallAsFunc(const long lMethodNum, tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
+    error->Clear();
 
-    switch(lMethodNum)
-    {
-    case eMethStartLogging:        
-        return StartLogging(pvarRetValue, paParams, lSizeArray);
+    switch(lMethodNum) {
 
-    case eMethInitProducer:        
-        return InitProducer(pvarRetValue, paParams, lSizeArray);
+        // Producer
+        case eMethProducerQueueLen:
+            return ProducerQueueLen(pvarRetValue, paParams, lSizeArray);
+        
+        case eMethCountUndeliveredMessages:
+            return CountUndeliveredMessages(pvarRetValue, paParams, lSizeArray);
 
-    case eMethProduce:
-        return Produce(pvarRetValue, paParams, lSizeArray);
+        case eMethMessageStatus:
+            return MessageStatus(pvarRetValue, paParams, lSizeArray);
 
-    case eMethStartProduceAsynch:
-        return StartProduceAsynch(pvarRetValue, paParams, lSizeArray);
+        // Consumer
+        case eMethConsume:
+            return Consume(pvarRetValue, paParams, lSizeArray);
 
-    case eMethProduceAsynch:
-        return ProduceAsynch(pvarRetValue, paParams, lSizeArray);
+        case eMethMessageData:
+            return MessageData(pvarRetValue, paParams, lSizeArray);
 
-    case eMethFlush:
-        return Flush(pvarRetValue, paParams, lSizeArray);
+        case eMethMessageMetadata:
+            return MessageMetadata(pvarRetValue, paParams, lSizeArray);
 
-    case eMethStopProducer:
-        return StopProducer(pvarRetValue, paParams, lSizeArray);
+        case eMethCommittedOffset:
+            return CommittedOffset(pvarRetValue, paParams, lSizeArray);
 
-    case eMethInitConsumer:
-        return InitConsumer(pvarRetValue, paParams, lSizeArray);
+        case eMethCommitOffset:
+            return CommitOffset(pvarRetValue, paParams, lSizeArray);
 
-    case eMethConsume:
-        return Consume(pvarRetValue, paParams, lSizeArray);
+        case eMethChangeOffset:
+            return ChangeOffset(pvarRetValue, paParams, lSizeArray);
 
-    case eMethGetMessageData:
-        return GetMessageData(pvarRetValue, paParams, lSizeArray);
+        case eMethConsumerQueueLen:
+            return ConsumerQueueLen(pvarRetValue, paParams, lSizeArray);
 
-    case eMethGetMessageMetadata:
-        return GetMessageMetadata(pvarRetValue, paParams, lSizeArray);
-
-    case eMethAssignPartition:
-        return AssignPartition(pvarRetValue, paParams, lSizeArray);
-
-    case eMethCommittedOffset:
-        return CommittedOffset(pvarRetValue, paParams, lSizeArray);
-
-    case eMethCommitOffset:
-        return CommitOffset(pvarRetValue, paParams, lSizeArray);
-
-    case eMethStopConsumer:
-        return StopConsumer(pvarRetValue, paParams, lSizeArray);
-
-    case eMethSubscription:
-        return Subscription(pvarRetValue, paParams, lSizeArray);
-
-    case eMethSubscribe:
-        return Subscribe(pvarRetValue, paParams, lSizeArray);
-
-    case eMethUnsubscribe:
-        return Unsubscribe(pvarRetValue, paParams, lSizeArray);
-
-    case eMethProducerQueueLen:
-        return ProducerQueueLen(pvarRetValue, paParams, lSizeArray);
-
-    case eMethConsumerQueueLen:
-        return ConsumerQueueLen(pvarRetValue, paParams, lSizeArray);
-
+        // Subscriptions
+        case eMethSubscription:
+            return Subscription(pvarRetValue, paParams, lSizeArray);
     }
+
     return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // UserLanguageBase
 
-void ADDIN_API CAddInNative::SetUserInterfaceLanguageCode(const WCHAR_T * lang)
-{
+void ADDIN_API CAddInNative::SetUserInterfaceLanguageCode(const WCHAR_T * lang) {
     wchar_t* wstr = Strings::ToWchar(lang);
     char* cstr = Strings::ToChar(wstr);
 
@@ -579,23 +542,20 @@ void ADDIN_API CAddInNative::SetUserInterfaceLanguageCode(const WCHAR_T * lang)
 /////////////////////////////////////////////////////////////////////////////
 // LocaleBase
 
-void ADDIN_API CAddInNative::SetLocale(const WCHAR_T* locale)
-{
+void ADDIN_API CAddInNative::SetLocale(const WCHAR_T* locale) {
     // Deprecated its.1c.ru/db/metod8dev#content:3221:hdoc 
 }
 
-bool CAddInNative::SetLocale(tVariant* varPropVal)
-{
+bool CAddInNative::SetLocale(tVariant* varPropVal) {
     std::string localeName = ToString(varPropVal);
     
-    if (Error())
+    if (error->Error())
         return true;    
 
     return SetLocale(localeName);
 }
 
-bool CAddInNative::SetLocale(std::string LocaleName)
-{
+bool CAddInNative::SetLocale(std::string LocaleName) {
     char * cstr = std::setlocale(LC_ALL, LocaleName.c_str());
 
     if (cstr)
@@ -604,13 +564,10 @@ bool CAddInNative::SetLocale(std::string LocaleName)
     return true;
 }
 
-long CAddInNative::findName(const wchar_t* names[], const wchar_t* name, const uint32_t size) const
-{
+long CAddInNative::findName(const wchar_t* names[], const wchar_t* name, const uint32_t size) const {
     long ret = -1;
-    for (uint32_t i = 0; i < size; i++)
-    {
-        if (!wcscmp(names[i], name))
-        {
+    for (uint32_t i = 0; i < size; i++) {
+        if (!wcscmp(names[i], name)) {
             ret = i;
             break;
         }
@@ -619,95 +576,68 @@ long CAddInNative::findName(const wchar_t* names[], const wchar_t* name, const u
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// Error handling
-
-bool CAddInNative::Error()
-{
-    return error || rdk1c->Error();
-}
-
-bool CAddInNative::NoError()
-{
-    return !Error();
-}
-
-std::string CAddInNative::ErrorDescription()
-{
-    if (!errorDescription.empty())
-        return errorDescription;
-
-    return rdk1c->ErrorDescription();
-}
-
-void CAddInNative::ClearError()
-{
-    error = false;
-    errorDescription = "";
-}
-
-void CAddInNative::SetError(std::string Description)
-{
-    error = true;
-    errorDescription = Description;
-}
-
-/////////////////////////////////////////////////////////////////////////////
 // Logging
 
-bool CAddInNative::StartLogging(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    if (lSizeArray != 2 || !paParams)
-    {
-        SetError("Invalid parameters");
+bool CAddInNative::StartLogging(tVariant* paParams, const long lSizeArray) {
+    error->Clear(); 
+    
+    if (lSizeArray != 2 || !paParams) {
+        error->Set("Invalid parameters");
         return false;
     }
 
     std::string fileName = ToString(&paParams[0]);
-    std::string level = ToString(&paParams[1]);
+    std::string levelName = ToString(&paParams[1]);
+    Loger::Levels level = StringToLogLevel(levelName);
 
-    if (Error())
-    {
-        SetVariant(pvarRetValue, false); 
+    if (error->Error()) 
         return true;
-    }
-
-    Loger::Levels logLevel = StringToLogLevel(level);
-    if (Error())
-    {
-        SetVariant(pvarRetValue, false);
-        return true;
-    }
     
-    auto result = rdk1c->StartLogging(fileName, logLevel);
-    SetVariant(pvarRetValue, result);
+    loger->level = level;
+    std::string errorDescription;    
+    bool result = loger->Init(fileName, errorDescription);
+    if (result)
+        loger->Info("Start loging");
+    else
+        error->Set("Failed to init loger: " + errorDescription);
 
     return true;
 }
 
-bool CAddInNative::StopLogging()
-{
-    rdk1c->StopLogging();
+bool CAddInNative::StopLogging(tVariant* paParams, const long lSizeArray) {
+    loger->Info("Stop logging");
+    error->Clear();
+    
+    loger->level = Loger::Levels::NONE;
     return true;
 }
 
-bool CAddInNative::SetLogLevel(tVariant* varPropVal)
-{
+bool CAddInNative::SetLogLevel(tVariant* varPropVal) {
+    loger->Info("Set loger level");
+    error->Clear();
+
     std::string level = ToString(varPropVal);
     
-    if (Error())
+    if (error->Error())
         return true;    
 
     Loger::Levels logLevel = StringToLogLevel(level);
-    if (Error())
+    if (error->Error())
         return true;
 
-    rdk1c->SetLogerLevel(logLevel);
+    loger->level = logLevel;    
 
     return true;
 }
 
-Loger::Levels CAddInNative::StringToLogLevel(std::string String)
-{
+std::string CAddInNative::GetLogFile() {
+    loger->Info("Get current log file");
+    error->Clear();
+
+    return loger->GetLogFile();
+}
+
+Loger::Levels CAddInNative::StringToLogLevel(std::string String) {
     Loger::Levels Level = Loger::Levels::NONE;
     
     if (String == "none")
@@ -722,16 +652,18 @@ Loger::Levels CAddInNative::StringToLogLevel(std::string String)
         Level = Loger::Levels::ERRORS;
     else
     {
-        SetError("Faled to convert value '" + String + "' to log level. Valid values: none, debug, info, warn, error");
+        error->Set("Faled to convert value '" + String + "' to log level. Valid values: none, debug, info, warn, error");
         return Level;
     }
 
     return Level;
 }
 
-std::string CAddInNative::GetLogLevel()
-{
-    switch (rdk1c->GetLogerLevel())
+std::string CAddInNative::GetLogLevel() {
+    loger->Info("Get loger level");
+    error->Clear();
+    
+    switch (loger->level)
     {
     case Loger::Levels::NONE:
         return "none";
@@ -751,18 +683,16 @@ std::string CAddInNative::GetLogLevel()
 /////////////////////////////////////////////////////////////////////////////
 // General action
 
-bool CAddInNative::SetConfigProperty(tVariant* paParams, const long lSizeArray)
-{
-    if (lSizeArray != 2 || !paParams )
-    {
-        SetError("Invalid parameters");
+bool CAddInNative::SetConfigProperty(tVariant* paParams, const long lSizeArray) {
+    if (lSizeArray != 2 || !paParams ) {
+        error->Set("Invalid parameters");
         return false;
     }
     
     std::string paramName = ToString(&paParams[0]);
     std::string paramValue = ToString(&paParams[1]);
 
-    if (Error())
+    if (error->Error())
         return true;
 
     rdk1c->SetConfigProperty(paramName, paramValue);
@@ -770,184 +700,170 @@ bool CAddInNative::SetConfigProperty(tVariant* paParams, const long lSizeArray)
     return true;
 }
 
-bool CAddInNative::InitProducer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    if (lSizeArray != 1 || !paParams)
-    {
-        SetError("Invalid parameters");
-        return false;
-    }
+/////////////////////////////////////////////////////////////////////////////
+// Producer
 
-    std::string brokers = ToString(&paParams[0]);
-        
-    if (Error())
-    {
-        SetVariant(pvarRetValue, false);
-        return true;
-    }
-
-    auto result = rdk1c->InitProducer(brokers);
-    SetVariant(pvarRetValue, result);
-
+bool CAddInNative::InitProducer(tVariant* paParams, const long lSizeArray) {
+    rdk1c->InitProducer();
     return true;
 }
 
-bool CAddInNative::Produce(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    if (lSizeArray != 5 || !paParams)
-    {
-        SetError("Invalid parameters");
+bool CAddInNative::StartProduce(tVariant* paParams, const long lSizeArray) {
+    rdk1c->StartProduce();
+    return true;
+}
+
+bool CAddInNative::Produce(tVariant* paParams, const long lSizeArray) {
+    if (lSizeArray != 6 || !paParams) {
+        error->Set("Invalid parameters");
         return false;
     }
 
     std::string topic = ToString(&paParams[0]);
     std::string message = ToString(&paParams[1]);
-    std::string key = ToString(&paParams[2]);
-    std::string headers = ToString(&paParams[3]);
+    std::string key = ToString(&paParams[2], "");
+    std::string headers = ToString(&paParams[3], "");
     int partition = ToInt(&paParams[4], -1);
-
-    if (Error())
-    {
-        SetVariant(pvarRetValue, false);
+    std::string messageId = ToString(&paParams[5], "");
+    
+    if (error->Error())
         return true;
-    }
 
-    auto result = rdk1c->Produce(topic, message, key, headers, partition);
-    SetVariant(pvarRetValue, result);
-
+    rdk1c->Produce(topic, message, key, headers, partition, messageId);
+    
     return true;
 }
 
-bool CAddInNative::StartProduceAsynch(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    auto result = rdk1c->StartProduceAsynch();
-    SetVariant(pvarRetValue, result);
-
+bool CAddInNative::Flush(tVariant* paParams, const long lSizeArray) {
+    rdk1c->Flush();
     return true;
 }
 
-bool CAddInNative::ProduceAsynch(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    if (lSizeArray != 5 || !paParams)
-    {
-        SetError("Invalid parameters");
+bool CAddInNative::StopProducer(tVariant* paParams, const long lSizeArray) {
+    rdk1c->StopProduser();
+    return true;
+}
+
+bool CAddInNative::ProducerQueueLen(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
+    auto result = rdk1c->ProducerQueueLen();
+    SetVariant(pvarRetValue, result);
+    return true;
+}
+
+bool CAddInNative::CountUndeliveredMessages(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
+    auto result = rdk1c->CountUndeliveredMessages();
+    SetVariant(pvarRetValue, result);
+    return true;
+}
+
+bool CAddInNative::MessageStatus(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
+    if (lSizeArray != 1 || !paParams ) {
+        error->Set("Invalid parameters");
         return false;
     }
-
-    std::string topic = ToString(&paParams[0]);
-    std::string message = ToString(&paParams[1]);
-    std::string key = ToString(&paParams[2]);
-    std::string headers = ToString(&paParams[3]);
-    int partition = ToInt(&paParams[4], -1);
-
-    if (Error())
-    {
-        SetVariant(pvarRetValue, false);
+    
+    std::string messageId = ToString(&paParams[0]);
+    
+    if (error->Error())
         return true;
-    }
 
-    auto result = rdk1c->ProduceAsynch(topic, message, key, headers, partition);
+    auto result = rdk1c->MessageStatus(messageId);
     SetVariant(pvarRetValue, result);
 
     return true;
 }
 
-bool CAddInNative::Flush(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    auto result = rdk1c->Flush();
-    SetVariant(pvarRetValue, result);
+/////////////////////////////////////////////////////////////////////////////
+// Consumer
 
+bool CAddInNative::InitConsumer(tVariant* paParams, const long lSizeArray) {
+    rdk1c->InitConsumer();
     return true;
 }
 
-bool CAddInNative::StopProducer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    auto result = rdk1c->StopProduser();
-    SetVariant(pvarRetValue, result);
-
-    return true;
-}
-
-bool CAddInNative::InitConsumer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    if (lSizeArray != 2 || !paParams)
-    {
-        SetError("Invalid parameters");
-        return false;
-    }
-
-    std::string brokers = ToString(&paParams[0]);
-    std::string groupId = ToString(&paParams[1]);
-
-    if (Error())
-    {
-        SetVariant(pvarRetValue, false);
-        return true;
-    }
-
-    bool result = rdk1c->InitConsumer(brokers, groupId);
-    SetVariant(pvarRetValue, result);
-
-    return true;
-}
-
-bool CAddInNative::Consume(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
+bool CAddInNative::Consume(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
     auto result = rdk1c->Consume();
     SetVariant(pvarRetValue, result);
     return true;
 }
 
-bool CAddInNative::GetMessageData(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    auto result = rdk1c->GetMessageData();
+bool CAddInNative::MessageData(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
+    auto result = rdk1c->MessageData();
     SetVariant(pvarRetValue, result);
     return true;
 }
 
-bool CAddInNative::GetMessageMetadata(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    auto result = rdk1c->GetMessageMetadata();
+bool CAddInNative::MessageMetadata(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
+    auto result = rdk1c->MessageMetadata();
     SetVariant(pvarRetValue, result);
     return true;
 }
 
-bool CAddInNative::AssignPartition(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    if (lSizeArray != 2 || !paParams)
-    {
-        SetError("Invalid parameters");
+bool CAddInNative::StopConsumer(tVariant* paParams, const long lSizeArray) {
+    rdk1c->StopConsumer();
+    return true;
+}
+
+bool CAddInNative::ConsumerQueueLen(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
+    auto result = rdk1c->ConsumerQueueLen();
+    SetVariant(pvarRetValue, result);
+    return true;
+}
+
+bool CAddInNative::AssignPartition(tVariant* paParams, const long lSizeArray) {
+    if (lSizeArray != 2 || !paParams) {
+        error->Set("Invalid parameters");
+        return false;
+    }
+
+    std::string topic = ToString(&paParams[0]);
+    int partition = ToInt(&paParams[1], 0);
+
+    if (error->Error()) 
+        return true;
+
+    rdk1c->AssignPartition(topic, partition);
+
+    return true;
+}
+
+bool CAddInNative::CommitOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
+    auto result = rdk1c->CommitOffset();
+    SetVariant(pvarRetValue, result);
+    return true;
+}
+
+bool CAddInNative::ChangeOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
+    if (lSizeArray != 3 || !paParams) {
+        error->Set("Invalid parameters");
         return false;
     }
 
     std::string topic = ToString(&paParams[0]);
     int partition = ToInt(&paParams[1]);
+    int64_t offset = ToLongInt(&paParams[2]);
 
-    if (Error())
-    {
+    if (error->Error()) {
         SetVariant(pvarRetValue, false);
         return true;
     }
 
-    auto result = rdk1c->AssignPartition(topic, partition);
+    auto result = rdk1c->ChangeOffset(topic, partition, offset);
     SetVariant(pvarRetValue, result);
 
     return true;
 }
 
-bool CAddInNative::CommittedOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    if (lSizeArray != 2 || !paParams)
-    {
-        SetError("Invalid parameters");
+bool CAddInNative::CommittedOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
+    if (lSizeArray != 2 || !paParams) {
+        error->Set("Invalid parameters");
         return false;
     }
 
     std::string topic = ToString(&paParams[0]);
     int partition = ToInt(&paParams[1]);
-    
-    if (Error())
-    {
+
+    if (error->Error()) {
         SetVariant(pvarRetValue, false);
         return true;
     }
@@ -958,100 +874,47 @@ bool CAddInNative::CommittedOffset(tVariant* pvarRetValue, tVariant* paParams, c
     return true;
 }
 
-bool CAddInNative::CommitOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    if (lSizeArray != 3 || !paParams)
-    {
-        SetError("Invalid parameters");
-        return false;
-    }
+/////////////////////////////////////////////////////////////////////////////
+// Subscription
 
-    std::string topic = ToString(&paParams[0]);
-    int partition = ToInt(&paParams[1]);
-    int64_t offset = ToLongInt(&paParams[2]);
-
-    if (Error())
-    {
-        SetVariant(pvarRetValue, false);
-        return true;
-    }
-
-    auto result = rdk1c->CommitOffset(topic, partition, offset);
-    SetVariant(pvarRetValue, result);
-
-    return true;
-}
-
-bool CAddInNative::StopConsumer(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    auto result = rdk1c->StopConsumer();
-    SetVariant(pvarRetValue, result);
-    return true;
-}
-
-bool CAddInNative::Subscription(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
+bool CAddInNative::Subscription(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
     auto result = rdk1c->Subscription();
     SetVariant(pvarRetValue, result);
     return true;
 }
 
-bool CAddInNative::Subscribe(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    if (lSizeArray != 1 || !paParams)
-    {
-        SetError("Invalid parameters");
+bool CAddInNative::Subscribe(tVariant* paParams, const long lSizeArray) {
+    if (lSizeArray != 1 || !paParams) {
+        error->Set("Invalid parameters");
         return false;
     }
 
     std::string topic = ToString(&paParams[0]);
 
-    if (Error())
-    {
-        SetVariant(pvarRetValue, false);
+    if (error->Error()) 
         return true;
-    }
 
-    bool result = rdk1c->Subscribe(topic);
-    SetVariant(pvarRetValue, result);
-
+    rdk1c->Subscribe(topic);
+    
     return true;
 }
 
-bool CAddInNative::Unsubscribe(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    auto result = rdk1c->Unsubscribe();
-    SetVariant(pvarRetValue, result);
-    return true;
-}
-
-bool CAddInNative::ProducerQueueLen(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    auto result = rdk1c->ProducerQueueLen();
-    SetVariant(pvarRetValue, result);
-    return true;
-}
-
-bool CAddInNative::ConsumerQueueLen(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray)
-{
-    auto result = rdk1c->ConsumerQueueLen();
-    SetVariant(pvarRetValue, result);
+bool CAddInNative::Unsubscribe(tVariant* paParams, const long lSizeArray) {
+    rdk1c->Unsubscribe();
     return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // Variant conversion
 
-int CAddInNative::ToInt(tVariant* Source, int defaultValue)
-{
+int CAddInNative::ToInt(tVariant* Source, int defaultValue) {
     if (TV_VT(Source) == VTYPE_EMPTY)
         return defaultValue;
 
     return ToInt(Source);
 }
 
-int CAddInNative::ToInt(tVariant* Source)
-{
+int CAddInNative::ToInt(tVariant* Source) {
     if (TV_VT(Source) != VTYPE_I2
         && TV_VT(Source) != VTYPE_I4
         && TV_VT(Source) != VTYPE_UI1
@@ -1060,17 +923,15 @@ int CAddInNative::ToInt(tVariant* Source)
         && TV_VT(Source) != VTYPE_I8
         && TV_VT(Source) != VTYPE_UI8
         && TV_VT(Source) != VTYPE_INT
-        && TV_VT(Source) != VTYPE_UINT)
-    {
-        SetError("Value isn't integer");
+        && TV_VT(Source) != VTYPE_UINT) {
+        error->Set("Value isn't integer");
         return 0;
     }
 
     return TV_INT(Source);
 }
 
-int64_t CAddInNative::ToLongInt(tVariant* Source)
-{
+int64_t CAddInNative::ToLongInt(tVariant* Source) {
     if (TV_VT(Source) != VTYPE_I2
         && TV_VT(Source) != VTYPE_I4
         && TV_VT(Source) != VTYPE_UI1
@@ -1079,20 +940,24 @@ int64_t CAddInNative::ToLongInt(tVariant* Source)
         && TV_VT(Source) != VTYPE_I8
         && TV_VT(Source) != VTYPE_UI8
         && TV_VT(Source) != VTYPE_INT
-        && TV_VT(Source) != VTYPE_UINT)
-    {
-        SetError("Value isn't integer");
+        && TV_VT(Source) != VTYPE_UINT) {
+        error->Set("Value isn't integer");
         return 0;
     }
 
     return TV_INT(Source);
 }
 
-std::string CAddInNative::ToString(tVariant* Source)
-{
-    if (TV_VT(Source) != VTYPE_PWSTR)
-    {
-        SetError("Value isn't string");
+std::string CAddInNative::ToString(tVariant* Source, std::string defaultValue) {
+    if (TV_VT(Source) == VTYPE_EMPTY)
+        return defaultValue;
+
+    return ToString(Source);
+}
+
+std::string CAddInNative::ToString(tVariant* Source) {
+    if (TV_VT(Source) != VTYPE_PWSTR) {
+        error->Set("Value isn't string");
         return "";
     }
 
@@ -1107,42 +972,36 @@ std::string CAddInNative::ToString(tVariant* Source)
     return result;
 }
 
-void CAddInNative::SetVariant(tVariant* Dest, std::string Source)
-{
+void CAddInNative::SetVariant(tVariant* Dest, std::string Source) {
     TV_VT(Dest) = VTYPE_PWSTR;
 
     ToShortWchar(&TV_WSTR(Dest), Source.c_str());
     Dest->wstrLen = Strings::GetLength(TV_WSTR(Dest));
 }
 
-void CAddInNative::SetVariant(tVariant* Dest, const wchar_t* Source)
-{
+void CAddInNative::SetVariant(tVariant* Dest, const wchar_t* Source) {
     TV_VT(Dest) = VTYPE_PWSTR;
     ToShortWchar(&TV_WSTR(Dest), Source);
     Dest->wstrLen = Strings::GetLength(TV_WSTR(Dest));
 }
 
-void CAddInNative::SetVariant(tVariant* Dest, const char* Source)
-{
+void CAddInNative::SetVariant(tVariant* Dest, const char* Source) {
     TV_VT(Dest) = VTYPE_PWSTR;
     ToShortWchar(&TV_WSTR(Dest), Source);
     Dest->wstrLen = Strings::GetLength(TV_WSTR(Dest));
 }
 
-void CAddInNative::SetVariant(tVariant* Dest, int Source)
-{
+void CAddInNative::SetVariant(tVariant* Dest, int Source) {
     TV_VT(Dest) = VTYPE_INT;
     TV_INT(Dest) = Source;
 }
 
-void CAddInNative::SetVariant(tVariant* Dest, int64_t Source)
-{
+void CAddInNative::SetVariant(tVariant* Dest, int64_t Source) {
     TV_VT(Dest) = VTYPE_INT;
     TV_INT(Dest) = Source;
 }
 
-void CAddInNative::SetVariant(tVariant* Dest, bool Source)
-{
+void CAddInNative::SetVariant(tVariant* Dest, bool Source) {
     TV_VT(Dest) = VTYPE_BOOL;
     TV_BOOL(Dest) = Source;
 }
@@ -1150,15 +1009,13 @@ void CAddInNative::SetVariant(tVariant* Dest, bool Source)
 // Conversion with memory allocation
 // Platform 1C control memory via garbage collector m_iMemory
 
-void CAddInNative::ToShortWchar(WCHAR_T** Dest, const char* Source)
-{
+void CAddInNative::ToShortWchar(WCHAR_T** Dest, const char* Source) {
     wchar_t* wcstr = Strings::ToWchar(Source);
     ToShortWchar(Dest, wcstr);
     delete[] wcstr;
 }
 
-void CAddInNative::ToShortWchar(WCHAR_T** Dest, const wchar_t* Source)
-{
+void CAddInNative::ToShortWchar(WCHAR_T** Dest, const wchar_t* Source) {
     if (!m_iMemory)
         return;
     
@@ -1170,4 +1027,3 @@ void CAddInNative::ToShortWchar(WCHAR_T** Dest, const wchar_t* Source)
 
     Strings::ConvertToShortWchar(Dest, Source);
 }
-
