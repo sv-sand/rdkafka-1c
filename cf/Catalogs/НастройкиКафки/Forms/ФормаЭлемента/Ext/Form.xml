@@ -93,6 +93,12 @@
 			<ContextMenu name="ТопикКонтекстноеМеню" id="23"/>
 			<ExtendedTooltip name="ТопикРасширеннаяПодсказка" id="24"/>
 		</InputField>
+		<InputField name="ТаймаутОпераций" id="61">
+			<DataPath>Объект.ТаймаутОпераций</DataPath>
+			<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+			<ContextMenu name="ТаймаутОперацийКонтекстноеМеню" id="62"/>
+			<ExtendedTooltip name="ТаймаутОперацийРасширеннаяПодсказка" id="63"/>
+		</InputField>
 		<UsualGroup name="ГруппаФлаги" id="30">
 			<Title>
 				<v8:item>
