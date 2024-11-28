@@ -64,10 +64,6 @@ bool ConfigBuilder::BuildConsumerConfig() {
     if (!SetProperty("client.id", "rdkafka-1c"))
         return false;
 
-    if (rebalance)
-        if (!SetProperty("enable.partition.eof", "true"))
-            return false;
-
     loger->Debug("Set user props");
     for (const auto& [key, value] : properties)
         if (!SetProperty(key, value))
