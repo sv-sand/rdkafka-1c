@@ -25,9 +25,9 @@ docker-compose up -d
 Веб интерфейс открывается в браузере, на странице [http://localhost:8082/](http://localhost:8082/). При первом входе Kefka UI предложит ввести настройки кластера, вводим:
 
 ```
-Cluster name: localhost
-Bootstrap Servers: PLAINTEXT://kafka
-Port: 19092
+Cluster name: kafka-broker
+Bootstrap Servers: kafka-broker
+Port: 9093
 ```
 
 Тестовый топик добавится при запуске тестов.
