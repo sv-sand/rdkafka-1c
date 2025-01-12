@@ -331,6 +331,7 @@ std::string RdKafka1C::MessageData() {
         return "";
 
     loger->Debug("Convert to string");
+    
     const char* cstr = static_cast<const char*> (message->payload());
     std::string result = std::string(cstr, message->len());
 
