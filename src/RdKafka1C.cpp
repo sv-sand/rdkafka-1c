@@ -176,29 +176,27 @@ bool RdKafka1C::Flush() {
 
 bool RdKafka1C::SetHeaders(RdKafka::Headers* Headers, std::string HeadersString) {
     loger->Info("Fill headers");
-
-    boost::algorithm::trim_all(HeadersString);
     if (HeadersString.empty()) {
         loger->Info("Headers are empty");
         return true;
     }
 
-    std::stringstream stream(HeadersString);
-    boost::property_tree::ptree tree;
-    try {
-        boost::property_tree::read_json(stream, tree);
+    loger->Debug("Trim headers string");
+    boost::algorithm::trim_all(HeadersString);
 
-        for (boost::property_tree::ptree::value_type& item : tree) {
-            loger->Debug("Create header " + item.first + ":" + item.second.data());
-            Headers->add(item.first, item.second.data());
-        }
+    loger->Debug("Split headers string");
+    std::multimap map = Strings::SplitString(HeadersString, ";", ":");
+    if (map.size() == 0) {
+        error->Set("Can't parse string headers " + HeadersString);
+        return false;
+    }
 
+    loger->Debug("Fill headers collection");
+    for (auto& [key, value] : map) {
+        loger->Debug("Create header " + key + ":" + value);
+        Headers->add(key, value);
     }
-    catch (boost::property_tree::json_parser_error e) {
-        error->Set("Failed to deserialize message headers: " + e.message());
-        return "";
-    }
-                
+
     return true;
 }
 
@@ -355,21 +353,11 @@ std::string RdKafka1C::MessageHeaders() {
     }
 
     loger->Debug("Get headers");
-    boost::property_tree::ptree tree;
+    std::stringstream stream;
     if (message->headers())
         for (auto header : message->headers()->get_all())
-            tree.put(header.key(), std::string(header.value_string(), header.value_size()));
+            stream << header.key() << ":" << header.value_string() << ";";
     
-    loger->Debug("Serialize headers tree to JSON");
-    std::stringstream stream;
-    try {
-        boost::property_tree::write_json(stream, tree, true);
-    }
-    catch (boost::property_tree::json_parser_error e) {
-        error->Set("Failed to serialize message headers: " + e.message());
-        return "";
-    }
-
     return stream.str();
 }
 
