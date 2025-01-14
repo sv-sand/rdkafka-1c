@@ -104,15 +104,6 @@ bool RdKafka1C::Produce(std::string Topic, std::string Message, std::string Key,
     if (Partition < 0)
         Partition = RdKafka::Topic::PARTITION_UA;
 
-    loger->Debug("Prepare data for transmit");
-    const char* key = Key.c_str();    
-    size_t keySize = strlen(key);
-    loger->Debug("Message key (" + std::to_string(Key.length()) + "): " + Key);
-    
-    const char* payload = Message.c_str();
-    size_t payloadSize = strlen(payload);
-    loger->Debug("Message payload (" + std::to_string(Message.length()) + "): " + Message);
-
     const std::string* opaque = config->GetDeliveryReport()->AddEmptyStatus(MessageId);
     loger->Debug("Message id: " + MessageId);
 
@@ -131,8 +122,8 @@ bool RdKafka1C::Produce(std::string Topic, std::string Message, std::string Key,
 
         errorCode = producer->produce(
             Topic, Partition, RdKafka::Producer::RK_MSG_COPY,
-            const_cast<char*>(payload), payloadSize,
-            key, keySize,
+            const_cast<char*> (Message.c_str()), Message.size(),
+            Key.c_str(), Key.size(),
             0, headers, (void*)opaque);
 
         if (errorCode == RdKafka::ERR__QUEUE_FULL) {
@@ -185,22 +176,27 @@ bool RdKafka1C::Flush() {
 
 bool RdKafka1C::SetHeaders(RdKafka::Headers* Headers, std::string HeadersString) {
     loger->Info("Fill headers");
+
+    boost::algorithm::trim_all(HeadersString);
     if (HeadersString.empty()) {
         loger->Info("Headers are empty");
         return true;
     }
 
-    loger->Debug("Split headers string");
-    std::multimap map = Strings::SplitString(HeadersString, ";", ":");
-    if (map.size() == 0) {
-        error->Set("Can't parse string headers " + HeadersString);
-        return false;
-    }
+    std::stringstream stream(HeadersString);
+    boost::property_tree::ptree tree;
+    try {
+        boost::property_tree::read_json(stream, tree);
 
-    loger->Debug("Fill headers collection");
-    for (auto& [key, value] : map) {
-        loger->Debug("Create header " + key + ":" + value);
-        Headers->add(key, value);
+        for (boost::property_tree::ptree::value_type& item : tree) {
+            loger->Debug("Create header " + item.first + ":" + item.second.data());
+            Headers->add(item.first, item.second.data());
+        }
+
+    }
+    catch (boost::property_tree::json_parser_error e) {
+        error->Set("Failed to deserialize message headers: " + e.message());
+        return "";
     }
                 
     return true;
@@ -327,15 +323,54 @@ std::string RdKafka1C::MessageData() {
     }
 
     loger->Debug("Get payload");
-    if (!message->payload())
+    if (!message->payload() || !message->len())
         return "";
 
-    loger->Debug("Convert to string");
-    
-    const char* cstr = static_cast<const char*> (message->payload());
-    std::string result = std::string(cstr, message->len());
+    return std::string(static_cast<char*> (message->payload()), message->len());
+}
 
-    return result;
+std::string RdKafka1C::MessageKey() {
+    loger->Info("Get message key");
+    error->Clear();
+
+    if (!message) {
+        error->Set("Failed to read message key: there are no messages");
+        return "";
+    }
+
+    loger->Debug("Get key");
+    if (!message->key() || !message->key_len())
+        return "";
+
+    return std::string(*message->key());
+}
+
+std::string RdKafka1C::MessageHeaders() {
+    loger->Info("Get message headers");
+    error->Clear();
+
+    if (!message) {
+        error->Set("Failed to read message headers: there are no messages");
+        return "";
+    }
+
+    loger->Debug("Get headers");
+    boost::property_tree::ptree tree;
+    if (message->headers())
+        for (auto header : message->headers()->get_all())
+            tree.put(header.key(), std::string(header.value_string(), header.value_size()));
+    
+    loger->Debug("Serialize headers tree to JSON");
+    std::stringstream stream;
+    try {
+        boost::property_tree::write_json(stream, tree, true);
+    }
+    catch (boost::property_tree::json_parser_error e) {
+        error->Set("Failed to serialize message headers: " + e.message());
+        return "";
+    }
+
+    return stream.str();
 }
 
 std::string RdKafka1C::MessageMetadata() {
@@ -347,19 +382,6 @@ std::string RdKafka1C::MessageMetadata() {
         return "";
     }
 
-    loger->Debug("Get key");
-    std::string key;
-    if (message->key()) {
-        std::string keyString = *message->key();
-        key = std::string(keyString.c_str());
-    }
-
-    loger->Debug("Get headers");
-    boost::property_tree::ptree treeHeaders;    
-    if (message->headers())
-        for (auto header : message->headers()->get_all())
-            treeHeaders.put(header.key(), std::string(header.value_string(), header.value_size()));
-
     loger->Debug("Build property tree");
     boost::property_tree::ptree tree;
 
@@ -370,13 +392,11 @@ std::string RdKafka1C::MessageMetadata() {
     tree.put("topic", message->topic_name());
     tree.put("partition", message->partition());
     tree.put("offset", message->offset());
-    tree.put("key", key);
     tree.put("length", (unsigned int) message->len());
     tree.put("status", status);
     tree.put("timestamp", Strings::ToString(message->timestamp().timestamp));
     tree.put("error_code", message->err());
     tree.put("error_description", message->errstr());    
-    tree.put_child("headers", treeHeaders);
     
     loger->Debug("Serialize property tree to JSON");
     std::stringstream stream;

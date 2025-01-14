@@ -4,3 +4,7 @@
     delete ptr;\
     ptr = nullptr;\
 }
+
+#define delete_array(ptr) {\
+    delete [] ptr;\
+}
