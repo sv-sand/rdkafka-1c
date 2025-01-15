@@ -14,7 +14,10 @@
 			<IncludeInCommandInterface>true</IncludeInCommandInterface>
 			<UseOneCommand>false</UseOneCommand>
 			<Explanation/>
-			<Picture/>
+			<Picture>
+				<xr:Ref>CommonPicture.Кафка</xr:Ref>
+				<xr:LoadTransparent>true</xr:LoadTransparent>
+			</Picture>
 			<Content>
 				<xr:Item xsi:type="xr:MDObjectRef">Catalog.НастройкиКафки</xr:Item>
 				<xr:Item xsi:type="xr:MDObjectRef">DataProcessor.КафкаКоннектор</xr:Item>
