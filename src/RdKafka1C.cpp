@@ -370,31 +370,20 @@ std::string RdKafka1C::MessageMetadata() {
         return "";
     }
 
-    loger->Debug("Build property tree");
-    boost::property_tree::ptree tree;
-
-    loger->Debug("Get status");
-    std::string status = MessageStatusToString(message->status());
-    
-    tree.put("broker", message->broker_id());
-    tree.put("topic", message->topic_name());
-    tree.put("partition", message->partition());
-    tree.put("offset", message->offset());
-    tree.put("length", (unsigned int) message->len());
-    tree.put("status", status);
-    tree.put("timestamp", Strings::ToString(message->timestamp().timestamp));
-    tree.put("error_code", message->err());
-    tree.put("error_description", message->errstr());    
-    
-    loger->Debug("Serialize property tree to JSON");
+    loger->Debug("Build JSON");
+    // The fastest way is manual building JSON
     std::stringstream stream;
-    try {
-        boost::property_tree::write_json(stream, tree, true);
-    }
-    catch(boost::property_tree::json_parser_error e) {
-        error->Set("Failed to serialize message metadata: " + e.message());
-        return "";
-    }
+    stream << "{"
+        << "\"broker\":\"" << message->broker_id() << "\","
+        << "\"topic\":\"" << message->topic_name() << "\","
+        << "\"partition\":\"" << message->partition() << "\","
+        << "\"offset\":\"" << message->offset() << "\","
+        << "\"length\":\"" << message->len() << "\","
+        << "\"status\":\"" << MessageStatusToString(message->status()) << "\","
+        << "\"timestamp\":\"" << message->timestamp().timestamp << "\","
+        << "\"error_code\":\"" << message->err() << "\","
+        << "\"error_description\":\"" << message->errstr() << "\""
+        << "}";
 
     return stream.str();
 }
