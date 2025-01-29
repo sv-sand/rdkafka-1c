@@ -13,12 +13,12 @@ uint32_t Strings::GetLength(const WCHAR_T* Source) {
 uint32_t Strings::GetLength(const char* Source) {
     uint32_t length = 0;
 
-#ifdef __linux__
-    for (size_t size = 0; size < strlen(Source); length++) 
-        size += mblen(&Source[size], MB_CUR_MAX);
-#else
+#ifdef WIN32
     length = _mbstrlen(Source);
-#endif //__linux__
+#else
+    for (size_t size = 0; size < strlen(Source); length++)
+        size += mblen(&Source[size], MB_CUR_MAX);
+#endif
 
     return length;
 }
@@ -29,11 +29,11 @@ uint32_t Strings::GetLength(const char* Source) {
 
 uint32_t Strings::ConvertToShortWchar(WCHAR_T** Dest, const wchar_t* Source) {
     uint32_t length = wcslen(Source);
+    size_t size = sizeof(WCHAR_T) * (length + 1);
     WCHAR_T* tmpShort = *Dest;
     wchar_t* tmpWChar = (wchar_t*)Source;
-    size_t size = sizeof(WCHAR_T) * (length + 1);
-
-    std::memset(*Dest, 0, size);
+    
+    memset(*Dest, 0, size);
 
 #ifdef __linux__
     size_t succeed = (size_t)-1;
@@ -42,12 +42,11 @@ uint32_t Strings::ConvertToShortWchar(WCHAR_T** Dest, const wchar_t* Source) {
 
     const char* fromCode = sizeof(wchar_t) == 2 ? "UTF-16" : "UTF-32";
     iconv_t cd = iconv_open("UTF-16LE", fromCode);
-    if (cd != (iconv_t)-1)
-    {
+    if (cd != (iconv_t)-1) {
         succeed = iconv(cd, (char**)&tmpWChar, &f, (char**)&tmpShort, &t);
         iconv_close(cd);
         if (succeed != (size_t)-1)
-            return (uint32_t)succeed;
+            return (uint32_t) succeed;
     }
 #endif //__linux__
 
@@ -59,11 +58,11 @@ uint32_t Strings::ConvertToShortWchar(WCHAR_T** Dest, const wchar_t* Source) {
 
 uint32_t Strings::ConvertToWchar(wchar_t** Dest, const WCHAR_T* Source) {
     uint32_t length = GetLength(Source);
+    size_t size = sizeof(wchar_t) * (length + 1);
     wchar_t* tmpWChar = *Dest;
     WCHAR_T* tmpShort = (WCHAR_T*)Source;
-    size_t size = sizeof(wchar_t) * (length + 1);
-
-    std::memset(*Dest, 0, size);
+    
+    memset(*Dest, 0, size);
 
     for (size_t i = length; i; --i, ++tmpWChar, ++tmpShort)
         *tmpWChar = (wchar_t)*tmpShort;
