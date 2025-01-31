@@ -42,6 +42,8 @@ static const wchar_t *g_MethodNames[] = {
     L"InitConsumer",
     L"Consume",
     L"MessageData",
+    L"MessageKey",
+    L"MessageHeaders",
     L"MessageMetadata",
     L"StopConsumer",
     L"AssignPartition",
@@ -76,6 +78,8 @@ static const wchar_t *g_MethodNamesRu[] = {
     L"ИнициализироватьКонсюмера",
     L"Прочитать",
     L"ДанныеСообщения",
+    L"КлючСообщения",
+    L"ЗаголовкиСообщения",
     L"МетаданныеСообщения",
     L"ОстановитьКонсюмера",
     L"УстановитьПартицию",
@@ -410,6 +414,8 @@ bool CAddInNative::HasRetVal(const long lMethodNum) {
         // Consumer
         case eMethConsume:
         case eMethMessageData:
+        case eMethMessageKey:
+        case eMethMessageHeaders:
         case eMethMessageMetadata:
         case eMethCommittedOffset:
         case eMethCommitOffset:
@@ -498,6 +504,12 @@ bool CAddInNative::CallAsFunc(const long lMethodNum, tVariant* pvarRetValue, tVa
 
         case eMethMessageData:
             return MessageData(pvarRetValue, paParams, lSizeArray);
+
+        case eMethMessageKey:
+            return MessageKey(pvarRetValue, paParams, lSizeArray);
+
+        case eMethMessageHeaders:
+            return MessageHeaders(pvarRetValue, paParams, lSizeArray);
 
         case eMethMessageMetadata:
             return MessageMetadata(pvarRetValue, paParams, lSizeArray);
@@ -720,9 +732,9 @@ bool CAddInNative::Produce(tVariant* paParams, const long lSizeArray) {
     }
 
     std::string topic = ToString(&paParams[0]);
-    std::string message = ToString(&paParams[1]);
-    std::string key = ToString(&paParams[2], "");
-    std::string headers = ToString(&paParams[3], "");
+    std::string message = ToBinaryString(&paParams[1]);
+    std::string key = ToBinaryString(&paParams[2]);
+    std::string headers = ToBinaryString(&paParams[3]);
     int partition = ToInt(&paParams[4], -1);
     std::string messageId = ToString(&paParams[5], "");
     
@@ -789,7 +801,19 @@ bool CAddInNative::Consume(tVariant* pvarRetValue, tVariant* paParams, const lon
 
 bool CAddInNative::MessageData(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
     auto result = rdk1c->MessageData();
-    SetVariant(pvarRetValue, result);
+    SetVariantBlob(pvarRetValue, result);
+    return true;
+}
+
+bool CAddInNative::MessageKey(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
+    auto result = rdk1c->MessageKey();
+    SetVariantBlob(pvarRetValue, result);
+    return true;
+}
+
+bool CAddInNative::MessageHeaders(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) {
+    auto result = rdk1c->MessageHeaders();
+    SetVariantBlob(pvarRetValue, result);
     return true;
 }
 
@@ -972,6 +996,15 @@ std::string CAddInNative::ToString(tVariant* Source) {
     return result;
 }
 
+std::string CAddInNative::ToBinaryString(tVariant* Source) {
+    if (TV_VT(Source) != VTYPE_BLOB) {
+        error->Set("Value isn't binary string");
+        return "";
+    }
+    
+    return std::string(Source->pstrVal, Source->strLen);
+}
+
 void CAddInNative::SetVariant(tVariant* Dest, std::string Source) {
     TV_VT(Dest) = VTYPE_PWSTR;
 
@@ -1004,6 +1037,19 @@ void CAddInNative::SetVariant(tVariant* Dest, int64_t Source) {
 void CAddInNative::SetVariant(tVariant* Dest, bool Source) {
     TV_VT(Dest) = VTYPE_BOOL;
     TV_BOOL(Dest) = Source;
+}
+
+void CAddInNative::SetVariantBlob(tVariant* Dest, std::string Source) {
+    if (!m_iMemory)
+        return;
+
+    TV_VT(Dest) = VTYPE_BLOB;
+
+    if (!m_iMemory->AllocMemory((void**)(&Dest->pstrVal), Source.length()))
+        return;
+    
+    memcpy(Dest->pstrVal, Source.c_str(), Source.length());
+    Dest->wstrLen = Source.length();
 }
 
 // Conversion with memory allocation

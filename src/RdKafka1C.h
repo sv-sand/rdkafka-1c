@@ -17,7 +17,7 @@
 class RdKafka1C {
     public:
 
-        int OperationTimeout = 10000; // ms
+        int OperationTimeout = 1000; // ms
 
         RdKafka1C(Loger* Loger, ErrorHandler* Error);
         ~RdKafka1C();
@@ -43,6 +43,8 @@ class RdKafka1C {
         bool StopConsumer();
         bool Consume();
         std::string MessageData();
+        std::string MessageKey();
+        std::string MessageHeaders();
         std::string MessageMetadata();
         int64_t CommittedOffset(std::string Topic, int Partition);
         bool AssignPartition(std::string Topic, int Partition);

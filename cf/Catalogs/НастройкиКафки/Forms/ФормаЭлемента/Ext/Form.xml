@@ -93,12 +93,58 @@
 			<ContextMenu name="ТопикКонтекстноеМеню" id="23"/>
 			<ExtendedTooltip name="ТопикРасширеннаяПодсказка" id="24"/>
 		</InputField>
-		<InputField name="ТаймаутОпераций" id="61">
-			<DataPath>Объект.ТаймаутОпераций</DataPath>
-			<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
-			<ContextMenu name="ТаймаутОперацийКонтекстноеМеню" id="62"/>
-			<ExtendedTooltip name="ТаймаутОперацийРасширеннаяПодсказка" id="63"/>
-		</InputField>
+		<UsualGroup name="ГруппаПрочее" id="67">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Группа прочее</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Группа прочее</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Representation>None</Representation>
+			<ShowTitle>false</ShowTitle>
+			<ExtendedTooltip name="ГруппаПрочееРасширеннаяПодсказка" id="68"/>
+			<ChildItems>
+				<InputField name="КодировкаТекста" id="64">
+					<DataPath>Объект.КодировкаТекста</DataPath>
+					<AutoMaxWidth>false</AutoMaxWidth>
+					<MaxWidth>18</MaxWidth>
+					<ListChoiceMode>true</ListChoiceMode>
+					<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+					<ChoiceList>
+						<xr:Item>
+							<xr:Presentation/>
+							<xr:CheckState>0</xr:CheckState>
+							<xr:Value xsi:type="FormChoiceListDesTimeValue">
+								<Presentation/>
+								<Value xsi:type="xs:string">UTF-8</Value>
+							</xr:Value>
+						</xr:Item>
+						<xr:Item>
+							<xr:Presentation/>
+							<xr:CheckState>0</xr:CheckState>
+							<xr:Value xsi:type="FormChoiceListDesTimeValue">
+								<Presentation/>
+								<Value xsi:type="xs:string">windows-1251</Value>
+							</xr:Value>
+						</xr:Item>
+					</ChoiceList>
+					<ContextMenu name="КодировкаТекстаКонтекстноеМеню" id="65"/>
+					<ExtendedTooltip name="КодировкаТекстаРасширеннаяПодсказка" id="66"/>
+				</InputField>
+				<InputField name="ТаймаутОпераций" id="61">
+					<DataPath>Объект.ТаймаутОпераций</DataPath>
+					<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+					<ContextMenu name="ТаймаутОперацийКонтекстноеМеню" id="62"/>
+					<ExtendedTooltip name="ТаймаутОперацийРасширеннаяПодсказка" id="63"/>
+				</InputField>
+			</ChildItems>
+		</UsualGroup>
 		<UsualGroup name="ГруппаФлаги" id="30">
 			<Title>
 				<v8:item>
@@ -177,7 +223,7 @@
 			<Title>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Группа логи</v8:content>
+					<v8:content>Логирование</v8:content>
 				</v8:item>
 			</Title>
 			<ToolTip>
@@ -186,8 +232,7 @@
 					<v8:content>Группа логи</v8:content>
 				</v8:item>
 			</ToolTip>
-			<Representation>None</Representation>
-			<ShowTitle>false</ShowTitle>
+			<Representation>NormalSeparation</Representation>
 			<ExtendedTooltip name="ГруппаЛогиРасширеннаяПодсказка" id="41"/>
 			<ChildItems>
 				<InputField name="УровеньЛогирования" id="35">

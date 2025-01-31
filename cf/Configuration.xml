@@ -261,6 +261,7 @@
 		<ChildObjects>
 			<Language>Русский</Language>
 			<Subsystem>Кафка</Subsystem>
+			<CommonPicture>Кафка</CommonPicture>
 			<CommonModule>ОбщегоНазначения</CommonModule>
 			<Catalog>НастройкиКафки</Catalog>
 			<Catalog>БрокерыКафка</Catalog>

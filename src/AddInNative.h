@@ -62,6 +62,8 @@ class CAddInNative : public IComponentBase {
             eMethInitConsumer,
             eMethConsume,
             eMethMessageData,
+            eMethMessageKey,
+            eMethMessageHeaders,
             eMethMessageMetadata,
             eMethStopConsumer,
             eMethAssignPartition,
@@ -155,6 +157,8 @@ class CAddInNative : public IComponentBase {
         bool StopConsumer(tVariant* paParams, const long lSizeArray);
         bool Consume(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
         bool MessageData(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+        bool MessageKey(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
+        bool MessageHeaders(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
         bool MessageMetadata(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
         bool ConsumerQueueLen(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
         bool AssignPartition(tVariant* paParams, const long lSizeArray);
@@ -173,12 +177,15 @@ class CAddInNative : public IComponentBase {
         int64_t ToLongInt(tVariant* Source);
         std::string ToString(tVariant* Source);
         std::string ToString(tVariant* Source, std::string defaultValue);
+        std::string ToBinaryString(tVariant* Source);
+
         void SetVariant(tVariant* Dest, std::string Source);
         void SetVariant(tVariant* Dest, const wchar_t* Source);
         void SetVariant(tVariant* Dest, const char* Source);
         void SetVariant(tVariant* Dest, int Source);
         void SetVariant(tVariant* Dest, int64_t Source);
         void SetVariant(tVariant* Dest, bool Source);
+        void SetVariantBlob(tVariant* Dest, std::string Source);
         void ToShortWchar(WCHAR_T** Dest, const wchar_t* Source);
         void ToShortWchar(WCHAR_T** Dest, const char* Source);
         

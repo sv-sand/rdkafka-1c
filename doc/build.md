@@ -93,3 +93,11 @@ CMake Error: CMake was unable to find a build program corresponding to "Unix Mak
 ```sh
 sudo apt install make
 ```
+
+### Ошибка "No targets specified and no makefile found"
+
+При сборке на Ubuntu Server может появиться данная ошибка. Необходимо установить генератор makefiles для UNIX.
+
+```sh
+sudo apt install make
+```
