@@ -12,6 +12,8 @@ docker-compose build
 
 2. Запуск контейнеров
 
+Также выполняет сброку контейнеров (можно не выполнять п.1)
+
 ```sh
 docker-compose up -d
 ```
@@ -24,10 +26,10 @@ docker-compose up -d
 
 Веб интерфейс открывается в браузере, на странице [http://localhost:8082/](http://localhost:8082/). При первом входе Kefka UI предложит ввести настройки кластера, вводим:
 
-```
-Cluster name: kafka-broker
-Bootstrap Servers: kafka-broker
-Port: 9093
-```
+> Cluster name: kafka-broker
+>
+> Bootstrap Servers: kafka-broker
+>
+> Port: 9093
 
 Тестовый топик добавится при запуске тестов.
