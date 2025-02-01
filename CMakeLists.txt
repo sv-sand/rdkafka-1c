@@ -13,7 +13,7 @@ endif()
 # DLL 
 project(RdKafka1C) 
 
-find_package(Boost 1.86 CONFIG REQUIRED COMPONENTS filesystem iostreams program_options regex system json)
+find_package(Boost 1.85 CONFIG REQUIRED COMPONENTS filesystem iostreams program_options regex system json)
 find_package(RdKafka CONFIG REQUIRED)
 
 add_definitions(${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
