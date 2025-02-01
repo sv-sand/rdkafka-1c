@@ -446,8 +446,8 @@
 	АдресКомпоненты = ПоместитьВоВременноеХранилище(Макет);
 	
 	// +++ DEBUG
-	//АдресКомпоненты = "/home/sand/work/rdkafka-1c/build/libRdKafka1C.so";
-	АдресКомпоненты = "d:\work\rdkafka-1c\build\Debug\RdKafka1C.dll";
+	//АдресКомпоненты = "/home/sand/work/rdkafka-1c/build/Desktop-Debug/libRdKafka1C.so";
+	//АдресКомпоненты = "d:\work\rdkafka-1c\build\Debug\RdKafka1C.dll";
 	// --- DEBUG
 	
 	Результат = ПодключитьВнешнююКомпоненту(АдресКомпоненты, "Kafka", 
