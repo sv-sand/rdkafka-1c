@@ -35,21 +35,6 @@ uint32_t Strings::ConvertToShortWchar(WCHAR_T** Dest, const wchar_t* Source) {
     
     memset(*Dest, 0, size);
 
-#ifdef __linux__
-    size_t succeed = (size_t)-1;
-    size_t f = (length + 1) * sizeof(wchar_t);
-    size_t t = (length + 1) * sizeof(WCHAR_T);
-
-    const char* fromCode = sizeof(wchar_t) == 2 ? "UTF-16" : "UTF-32";
-    iconv_t cd = iconv_open("UTF-16LE", fromCode);
-    if (cd != (iconv_t)-1) {
-        succeed = iconv(cd, (char**)&tmpWChar, &f, (char**)&tmpShort, &t);
-        iconv_close(cd);
-        if (succeed != (size_t)-1)
-            return (uint32_t) succeed;
-    }
-#endif //__linux__
-
     for (size_t i = length; i; --i, ++tmpWChar, ++tmpShort)
         *tmpShort = (WCHAR_T)*tmpWChar;
 
