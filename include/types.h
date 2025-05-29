@@ -3,6 +3,7 @@
 #define __CON_TYPES_H__
 
 #if defined(_WINDOWS) || defined(WINAPI_FAMILY)
+#define NOMINMAX
 #include <windows.h>
 #endif
 

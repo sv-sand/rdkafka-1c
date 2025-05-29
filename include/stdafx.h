@@ -6,7 +6,8 @@
 #define __STDAFX_H__
 
 #ifdef _WINDOWS
-    #include <windows.h>
+#define NOMINMAX
+#include <windows.h>
 #endif //_WINDOWS
 
 #if defined(__linux__) || defined(__APPLE__)
