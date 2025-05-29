@@ -1,6 +1,5 @@
 @set BUILD_DIR="./build"
-@set VCPKG_DIR=D:\tools\vcpkg
 
-cmake -B %BUILD_DIR% -S . "-DCMAKE_TOOLCHAIN_FILE=%VCPKG_DIR%\scripts\buildsystems\vcpkg.cmake"
+cmake -S . -B %BUILD_DIR% "-DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake"
 
 @pause
