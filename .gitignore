@@ -2,6 +2,7 @@
 /.cache
 /build
 /logs
+/vcpkg_installed
 
 *.so
 *.dll
