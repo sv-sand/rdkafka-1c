@@ -1,0 +1,26 @@
+{
+  "name": "rdkafka-1c",
+  "dependencies": [
+    "boost-property-tree",
+    "boost-json",
+    "boost-uuid",
+    "boost-filesystem",
+    "boost-iostreams",
+    "boost-program-options",
+    "openssl",
+    {
+      "name": "librdkafka",
+      "features": [
+        "ssl"
+      ]
+    },
+    "lz4",
+    "gtest"
+  ],
+  "overrides": [
+    {
+      "name": "librdkafka",
+      "version": "2.10.0#0"
+    }
+  ]
+}
