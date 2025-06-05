@@ -119,7 +119,7 @@ class CAddInNative : public IComponentBase {
     private:
 
         const wchar_t* EXTENSION_NAME = L"RdKafka1C";
-        const wchar_t* COMPONENT_VERSION = L"1.3.0";
+        const wchar_t* COMPONENT_VERSION = L"1.3.1";
         
         std::string currentLocale;
         IAddInDefBase* m_iConnect;

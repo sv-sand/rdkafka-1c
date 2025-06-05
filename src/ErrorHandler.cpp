@@ -1,6 +1,7 @@
 #include "ErrorHandler.h"
 
 ErrorHandler::ErrorHandler(Loger* Loger) {
+    error = false;
     loger = Loger;
 }
 
