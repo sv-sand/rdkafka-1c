@@ -9,7 +9,6 @@ class MemoryManager :
     public IMemoryManager
 {
 public:
-    MemoryManager();
     ~MemoryManager();
 
     bool ADDIN_API AllocMemory(void** pMemory, unsigned long ulCountByte) override;

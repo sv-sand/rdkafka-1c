@@ -264,7 +264,7 @@ AddInNativeTest::AddInNativeTest()
 
 void AddInNativeTest::SetUp()
 {
-	memoryManager = new MemoryManager;
+	memoryManager = new MemoryManager();
 	addInNative = new CAddInNative();
 	addInNative->Init(nullptr);
 	addInNative->setMemManager(memoryManager);

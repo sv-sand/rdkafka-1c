@@ -10,7 +10,7 @@
 #include "RdKafka1C.h"
 #include "utils.h"
 
-class RdKafka1CIntegrtionTest : public testing::Test 
+class RdKafka1CIntegrationTest : public testing::Test 
 {
     public:
 

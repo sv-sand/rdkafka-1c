@@ -1,22 +1,22 @@
-#include "RdKafka1CIntegrtionTest.h"
+#include "RdKafka1CIntegrationTest.h"
 
 std::string GetData();
 
 /////////////////////////////////////////////////////////////////////////////
 // Tests
 
-TEST_F(RdKafka1CIntegrtionTest, Constructor)
+TEST_F(RdKafka1CIntegrationTest, Constructor)
 {
     // Here method tests SetUp() & TearDown()
 }
 
-TEST_F(RdKafka1CIntegrtionTest, InitProducer)
+TEST_F(RdKafka1CIntegrationTest, InitProducer)
 {
     InitProducer();
     StopProducer();
 }
 
-TEST_F(RdKafka1CIntegrtionTest, InitProducer_Twice)
+TEST_F(RdKafka1CIntegrationTest, InitProducer_Twice)
 {
     InitProducer();
     
@@ -29,13 +29,13 @@ TEST_F(RdKafka1CIntegrtionTest, InitProducer_Twice)
     StopProducer();
 }
 
-TEST_F(RdKafka1CIntegrtionTest, InitConsumer)
+TEST_F(RdKafka1CIntegrationTest, InitConsumer)
 {
     InitConsumer();
     StopConsumer();
 }
 
-TEST_F(RdKafka1CIntegrtionTest, InitConsumer_Twice)
+TEST_F(RdKafka1CIntegrationTest, InitConsumer_Twice)
 {
     InitConsumer();
 
@@ -49,14 +49,14 @@ TEST_F(RdKafka1CIntegrtionTest, InitConsumer_Twice)
     StopConsumer();
 }
 
-TEST_F(RdKafka1CIntegrtionTest, ProduceConsume)
+TEST_F(RdKafka1CIntegrationTest, ProduceConsume)
 {
     ConsumeAll();
     Produce();
     Consume();
 }
 
-TEST_F(RdKafka1CIntegrtionTest, ProduceConsumeWithKey)
+TEST_F(RdKafka1CIntegrationTest, ProduceConsumeWithKey)
 {
     SetKey("Key (ключ) 1");    
     ConsumeAll();
@@ -71,7 +71,7 @@ TEST_F(RdKafka1CIntegrtionTest, ProduceConsumeWithKey)
     ASSERT_STREQ(key.c_str(), "Key (ключ) 1");
 }
 
-TEST_F(RdKafka1CIntegrtionTest, ProduceConsumeWithHeader)
+TEST_F(RdKafka1CIntegrationTest, ProduceConsumeWithHeader)
 {
     SetHeaders("Header 1: значение 1;  Header 2: значение 2; ");    
     ConsumeAll();
@@ -86,7 +86,7 @@ TEST_F(RdKafka1CIntegrtionTest, ProduceConsumeWithHeader)
     ASSERT_STREQ(headers.c_str(), "Header 1:значение 1;Header 2:значение 2");
 }
 
-TEST_F(RdKafka1CIntegrtionTest, ConsumeFromEmptyTopic)
+TEST_F(RdKafka1CIntegrationTest, ConsumeFromEmptyTopic)
 {
     ConsumeAll();    
     InitConsumer();    
@@ -105,25 +105,25 @@ TEST_F(RdKafka1CIntegrtionTest, ConsumeFromEmptyTopic)
     StopConsumer();
 }
 
-TEST_F(RdKafka1CIntegrtionTest, StartLogging)
+TEST_F(RdKafka1CIntegrationTest, StartLogging)
 {
     StartLogging();
 }
 
-TEST_F(RdKafka1CIntegrtionTest, StartStopLogging)
+TEST_F(RdKafka1CIntegrationTest, StartStopLogging)
 {
     StartLogging();
     StopLogging();
 }
 
-TEST_F(RdKafka1CIntegrtionTest, StartStopLoggingInWork)
+TEST_F(RdKafka1CIntegrationTest, StartStopLoggingInWork)
 {
     StartLogging();
     ConsumeAll();
     StopLogging();
 }
 
-TEST_F(RdKafka1CIntegrtionTest, SetProperty)
+TEST_F(RdKafka1CIntegrationTest, SetProperty)
 {
     SetProperty("sasl.username", "test-user");
     
@@ -135,7 +135,7 @@ TEST_F(RdKafka1CIntegrtionTest, SetProperty)
 /////////////////////////////////////////////////////////////////////////////
 // Test class members
 
-void RdKafka1CIntegrtionTest::SetUp()
+void RdKafka1CIntegrationTest::SetUp()
 {
     
 #ifdef WIN32
@@ -150,14 +150,14 @@ void RdKafka1CIntegrtionTest::SetUp()
     rdk1c->OperationTimeout = 10000;
 }
 
-void RdKafka1CIntegrtionTest::TearDown()
+void RdKafka1CIntegrationTest::TearDown()
 {
     delete_pointer(rdk1c);
     delete_pointer(error);
     delete_pointer(loger);
 }
 
-void RdKafka1CIntegrtionTest::InitProducer()
+void RdKafka1CIntegrationTest::InitProducer()
 {   
     rdk1c->SetConfigProperty("bootstrap.servers", BROKERS);
     bool initResult = rdk1c->InitProducer();
@@ -165,7 +165,7 @@ void RdKafka1CIntegrtionTest::InitProducer()
     ASSERT_TRUE(initResult);
 }
 
-void RdKafka1CIntegrtionTest::Produce()
+void RdKafka1CIntegrationTest::Produce()
 {   
     InitProducer();
     GenerateNewData();
@@ -173,7 +173,7 @@ void RdKafka1CIntegrtionTest::Produce()
     StopProducer();
 }
 
-void RdKafka1CIntegrtionTest::ProduceMessage()
+void RdKafka1CIntegrationTest::ProduceMessage()
 {   
     bool sendResult = rdk1c->Produce(TOPIC, DATA, KEY, HEADERS, 0, "");
     ASSERT_STREQ(error->ErrorDescription().c_str(), "");
@@ -184,14 +184,14 @@ void RdKafka1CIntegrtionTest::ProduceMessage()
     ASSERT_TRUE(flushResult);
 }
 
-void RdKafka1CIntegrtionTest::StopProducer()
+void RdKafka1CIntegrationTest::StopProducer()
 {   
     bool stopResult = rdk1c->StopProduser();
     ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     ASSERT_TRUE(stopResult);
 }
 
-void RdKafka1CIntegrtionTest::InitConsumer()
+void RdKafka1CIntegrationTest::InitConsumer()
 {
     SetProperty("auto.offset.reset", "smallest");
 
@@ -207,14 +207,14 @@ void RdKafka1CIntegrtionTest::InitConsumer()
     ASSERT_TRUE(subscribeResult);
 }
 
-void RdKafka1CIntegrtionTest::Consume()
+void RdKafka1CIntegrationTest::Consume()
 {
     InitConsumer();  
     ConsumeMessage();
     StopConsumer();
 }
 
-void RdKafka1CIntegrtionTest::ConsumeMessage()
+void RdKafka1CIntegrationTest::ConsumeMessage()
 {
     bool consumeResult = rdk1c->Consume();
     ASSERT_STREQ(error->ErrorDescription().c_str(), "");
@@ -225,7 +225,7 @@ void RdKafka1CIntegrtionTest::ConsumeMessage()
     ASSERT_STREQ(DATA.c_str(), data.c_str());
 }
 
-void RdKafka1CIntegrtionTest::ConsumeAll()
+void RdKafka1CIntegrationTest::ConsumeAll()
 {
     InitConsumer();
 
@@ -238,14 +238,14 @@ void RdKafka1CIntegrtionTest::ConsumeAll()
     StopConsumer();
 }
 
-void RdKafka1CIntegrtionTest::StopConsumer()
+void RdKafka1CIntegrationTest::StopConsumer()
 {
     bool stopResult = rdk1c->StopConsumer();
     ASSERT_STREQ(error->ErrorDescription().c_str(), "");
     ASSERT_TRUE(stopResult);
 }
 
-void RdKafka1CIntegrtionTest::StartLogging()
+void RdKafka1CIntegrationTest::StartLogging()
 {
     loger->level = Loger::Levels::DEBUG;
     std::string errorDescription;    
@@ -255,7 +255,7 @@ void RdKafka1CIntegrtionTest::StartLogging()
     ASSERT_TRUE(result);     
 }
 
-void RdKafka1CIntegrtionTest::StopLogging()
+void RdKafka1CIntegrationTest::StopLogging()
 {
     loger->level = Loger::Levels::NONE;
 
@@ -264,7 +264,7 @@ void RdKafka1CIntegrtionTest::StopLogging()
     ASSERT_TRUE(std::filesystem::exists(logfile));
 }
 
-std::string RdKafka1CIntegrtionTest::GetKeyFromMessage()
+std::string RdKafka1CIntegrationTest::GetKeyFromMessage()
 {
     std::string metadata = rdk1c->MessageMetadata();
     std::stringstream stream(metadata);
@@ -284,7 +284,7 @@ std::string RdKafka1CIntegrtionTest::GetKeyFromMessage()
     return key;
 }
 
-std::string RdKafka1CIntegrtionTest::GetHeadersFromMessage()
+std::string RdKafka1CIntegrationTest::GetHeadersFromMessage()
 {
     std::string metadata = rdk1c->MessageMetadata();
     std::stringstream stream(metadata);
@@ -314,30 +314,30 @@ std::string RdKafka1CIntegrtionTest::GetHeadersFromMessage()
 /////////////////////////////////////////////////////////////////////////////
 // Support methods
 
-int RdKafka1CIntegrtionTest::NewRand()
+int RdKafka1CIntegrationTest::NewRand()
 {
     srand(time(0));
     return rand();
 }
 
-void RdKafka1CIntegrtionTest::GenerateNewData()
+void RdKafka1CIntegrationTest::GenerateNewData()
 {
     std::stringstream stream;
     stream << "test message (тестовое сообщение) " << NewRand();
     DATA = stream.str();
 }
 
-void RdKafka1CIntegrtionTest::SetKey(std::string key)
+void RdKafka1CIntegrationTest::SetKey(std::string key)
 {
     KEY = key;
 }
 
-void RdKafka1CIntegrtionTest::SetHeaders(std::string headers)
+void RdKafka1CIntegrationTest::SetHeaders(std::string headers)
 {
     HEADERS = headers;
 }
 
-void RdKafka1CIntegrtionTest::SetProperty(std::string name, std::string value)
+void RdKafka1CIntegrationTest::SetProperty(std::string name, std::string value)
 {
     rdk1c->SetConfigProperty(name, value);
 }

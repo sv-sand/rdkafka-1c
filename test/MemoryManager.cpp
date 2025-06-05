@@ -1,14 +1,13 @@
 #include "MemoryManager.h"
 
-MemoryManager::MemoryManager() {
-}
-
-MemoryManager::~MemoryManager() {
+MemoryManager::~MemoryManager() 
+{
     for (void* block : allocatedBlocks)
         FreeMemory(&block);
 }
 
-bool ADDIN_API MemoryManager::AllocMemory(void** pMemory, unsigned long ulCountByte) {
+bool ADDIN_API MemoryManager::AllocMemory(void** pMemory, unsigned long ulCountByte) 
+{
     *pMemory = malloc(ulCountByte);
 
     if (pMemory  && *pMemory)
@@ -17,7 +16,8 @@ bool ADDIN_API MemoryManager::AllocMemory(void** pMemory, unsigned long ulCountB
     return *pMemory != nullptr;
 }
 
-void ADDIN_API MemoryManager::FreeMemory(void** pMemory) {
+void ADDIN_API MemoryManager::FreeMemory(void** pMemory) 
+{
     if (!pMemory || !*pMemory)
         return;
 

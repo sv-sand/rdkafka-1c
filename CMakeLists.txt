@@ -78,7 +78,8 @@ enable_testing()
 
 add_executable(ModuleTests 
 	test/main.cpp
-	test/RdKafka1CTest.cpp
+	test/AddInNativeTest.cpp
+	test/MemoryManager.cpp
 	src/RdKafka1C.cpp
 	src/ErrorHandler.cpp
 	src/Loger.cpp

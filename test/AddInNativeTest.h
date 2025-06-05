@@ -15,10 +15,6 @@ protected:
 	
 	AddInNativeTest();
 	void SetUp() override;
-	void TearDown() override;
-
-private:
-	
-	
+	void TearDown() override;	
 };
 
