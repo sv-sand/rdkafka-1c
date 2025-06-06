@@ -2,6 +2,7 @@
 
 #include <stdlib.h> 
 #include <vector>
+#include <stdexcept>
 #include "types.h"
 #include "IMemoryManager.h"
 

@@ -46,6 +46,8 @@ class CAddInNative : public IComponentBase {
             // Logging
             eMethStartLogging = 0,
             eMethStopLogging,
+
+            // Config
             eMethSetConfigProperty,
 
             // Producer

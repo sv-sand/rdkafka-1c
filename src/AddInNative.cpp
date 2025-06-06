@@ -476,8 +476,6 @@ bool CAddInNative::CallAsProc(const long lMethodNum, tVariant* paParams, const l
 
         case eMethUnsubscribe:
             return Unsubscribe(paParams, lSizeArray);
-
-
     }
 
     return false;

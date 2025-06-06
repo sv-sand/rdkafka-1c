@@ -2,8 +2,8 @@
 
 MemoryManager::~MemoryManager() 
 {
-    for (void* block : allocatedBlocks)
-        FreeMemory(&block);
+    while (allocatedBlocks.size())
+        FreeMemory(&allocatedBlocks.back());
 }
 
 bool ADDIN_API MemoryManager::AllocMemory(void** pMemory, unsigned long ulCountByte) 
@@ -13,7 +13,7 @@ bool ADDIN_API MemoryManager::AllocMemory(void** pMemory, unsigned long ulCountB
     if (pMemory  && *pMemory)
         allocatedBlocks.push_back(*pMemory);
 
-    return *pMemory != nullptr;
+    return pMemory != nullptr;
 }
 
 void ADDIN_API MemoryManager::FreeMemory(void** pMemory) 
@@ -22,6 +22,9 @@ void ADDIN_API MemoryManager::FreeMemory(void** pMemory)
         return;
 
     auto iterator = std::find(allocatedBlocks.begin(), allocatedBlocks.end(), *pMemory);
+    if (iterator == allocatedBlocks.end())
+        throw std::out_of_range("Value not found in allocated blocks of memory");
+
     allocatedBlocks.erase(iterator);
     
     free(*pMemory);
