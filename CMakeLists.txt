@@ -80,6 +80,7 @@ add_executable(ModuleTests
 	test/main.cpp
 	test/AddInNativeTest.cpp
 	test/MemoryManager.cpp
+	test/MockAddInNative.cpp
 	src/RdKafka1C.cpp
 	src/ErrorHandler.cpp
 	src/Loger.cpp

@@ -6,7 +6,9 @@
 #include <filesystem>
 #include "strings.h"
 
-class Loger {
+namespace RdKafka1C {
+
+    class Loger {
 
     public:
         enum class Levels {
@@ -21,15 +23,15 @@ class Loger {
 
         Loger();
         ~Loger();
-        
+
         bool Init(std::string FileName);
-        bool Init(std::string FileName, std::string &ErrorDescription);
-        
+        bool Init(std::string FileName, std::string& ErrorDescription);
+
         void Debug(std::string Message);
         void Info(std::string Message);
         void Warn(std::string Message);
         void Error(std::string Message);
-        
+
         std::string GetLogFile();
 
     private:
@@ -37,5 +39,6 @@ class Loger {
 
         bool StartNewFile(std::string FileName);
         void WriteFile(std::string FileName, std::string Message);
-};
+    };
 
+}

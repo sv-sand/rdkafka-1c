@@ -3,8 +3,10 @@
 #include <string>
 #include "Loger.h"
 
-class ErrorHandler {
-    
+namespace RdKafka1C {
+
+    class ErrorHandler {
+
     public:
         ErrorHandler(Loger* Loger);
 
@@ -17,4 +19,6 @@ class ErrorHandler {
         Loger* loger;
         bool error;
         std::string errorDescription;
-};
+    };
+
+}

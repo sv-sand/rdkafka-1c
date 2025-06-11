@@ -159,9 +159,9 @@ CAddInNative::~CAddInNative() {
 }
 
 bool CAddInNative::Init(void* pConnection) {
-    loger = new Loger(); 
-    error = new ErrorHandler(loger); 
-    rdk1c = new RdKafka1C(loger, error);
+    loger = new RdKafka1C::Loger();
+    error = new RdKafka1C::ErrorHandler(loger);
+    rdk1c = new RdKafka1C::RdKafka1C(loger, error);
     m_iConnect = (IAddInDefBase*)pConnection;
     return m_iConnect != nullptr;
 }
@@ -598,7 +598,7 @@ bool CAddInNative::StartLogging(tVariant* paParams, const long lSizeArray) {
 
     std::string fileName = ToString(&paParams[0]);
     std::string levelName = ToString(&paParams[1]);
-    Loger::Levels level = StringToLogLevel(levelName);
+    RdKafka1C::Loger::Levels level = StringToLogLevel(levelName);
 
     if (error->Error()) 
         return true;
@@ -618,7 +618,7 @@ bool CAddInNative::StopLogging(tVariant* paParams, const long lSizeArray) {
     loger->Info("Stop logging");
     error->Clear();
     
-    loger->level = Loger::Levels::NONE;
+    loger->level = RdKafka1C::Loger::Levels::NONE;
     return true;
 }
 
@@ -631,7 +631,7 @@ bool CAddInNative::SetLogLevel(tVariant* varPropVal) {
     if (error->Error())
         return true;    
 
-    Loger::Levels logLevel = StringToLogLevel(level);
+    RdKafka1C::Loger::Levels logLevel = StringToLogLevel(level);
     if (error->Error())
         return true;
 
@@ -647,19 +647,19 @@ std::string CAddInNative::GetLogFile() {
     return loger->GetLogFile();
 }
 
-Loger::Levels CAddInNative::StringToLogLevel(std::string String) {
-    Loger::Levels Level = Loger::Levels::NONE;
+RdKafka1C::Loger::Levels CAddInNative::StringToLogLevel(std::string String) {
+    RdKafka1C::Loger::Levels Level = RdKafka1C::Loger::Levels::NONE;
     
     if (String == "none")
-        Level = Loger::Levels::NONE;
+        Level = RdKafka1C::Loger::Levels::NONE;
     else if (String == "debug")
-        Level = Loger::Levels::DEBUG;
+        Level = RdKafka1C::Loger::Levels::DEBUG;
     else if (String == "info")
-        Level = Loger::Levels::INFO;
+        Level = RdKafka1C::Loger::Levels::INFO;
     else if (String == "warn")
-        Level = Loger::Levels::WARN;
+        Level = RdKafka1C::Loger::Levels::WARN;
     else if (String == "error")
-        Level = Loger::Levels::ERRORS;
+        Level = RdKafka1C::Loger::Levels::ERRORS;
     else
     {
         error->Set("Faled to convert value '" + String + "' to log level. Valid values: none, debug, info, warn, error");
@@ -675,15 +675,15 @@ std::string CAddInNative::GetLogLevel() {
     
     switch (loger->level)
     {
-    case Loger::Levels::NONE:
+    case RdKafka1C::Loger::Levels::NONE:
         return "none";
-    case Loger::Levels::DEBUG:
+    case RdKafka1C::Loger::Levels::DEBUG:
         return "debug";
-    case Loger::Levels::INFO:
+    case RdKafka1C::Loger::Levels::INFO:
         return "info";
-    case Loger::Levels::WARN:
+    case RdKafka1C::Loger::Levels::WARN:
         return "warn";
-    case Loger::Levels::ERRORS:
+    case RdKafka1C::Loger::Levels::ERRORS:
         return "error";
     default:
         return "undefined";

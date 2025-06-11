@@ -5,7 +5,9 @@
 #include <librdkafka/rdkafkacpp.h>
 #include "Loger.h"
 
-class DeliveryReport : public RdKafka::DeliveryReportCb  {
+namespace RdKafka1C {
+
+	class DeliveryReport : public RdKafka::DeliveryReportCb {
 
 	public:
 		DeliveryReport(Loger* Loger);
@@ -24,4 +26,6 @@ class DeliveryReport : public RdKafka::DeliveryReportCb  {
 		void LogMessageStatus(RdKafka::Message& Message);
 		std::string ExtractMessageId(RdKafka::Message& Message);
 		void SetStatus(std::string MessageId, RdKafka::Message::Status Status);
-};
+	};
+
+}

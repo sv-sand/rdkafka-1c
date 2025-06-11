@@ -4,7 +4,9 @@
 #include <librdkafka/rdkafkacpp.h>
 #include "Loger.h"
 
-class Rebalance : public RdKafka::RebalanceCb {
+namespace RdKafka1C {
+
+    class Rebalance : public RdKafka::RebalanceCb {
     public:
 
         Rebalance(Loger* Loger);
@@ -16,4 +18,6 @@ class Rebalance : public RdKafka::RebalanceCb {
         void LogConfig(const std::vector<RdKafka::TopicPartition*>& partitions);
         void CooperativeRebalance(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions);
         void EagerRebalance(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions);
-};
+    };
+
+}
