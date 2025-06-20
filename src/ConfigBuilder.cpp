@@ -188,4 +188,4 @@ namespace RdKafka1C {
 
         return true;
     }
-}
+} // namespace RdKafka1C

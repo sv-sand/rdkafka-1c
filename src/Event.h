@@ -16,4 +16,4 @@ namespace RdKafka1C {
         Loger* loger;
     };
 
-}
+} // namespace RdKafka1C

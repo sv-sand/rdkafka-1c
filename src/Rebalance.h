@@ -20,4 +20,4 @@ namespace RdKafka1C {
         void EagerRebalance(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions);
     };
 
-}
+} // namespace RdKafka1C

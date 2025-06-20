@@ -101,4 +101,4 @@ namespace RdKafka1C {
         file.close();
     }
 
-}
+} // namespace RdKafka1C

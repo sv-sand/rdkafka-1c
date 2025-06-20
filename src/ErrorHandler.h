@@ -21,4 +21,4 @@ namespace RdKafka1C {
         std::string errorDescription;
     };
 
-}
+} // namespace RdKafka1C

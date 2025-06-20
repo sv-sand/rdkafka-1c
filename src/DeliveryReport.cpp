@@ -98,4 +98,4 @@ namespace RdKafka1C {
 
         return count;
     }
-}
+} // namespace RdKafka1C

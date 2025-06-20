@@ -77,6 +77,7 @@ namespace RdKafka1C {
 
         // Mock methods
         virtual RdKafka::ErrorCode ProduserFlush();
+        virtual RdKafka::Message* ConsumerConsume();
     };
 
-}
+} // namespace RdKafka1C

@@ -129,8 +129,8 @@ namespace RdKafka1C {
 	TEST_F(AddInNativeTest, SetPropLocale)
 	{
 		tVariant* propValue = newVariant(u"en-UK");
-		bool isSuccess = addInNative->SetPropVal(CAddInNative::ePropLocale, propValue);
-		ASSERT_TRUE(isSuccess);
+		bool is_success = addInNative->SetPropVal(CAddInNative::ePropLocale, propValue);
+		ASSERT_TRUE(is_success);
 		delete_pointer(propValue);
 
 		CheckPropLocale("en-UK");
@@ -139,8 +139,8 @@ namespace RdKafka1C {
 	TEST_F(AddInNativeTest, SetPropLogLevel)
 	{
 		tVariant* propValue = newVariant(u"debug");
-		bool isSuccess = addInNative->SetPropVal(CAddInNative::ePropLogLevel, propValue);
-		ASSERT_TRUE(isSuccess);
+		bool is_success = addInNative->SetPropVal(CAddInNative::ePropLogLevel, propValue);
+		ASSERT_TRUE(is_success);
 		delete_pointer(propValue);
 
 		CheckPropLogLevel("debug");
@@ -149,8 +149,8 @@ namespace RdKafka1C {
 	TEST_F(AddInNativeTest, SetPropOperationTimeout)
 	{
 		tVariant* propValue = newVariant(3000);
-		bool isSuccess = addInNative->SetPropVal(CAddInNative::ePropOperationTimeout, propValue);
-		ASSERT_TRUE(isSuccess);
+		bool is_success = addInNative->SetPropVal(CAddInNative::ePropOperationTimeout, propValue);
+		ASSERT_TRUE(is_success);
 		delete_pointer(propValue);
 
 		CheckPropOperationTimeout(3000);
@@ -158,98 +158,98 @@ namespace RdKafka1C {
 
 	// Checks
 
-	void AddInNativeTest::CheckPropComponentVersion(std::string value)
+	void AddInNativeTest::CheckPropComponentVersion(std::string component_varsion)
 	{
 		tVariant* result = new tVariant();
-		bool isSuccess = addInNative->GetPropVal(CAddInNative::ePropComponentVersion, result);
+		bool is_success = addInNative->GetPropVal(CAddInNative::ePropComponentVersion, result);
 
-		ASSERT_TRUE(isSuccess);
+		ASSERT_TRUE(is_success);
 		ASSERT_TRUE(TV_VT(result) = VTYPE_PWSTR);
-		ASSERT_STREQ(value.c_str(), ToString(TV_WSTR(result)).c_str());
+		ASSERT_STREQ(component_varsion.c_str(), ToString(TV_WSTR(result)).c_str());
 
 		delete_pointer(result);
 	}
 
-	void AddInNativeTest::CheckPropRdKafkaVersion(std::string value)
+	void AddInNativeTest::CheckPropRdKafkaVersion(std::string rdkafka_version)
 	{
 		tVariant* result = new tVariant();
-		bool isSuccess = addInNative->GetPropVal(CAddInNative::ePropRdKafkaVersion, result);
+		bool is_success = addInNative->GetPropVal(CAddInNative::ePropRdKafkaVersion, result);
 
-		ASSERT_TRUE(isSuccess);
+		ASSERT_TRUE(is_success);
 		ASSERT_TRUE(TV_VT(result) = VTYPE_PWSTR);
-		ASSERT_STREQ(value.c_str(), ToString(TV_WSTR(result)).c_str());
+		ASSERT_STREQ(rdkafka_version.c_str(), ToString(TV_WSTR(result)).c_str());
 
 		delete_pointer(result);
 	}
 
-	void AddInNativeTest::CheckPropLocale(std::string value)
+	void AddInNativeTest::CheckPropLocale(std::string locale)
 	{
 		tVariant* result = new tVariant();
-		bool isSuccess = addInNative->GetPropVal(CAddInNative::ePropLocale, result);
+		bool is_success = addInNative->GetPropVal(CAddInNative::ePropLocale, result);
 
-		ASSERT_TRUE(isSuccess);
+		ASSERT_TRUE(is_success);
 		ASSERT_TRUE(TV_VT(result) = VTYPE_PWSTR);
-		ASSERT_STREQ(value.c_str(), ToString(TV_WSTR(result)).c_str());
+		ASSERT_STREQ(locale.c_str(), ToString(TV_WSTR(result)).c_str());
 
 		delete_pointer(result);
 	}
 
-	void AddInNativeTest::CheckPropLogFile(std::string value)
+	void AddInNativeTest::CheckPropLogFile(std::string log_file)
 	{
 		tVariant* result = new tVariant();
-		bool isSuccess = addInNative->GetPropVal(CAddInNative::ePropLogFile, result);
+		bool is_success = addInNative->GetPropVal(CAddInNative::ePropLogFile, result);
 
-		ASSERT_TRUE(isSuccess);
+		ASSERT_TRUE(is_success);
 		ASSERT_TRUE(TV_VT(result) = VTYPE_PWSTR);
-		ASSERT_STREQ(value.c_str(), ToString(TV_WSTR(result)).c_str());
+		ASSERT_STREQ(log_file.c_str(), ToString(TV_WSTR(result)).c_str());
 
 		delete_pointer(result);
 	}
 
-	void AddInNativeTest::CheckPropLogLevel(std::string value)
+	void AddInNativeTest::CheckPropLogLevel(std::string log_level)
 	{
 		tVariant* result = new tVariant();
-		bool isSuccess = addInNative->GetPropVal(CAddInNative::ePropLogLevel, result);
+		bool is_success = addInNative->GetPropVal(CAddInNative::ePropLogLevel, result);
 
-		ASSERT_TRUE(isSuccess);
+		ASSERT_TRUE(is_success);
 		ASSERT_TRUE(TV_VT(result) = VTYPE_PWSTR);
-		ASSERT_STREQ(value.c_str(), ToString(TV_WSTR(result)).c_str());
+		ASSERT_STREQ(log_level.c_str(), ToString(TV_WSTR(result)).c_str());
 
 		delete_pointer(result);
 	}
 
-	void AddInNativeTest::CheckPropOperationTimeout(long value)
+	void AddInNativeTest::CheckPropOperationTimeout(long operation_timeout)
 	{
 		tVariant* result = new tVariant();
-		bool isSuccess = addInNative->GetPropVal(CAddInNative::ePropOperationTimeout, result);
+		bool is_success = addInNative->GetPropVal(CAddInNative::ePropOperationTimeout, result);
 
-		ASSERT_TRUE(isSuccess);
+		ASSERT_TRUE(is_success);
 		ASSERT_TRUE(TV_VT(result) = VTYPE_INT);
-		ASSERT_EQ(value, TV_INT(result));
+		ASSERT_EQ(operation_timeout, TV_INT(result));
 
 		delete_pointer(result);
 	}
 
-	void AddInNativeTest::CheckPropError(bool value)
+	void AddInNativeTest::CheckPropError(bool error)
 	{
 		tVariant* result = new tVariant();
-		bool isSuccess = addInNative->GetPropVal(CAddInNative::ePropError, result);
+		bool is_success = addInNative->GetPropVal(CAddInNative::ePropError, result);
 
-		ASSERT_TRUE(isSuccess);
+		ASSERT_TRUE(is_success);
 		ASSERT_TRUE(TV_VT(result) = VTYPE_BOOL);
 		ASSERT_FALSE(TV_BOOL(result));
 
 		delete_pointer(result);
 	}
 
-	void AddInNativeTest::CheckPropErrorDescription(std::string value)
+	void AddInNativeTest::CheckPropErrorDescription(std::string error_description)
 	{
 		tVariant* result = new tVariant();
-		bool isSuccess = addInNative->GetPropVal(CAddInNative::ePropErrorDescription, result);
+		bool is_success = addInNative->GetPropVal(CAddInNative::ePropErrorDescription, result);
 
-		ASSERT_TRUE(isSuccess);
+		ASSERT_TRUE(is_success);
 		ASSERT_TRUE(TV_VT(result) = VTYPE_PWSTR);
-		ASSERT_STREQ(value.c_str(), ToString(TV_WSTR(result)).c_str());
+		ASSERT_STREQ(error_description.c_str(), ToString(TV_WSTR(result)).c_str());
 
 		delete_pointer(result);
 	}
@@ -361,8 +361,8 @@ namespace RdKafka1C {
 		setToVariant(&paParams[0], u"file-name");
 		setToVariant(&paParams[1], u"error");
 
-		bool isSuccess = addInNative->CallAsProc(CAddInNative::eMethStartLogging, paParams, 2);
-		ASSERT_TRUE(isSuccess);
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethStartLogging, paParams, 2);
+		ASSERT_TRUE(is_success);
 		delete_array(paParams);
 
 		CheckPropErrorDescription("");
@@ -375,8 +375,8 @@ namespace RdKafka1C {
 	{
 		tVariant* paParams = new tVariant();
 
-		bool isSuccess = addInNative->CallAsProc(CAddInNative::eMethStopLogging, paParams, 0);
-		ASSERT_TRUE(isSuccess);
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethStopLogging, paParams, 0);
+		ASSERT_TRUE(is_success);
 		delete_pointer(paParams);
 
 		CheckPropErrorDescription("");
@@ -386,16 +386,7 @@ namespace RdKafka1C {
 
 	TEST_F(AddInNativeTest, SetConfigProperty)
 	{
-		tVariant* paParams = new tVariant[2];
-		setToVariant(&paParams[0], u"group.id");
-		setToVariant(&paParams[1], u"id");
-
-		bool isSuccess = addInNative->CallAsProc(CAddInNative::eMethSetConfigProperty, paParams, 2);
-		ASSERT_TRUE(isSuccess);
-		delete_array(paParams);
-
-		CheckPropErrorDescription("");
-		CheckPropError(false);
+		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
 	}
 
 	TEST_F(AddInNativeTest, InitProducer)
@@ -405,6 +396,7 @@ namespace RdKafka1C {
 
 	TEST_F(AddInNativeTest, StopProducer)
 	{
+		InitProducer();
 		StopProducer();
 	}
 
@@ -419,10 +411,6 @@ namespace RdKafka1C {
 		InitProducer();
 		StartProduce();
 		Produce(u"topic", "message", "key", "{""header1"":1}", 0, u"");
-
-		CheckPropErrorDescription("");
-		CheckPropError(false);
-
 		StopProducer();
 	}
 
@@ -432,40 +420,121 @@ namespace RdKafka1C {
 		StartProduce();
 		Produce(u"topic", "message", "key", "{""header1"":1}", 0, u"");
 		Flush();
-
-		CheckPropErrorDescription("");
-		CheckPropError(false);
-
 		StopProducer();
 	}
 
-	TEST_F(AddInNativeTest, ProduceFailed)
+	TEST_F(AddInNativeTest, ProducerQueueLen)
 	{
-		// todo: local timeout
+		InitProducer();
+		ProducerQueueLen();
+		StopProducer();
 	}
 
+	TEST_F(AddInNativeTest, CountUndeliveredMessages)
+	{
+		InitProducer();
+		CountUndeliveredMessages();
+		StopProducer();
+	}
+
+	TEST_F(AddInNativeTest, InitConsumer)
+	{
+		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
+		SetConfigProperty(u"group.id", u"group-id");
+
+		InitConsumer();
+	}
+
+	TEST_F(AddInNativeTest, StopConsumer)
+	{
+		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
+		SetConfigProperty(u"group.id", u"group-id");
+
+		InitConsumer();
+		StopConsumer();
+	}
+
+	TEST_F(AddInNativeTest, Consume)
+	{
+		MockMessage* message = new MockMessage();	// Will be deleted in RdKafka1C::StopConsumer()
+		message->topic_name_ = "topic-name";
+		message->payload_ = "payload";
+		message->key_ = "key";
+		message->headers_->add("header1", "value1");
+		message->partition_ = 111;
+		message->offset_ = 222;
+
+		EXPECT_CALL(*addInNative->GetRdk1C(), ConsumerConsume())
+			.WillOnce(testing::Return(message));
+
+		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
+		SetConfigProperty(u"group.id", u"group-id");
+
+		InitConsumer();
+		Consume();
+		CheckMessageData("payload");
+		CheckMessageKey("key");
+		CheckMessageHeaders("header1:value1;");
+		CheckMessageMetadata("topic-name", "111", "222", "PERSISTED");
+		StopConsumer();
+	}
+
+	TEST_F(AddInNativeTest, AssignPartition)
+	{
+		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
+		SetConfigProperty(u"group.id", u"group-id");
+
+		InitConsumer();
+		AssignPartition();
+		StopConsumer();
+	}
+
+	TEST_F(AddInNativeTest, Subscribe)
+	{
+		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
+		SetConfigProperty(u"group.id", u"group-id");
+
+		InitConsumer();
+		Subscribe();
+		StopConsumer();
+	}
+
+	TEST_F(AddInNativeTest, Unsubscribe)
+	{
+		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
+		SetConfigProperty(u"group.id", u"group-id");
+
+		InitConsumer();
+		Unsubscribe();
+		StopConsumer();
+	}
+	
 	// Checks
+
+	void AddInNativeTest::SetConfigProperty(const std::u16string& name, const std::u16string& value)
+	{
+		tVariant* paParams = new tVariant[2];
+		setToVariant(&paParams[0], name.c_str());
+		setToVariant(&paParams[1], value.c_str());
+		
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethSetConfigProperty, paParams, 2);
+		delete_array(paParams);
+		
+		ASSERT_TRUE(is_success);
+		
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
 
 	void AddInNativeTest::InitProducer()
 	{
 		tVariant* paParams = new tVariant();
 
-		bool isSuccess = addInNative->CallAsProc(CAddInNative::eMethInitProducer, paParams, 0);
-		ASSERT_TRUE(isSuccess);
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethInitProducer, paParams, 0);
 		delete_pointer(paParams);
 
-		CheckPropErrorDescription("");
-		CheckPropError(false);
-	}
-
-	void AddInNativeTest::StopProducer()
-	{
-		tVariant* paParams = new tVariant();
-
-		bool isSuccess = addInNative->CallAsProc(CAddInNative::eMethStopProducer, paParams, 0);
-		ASSERT_TRUE(isSuccess);
-		delete_pointer(paParams);
-
+		ASSERT_TRUE(is_success);
+		
 		CheckPropErrorDescription("");
 		CheckPropError(false);
 	}
@@ -473,10 +542,11 @@ namespace RdKafka1C {
 	void AddInNativeTest::StartProduce()
 	{
 		tVariant* paParams = new tVariant();
-		bool isSuccess = addInNative->CallAsProc(CAddInNative::eMethStartProduce, paParams, 0);
-		ASSERT_TRUE(isSuccess);
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethStartProduce, paParams, 0);
 		delete_pointer(paParams);
 
+		ASSERT_TRUE(is_success);
+		
 		CheckPropErrorDescription("");
 		CheckPropError(false);
 	}
@@ -492,19 +562,214 @@ namespace RdKafka1C {
 		setToVariant(&paParams[4], partition);
 		setToVariant(&paParams[5], id.c_str());
 
-		bool isSuccess = addInNative->CallAsProc(CAddInNative::eMethProduce, paParams, 6);
-		ASSERT_TRUE(isSuccess);
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethProduce, paParams, 6);
 		delete_array(paParams);
+
+		ASSERT_TRUE(is_success);
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
 	}
 
 	void AddInNativeTest::Flush()
 	{
 		tVariant* paParams = new tVariant();
 
-		EXPECT_CALL(*addInNative->GetRdk1C(), ProduserFlush());
+		EXPECT_CALL(*addInNative->GetRdk1C(), ProduserFlush())
+			.WillOnce(testing::Return(RdKafka::ErrorCode::ERR_NO_ERROR));
 
-		bool isSuccess = addInNative->CallAsProc(CAddInNative::eMethFlush, paParams, 0);
-		ASSERT_TRUE(isSuccess);
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethFlush, paParams, 0);
+		delete_pointer(paParams);
+		
+		ASSERT_TRUE(is_success);
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::ProducerQueueLen()
+	{
+		tVariant* paParams = new tVariant;
+		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
+
+		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethProducerQueueLen, pvarRetValue, paParams, 0);
+		delete_pointer(paParams);
+		ASSERT_TRUE(is_success);
+		ASSERT_EQ(TV_INT(pvarRetValue), 0);
+		
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::CountUndeliveredMessages()
+	{
+		tVariant* paParams = new tVariant;
+		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
+
+		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethCountUndeliveredMessages, pvarRetValue, paParams, 0);
+		delete_pointer(paParams);
+		ASSERT_TRUE(is_success);
+		ASSERT_EQ(TV_INT(pvarRetValue), 0);
+		
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::StopProducer()
+	{
+		tVariant* paParams = new tVariant();
+
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethStopProducer, paParams, 0);
+		delete_pointer(paParams);
+
+		ASSERT_TRUE(is_success);
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::InitConsumer()
+	{
+		tVariant* paParams = new tVariant();
+
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethInitConsumer, paParams, 0);
+		delete_pointer(paParams);
+		
+		ASSERT_TRUE(is_success);
+		
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::Consume()
+	{
+		tVariant* paParams = new tVariant();
+		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
+		
+		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethConsume, pvarRetValue, paParams, 0);
+		delete_pointer(paParams);
+		
+		ASSERT_TRUE(is_success);
+		ASSERT_TRUE(TV_BOOL(pvarRetValue));
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::CheckMessageData(std::string value)
+	{
+		tVariant* paParams = new tVariant();
+		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
+
+		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethMessageData, pvarRetValue, paParams, 0);
+		delete_pointer(paParams);
+		
+		ASSERT_TRUE(is_success);
+		ASSERT_TRUE(TV_VT(pvarRetValue) = VTYPE_PWSTR);
+		ASSERT_STREQ(value.c_str(), std::string(TV_STR(pvarRetValue), pvarRetValue->strLen).c_str());
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::CheckMessageKey(std::string value)
+	{
+		tVariant* paParams = new tVariant();
+		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
+
+		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethMessageKey, pvarRetValue, paParams, 0);
+		delete_pointer(paParams);
+
+		ASSERT_TRUE(is_success);
+		ASSERT_TRUE(TV_VT(pvarRetValue) = VTYPE_PWSTR);
+		ASSERT_STREQ(value.c_str(), std::string(TV_STR(pvarRetValue), pvarRetValue->strLen).c_str());
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::CheckMessageHeaders(std::string value)
+	{
+		tVariant* paParams = new tVariant();
+		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
+
+		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethMessageHeaders, pvarRetValue, paParams, 0);
+		delete_pointer(paParams);
+
+		ASSERT_TRUE(is_success);
+		ASSERT_TRUE(TV_VT(pvarRetValue) = VTYPE_PWSTR);
+		ASSERT_STREQ(value.c_str(), std::string(TV_STR(pvarRetValue), pvarRetValue->strLen).c_str());
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::CheckMessageMetadata(std::string topic_name, std::string partition, std::string offset, std::string status)
+	{
+		tVariant* paParams = new tVariant();
+		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
+
+		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethMessageMetadata, pvarRetValue, paParams, 0);
+		delete_pointer(paParams);
+
+		ASSERT_TRUE(is_success);
+		ASSERT_TRUE(TV_VT(pvarRetValue) = VTYPE_PWSTR);
+
+		std::string metadata = ToString(TV_WSTR(pvarRetValue));
+		ASSERT_THAT(metadata, testing::HasSubstr(topic_name));
+		ASSERT_THAT(metadata, testing::HasSubstr(partition));
+		ASSERT_THAT(metadata, testing::HasSubstr(offset));
+		ASSERT_THAT(metadata, testing::HasSubstr(status));
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::AssignPartition()
+	{
+		tVariant* paParams = new tVariant[2];
+		setToVariant(&paParams[0], u"topic-name");
+		setToVariant(&paParams[1], 111);
+
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethAssignPartition, paParams, 2);
+		ASSERT_TRUE(is_success);
+		delete_array(paParams);
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::Subscribe()
+	{
+		tVariant* paParams = new tVariant;
+		setToVariant(paParams, u"topic-name");
+		
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethSubscribe, paParams, 1);
+		ASSERT_TRUE(is_success);
+		delete(paParams);
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::Unsubscribe()
+	{
+		tVariant* paParams = new tVariant;
+		
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethUnsubscribe, paParams, 0);
+		ASSERT_TRUE(is_success);
+		delete_pointer(paParams);
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::StopConsumer()
+	{
+		tVariant* paParams = new tVariant();
+
+		bool is_success = addInNative->CallAsProc(CAddInNative::eMethStopConsumer, paParams, 0);
+		ASSERT_TRUE(is_success);
 		delete_pointer(paParams);
 
 		CheckPropErrorDescription("");

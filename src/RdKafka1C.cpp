@@ -293,7 +293,7 @@ namespace RdKafka1C {
         delete_pointer(message);
 
         loger->Debug("Consume new message");
-        message = consumer->consume(OperationTimeout);
+        message = ConsumerConsume();
 
         RdKafka::ErrorCode errorCode = message->err();
         switch (errorCode) {
@@ -315,6 +315,10 @@ namespace RdKafka1C {
         }
 
         return true;
+    }
+
+    RdKafka::Message* RdKafka1C::ConsumerConsume() {
+        return consumer->consume(OperationTimeout);
     }
 
     std::string RdKafka1C::MessageData() {
@@ -570,4 +574,4 @@ namespace RdKafka1C {
         return status;
     }
 
-}
+} // namespace RdKafka1C

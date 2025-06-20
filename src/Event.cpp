@@ -37,4 +37,4 @@ namespace RdKafka1C {
         }
     }
 
-}
+} // namespace RdKafka1C

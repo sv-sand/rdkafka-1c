@@ -41,4 +41,4 @@ namespace RdKafka1C {
         void WriteFile(std::string FileName, std::string Message);
     };
 
-}
+} // namespace RdKafka1C

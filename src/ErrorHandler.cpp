@@ -28,4 +28,4 @@ namespace RdKafka1C {
         errorDescription = "";
     }
 
-}
+} // namespace RdKafka1C

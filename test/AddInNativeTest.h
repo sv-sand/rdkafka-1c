@@ -6,6 +6,7 @@
 #include "MockAddInNative.h"
 #include "utils.h"
 #include "MemoryManager.h"
+#include "MockMessage.h"
 
 namespace RdKafka1C {
 
@@ -31,11 +32,26 @@ namespace RdKafka1C {
 		void CheckPropErrorDescription(std::string value);
 
 		// Methods
+		void SetConfigProperty(const std::u16string& name, const std::u16string& value);
+
 		void InitProducer();
-		void StopProducer();
 		void StartProduce();
 		void Produce(std::u16string topic, std::string message, std::string key, std::string headers, long partition, std::u16string id);
 		void Flush();
+		void ProducerQueueLen();
+		void CountUndeliveredMessages();
+		void StopProducer();
+
+		void InitConsumer();
+		void Consume();
+		void CheckMessageData(std::string value);
+		void CheckMessageKey(std::string value);
+		void CheckMessageHeaders(std::string value);
+		void CheckMessageMetadata(std::string topic_name, std::string partition, std::string offset, std::string status);
+		void AssignPartition();
+		void Subscribe();
+		void Unsubscribe();
+		void StopConsumer();
 
 		// Helper methods
 		std::string ToString(const char16_t* source);

@@ -83,4 +83,4 @@ namespace RdKafka1C {
             loger->Error("Assign failed: " + RdKafka::err2str(result));
     }
 
-}
+} // namespace RdKafka1C

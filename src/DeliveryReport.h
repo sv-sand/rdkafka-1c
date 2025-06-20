@@ -28,4 +28,4 @@ namespace RdKafka1C {
 		void SetStatus(std::string MessageId, RdKafka::Message::Status Status);
 	};
 
-}
+} // namespace RdKafka1C

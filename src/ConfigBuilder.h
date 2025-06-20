@@ -41,4 +41,4 @@ namespace RdKafka1C {
         bool SetRebalanceCb();
     };
 
-}
+} // namespace RdKafka1C
