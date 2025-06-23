@@ -23,7 +23,7 @@ static const wchar_t *g_PropNamesRu[] = {
 
 static const wchar_t *g_MethodNames[] = {
 
-    // Logging
+    // Common methods
     L"StartLogging",
     L"StopLogging",
     L"SetConfigProperty",
@@ -59,7 +59,7 @@ static const wchar_t *g_MethodNames[] = {
 };
 static const wchar_t *g_MethodNamesRu[] = {
     
-    // Логирование
+    // Общего назначения
     L"НачатьЛогирование",
     L"ОстановитьЛогирование",
     L"УстановитьПараметр",
@@ -434,7 +434,7 @@ bool CAddInNative::CallAsProc(const long lMethodNum, tVariant* paParams, const l
 
     switch (lMethodNum) {
 
-        // Logging
+        // Common methods
         case eMethStartLogging:
             return StartLogging(paParams, lSizeArray);
 
@@ -470,7 +470,6 @@ bool CAddInNative::CallAsProc(const long lMethodNum, tVariant* paParams, const l
         case eMethAssignPartition:
             return AssignPartition(paParams, lSizeArray);
 
-        // Subscription
         case eMethSubscribe:
             return Subscribe(paParams, lSizeArray);
 

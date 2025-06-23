@@ -434,10 +434,8 @@ namespace RdKafka1C {
 
         loger->Debug("Create topic partition pair");
         RdKafka::TopicPartition* partition = RdKafka::TopicPartition::create(Topic, Partition);
-        std::vector<RdKafka::TopicPartition*> partitions;
-        partitions.push_back(partition);
-
-        RdKafka::ErrorCode errorCode = consumer->committed(partitions, OperationTimeout);
+        
+        RdKafka::ErrorCode errorCode = ConsumerCommittedOffset(partition);
 
         int64_t offset = partition->offset();
         delete_pointer(partition);
@@ -448,6 +446,12 @@ namespace RdKafka1C {
         }
 
         return offset;
+    }
+
+    RdKafka::ErrorCode RdKafka1C::ConsumerCommittedOffset(RdKafka::TopicPartition* partition) {
+        std::vector<RdKafka::TopicPartition*> partitions;
+        partitions.push_back(partition);
+        return consumer->committed(partitions, OperationTimeout);
     }
 
     bool RdKafka1C::ChangeOffset(std::string Topic, int Partition, int64_t Offset) {

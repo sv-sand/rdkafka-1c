@@ -78,6 +78,7 @@ namespace RdKafka1C {
         // Mock methods
         virtual RdKafka::ErrorCode ProduserFlush();
         virtual RdKafka::Message* ConsumerConsume();
+        virtual RdKafka::ErrorCode ConsumerCommittedOffset(RdKafka::TopicPartition* partition);
     };
 
 } // namespace RdKafka1C

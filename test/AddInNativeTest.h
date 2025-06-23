@@ -40,6 +40,7 @@ namespace RdKafka1C {
 		void Flush();
 		void ProducerQueueLen();
 		void CountUndeliveredMessages();
+		void MessageStatus(std::u16string id, std::string status);
 		void StopProducer();
 
 		void InitConsumer();
@@ -51,6 +52,7 @@ namespace RdKafka1C {
 		void AssignPartition();
 		void Subscribe();
 		void Unsubscribe();
+		void CommittedOffset();
 		void StopConsumer();
 
 		// Helper methods

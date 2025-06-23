@@ -133,7 +133,7 @@ class CAddInNative : public IComponentBase {
         bool SetLocale(tVariant* varPropVal);
         bool SetLocale(std::string LocaleName);
         
-        // Logging
+        // Common methods
         bool StartLogging(tVariant* paParams, const long lSizeArray);
         bool StopLogging(tVariant* paParams, const long lSizeArray);
         bool SetLogLevel(tVariant* varPropVal);
@@ -141,7 +141,6 @@ class CAddInNative : public IComponentBase {
         std::string GetLogFile();
         RdKafka1C::Loger::Levels StringToLogLevel(std::string String);
         
-        // General action
         bool SetConfigProperty(tVariant* paParams, const long lSizeArray);
         
         // Producer
@@ -168,7 +167,6 @@ class CAddInNative : public IComponentBase {
         bool CommitOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
         bool ChangeOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
 
-        // Subscription
         bool Subscription(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
         bool Subscribe(tVariant* paParams, const long lSizeArray);
         bool Unsubscribe(tVariant* paParams, const long lSizeArray);

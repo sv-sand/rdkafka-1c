@@ -1,5 +1,7 @@
 #include "AddInNativeTest.h"
 
+using namespace testing;
+
 namespace RdKafka1C {
 
 	AddInNativeTest::AddInNativeTest()
@@ -353,7 +355,7 @@ namespace RdKafka1C {
 		ASSERT_TRUE(addInNative->HasRetVal(CAddInNative::eMethSubscription));
 	}
 
-	// CallAsProc
+	// Common methods
 
 	TEST_F(AddInNativeTest, StartLogging)
 	{
@@ -389,6 +391,8 @@ namespace RdKafka1C {
 		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
 	}
 
+	// Producer
+
 	TEST_F(AddInNativeTest, InitProducer)
 	{
 		InitProducer();
@@ -414,6 +418,15 @@ namespace RdKafka1C {
 		StopProducer();
 	}
 
+	TEST_F(AddInNativeTest, MessageStatus)
+	{
+		InitProducer();
+		StartProduce();
+		Produce(u"topic", "message", "key", "{""header1"":1}", 0, u"message-uuid");
+		MessageStatus(u"message-uuid", "NOT_PERSISTED");
+		StopProducer();
+	}
+
 	TEST_F(AddInNativeTest, ProduceFlush)
 	{
 		InitProducer();
@@ -436,6 +449,8 @@ namespace RdKafka1C {
 		CountUndeliveredMessages();
 		StopProducer();
 	}
+
+	// Consumer
 
 	TEST_F(AddInNativeTest, InitConsumer)
 	{
@@ -465,7 +480,7 @@ namespace RdKafka1C {
 		message->offset_ = 222;
 
 		EXPECT_CALL(*addInNative->GetRdk1C(), ConsumerConsume())
-			.WillOnce(testing::Return(message));
+			.WillOnce(Return(message));
 
 		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
 		SetConfigProperty(u"group.id", u"group-id");
@@ -509,6 +524,16 @@ namespace RdKafka1C {
 		StopConsumer();
 	}
 	
+	TEST_F(AddInNativeTest, CommittedOffset)
+	{
+		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
+		SetConfigProperty(u"group.id", u"group-id");
+
+		InitConsumer();
+		CommittedOffset();
+		StopConsumer();
+	}
+
 	// Checks
 
 	void AddInNativeTest::SetConfigProperty(const std::u16string& name, const std::u16string& value)
@@ -576,7 +601,7 @@ namespace RdKafka1C {
 		tVariant* paParams = new tVariant();
 
 		EXPECT_CALL(*addInNative->GetRdk1C(), ProduserFlush())
-			.WillOnce(testing::Return(RdKafka::ErrorCode::ERR_NO_ERROR));
+			.WillOnce(Return(RdKafka::ErrorCode::ERR_NO_ERROR));
 
 		bool is_success = addInNative->CallAsProc(CAddInNative::eMethFlush, paParams, 0);
 		delete_pointer(paParams);
@@ -589,7 +614,7 @@ namespace RdKafka1C {
 
 	void AddInNativeTest::ProducerQueueLen()
 	{
-		tVariant* paParams = new tVariant;
+		tVariant* paParams = new tVariant();
 		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
 
 		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethProducerQueueLen, pvarRetValue, paParams, 0);
@@ -603,7 +628,7 @@ namespace RdKafka1C {
 
 	void AddInNativeTest::CountUndeliveredMessages()
 	{
-		tVariant* paParams = new tVariant;
+		tVariant* paParams = new tVariant();
 		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
 
 		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethCountUndeliveredMessages, pvarRetValue, paParams, 0);
@@ -623,6 +648,23 @@ namespace RdKafka1C {
 		delete_pointer(paParams);
 
 		ASSERT_TRUE(is_success);
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::MessageStatus(std::u16string id, std::string status)
+	{
+		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
+		tVariant* paParams = new tVariant[1];
+		setToVariant(&paParams[0], id.c_str());
+		
+		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethMessageStatus, pvarRetValue, paParams, 1);
+		delete_array(paParams);
+		
+		ASSERT_TRUE(is_success);
+		ASSERT_TRUE(TV_VT(pvarRetValue) = VTYPE_PWSTR);
+		ASSERT_STREQ(status.c_str(), ToString(TV_WSTR(pvarRetValue)).c_str());
 
 		CheckPropErrorDescription("");
 		CheckPropError(false);
@@ -716,10 +758,10 @@ namespace RdKafka1C {
 		ASSERT_TRUE(TV_VT(pvarRetValue) = VTYPE_PWSTR);
 
 		std::string metadata = ToString(TV_WSTR(pvarRetValue));
-		ASSERT_THAT(metadata, testing::HasSubstr(topic_name));
-		ASSERT_THAT(metadata, testing::HasSubstr(partition));
-		ASSERT_THAT(metadata, testing::HasSubstr(offset));
-		ASSERT_THAT(metadata, testing::HasSubstr(status));
+		ASSERT_THAT(metadata, HasSubstr(topic_name));
+		ASSERT_THAT(metadata, HasSubstr(partition));
+		ASSERT_THAT(metadata, HasSubstr(offset));
+		ASSERT_THAT(metadata, HasSubstr(status));
 
 		CheckPropErrorDescription("");
 		CheckPropError(false);
@@ -741,12 +783,12 @@ namespace RdKafka1C {
 
 	void AddInNativeTest::Subscribe()
 	{
-		tVariant* paParams = new tVariant;
-		setToVariant(paParams, u"topic-name");
+		tVariant* paParams = new tVariant[1];
+		setToVariant(&paParams[0], u"topic-name");
 		
 		bool is_success = addInNative->CallAsProc(CAddInNative::eMethSubscribe, paParams, 1);
 		ASSERT_TRUE(is_success);
-		delete(paParams);
+		delete_array(paParams);
 
 		CheckPropErrorDescription("");
 		CheckPropError(false);
@@ -754,11 +796,33 @@ namespace RdKafka1C {
 
 	void AddInNativeTest::Unsubscribe()
 	{
-		tVariant* paParams = new tVariant;
+		tVariant* paParams = new tVariant();
 		
 		bool is_success = addInNative->CallAsProc(CAddInNative::eMethUnsubscribe, paParams, 0);
 		ASSERT_TRUE(is_success);
 		delete_pointer(paParams);
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::CommittedOffset()
+	{
+		int offset = -1001; // Undefined offset value
+		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
+		tVariant* paParams = new tVariant[2];
+		setToVariant(&paParams[0], u"topic-name");
+		setToVariant(&paParams[1], 123);
+
+		EXPECT_CALL(*addInNative->GetRdk1C(), ConsumerCommittedOffset(_))
+			.WillOnce(Return(RdKafka::ErrorCode::ERR_NO_ERROR));
+		
+		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethCommittedOffset, pvarRetValue, paParams, 2);
+		delete_array(paParams);
+
+		ASSERT_TRUE(is_success);
+		ASSERT_TRUE(TV_VT(pvarRetValue) = VTYPE_INT);
+		ASSERT_EQ(offset, TV_INT(pvarRetValue));
 
 		CheckPropErrorDescription("");
 		CheckPropError(false);

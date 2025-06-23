@@ -15,6 +15,7 @@ namespace RdKafka1C {
 
         MOCK_METHOD(RdKafka::ErrorCode, ProduserFlush, (), (override));
         MOCK_METHOD(RdKafka::Message*, ConsumerConsume, (), (override));
+        MOCK_METHOD(RdKafka::ErrorCode, ConsumerCommittedOffset, (RdKafka::TopicPartition* partition), (override));
     };
 
 }
