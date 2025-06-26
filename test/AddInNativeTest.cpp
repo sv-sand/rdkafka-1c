@@ -568,6 +568,16 @@ namespace Kafka1C {
 		StopConsumer();
 	}
 
+	TEST_F(AddInNativeTest, Subscription)
+	{
+		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
+		SetConfigProperty(u"group.id", u"group-id");
+
+		InitConsumer();
+		Subscription();
+		StopConsumer();
+	}
+
 	// Checks
 
 	void AddInNativeTest::SetConfigProperty(const std::u16string& name, const std::u16string& value)
@@ -917,6 +927,37 @@ namespace Kafka1C {
 		ASSERT_TRUE(is_success);
 		ASSERT_TRUE(TV_VT(pvarRetValue) = VTYPE_INT);
 		ASSERT_EQ(111, TV_INT(pvarRetValue));
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	ACTION_P(AddToVectorArgument, topic1)
+	{ 
+		arg0.push_back(topic1);
+	}
+
+	void AddInNativeTest::Subscription()
+	{
+		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
+		tVariant* paParams = new tVariant[0];
+
+		std::vector<std::string> topics = { "topic1", "topic2"};
+		EXPECT_CALL(*rdk1c->GetConsumer(), subscription(_))
+			.WillOnce(
+				DoAll(
+					WithArg<0>(AddToVectorArgument("topic1")),
+					WithArg<0>(AddToVectorArgument("topic2")),
+					Return(RdKafka::ErrorCode::ERR_NO_ERROR)
+				)
+			);
+
+		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethSubscription, pvarRetValue, paParams, 0);
+		delete_array(paParams);
+
+		ASSERT_TRUE(is_success);
+		ASSERT_TRUE(TV_VT(pvarRetValue) = VTYPE_PWSTR);
+		ASSERT_STREQ("topic1;topic2;", ToString(TV_WSTR(pvarRetValue)).c_str());
 
 		CheckPropErrorDescription("");
 		CheckPropError(false);

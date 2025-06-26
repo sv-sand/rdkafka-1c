@@ -125,11 +125,6 @@ namespace Kafka1C
 		return RdKafka::ERR_NO_ERROR;
 	}
 
-	RdKafka::ErrorCode MockKafkaConsumer::subscription(std::vector<std::string>&)
-	{
-		return RdKafka::ERR_NO_ERROR;
-	}
-
 	RdKafka::ErrorCode MockKafkaConsumer::subscribe(const std::vector<std::string>&)
 	{
 		return RdKafka::ERR_NO_ERROR;

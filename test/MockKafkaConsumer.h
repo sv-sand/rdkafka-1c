@@ -42,7 +42,6 @@ namespace Kafka1C
 
         // KafkaConsumer interface
         RdKafka::ErrorCode assignment(std::vector<RdKafka::TopicPartition*>& partitions) override;
-        RdKafka::ErrorCode subscription(std::vector<std::string>& topics) override;
         RdKafka::ErrorCode subscribe(const std::vector<std::string>& topics) override;
         RdKafka::ErrorCode unsubscribe() override;
         RdKafka::ErrorCode assign(const std::vector<RdKafka::TopicPartition*>& partitions) override;
@@ -70,5 +69,6 @@ namespace Kafka1C
         MOCK_METHOD(RdKafka::ErrorCode, commitSync, (), (override));
         MOCK_METHOD(RdKafka::ErrorCode, commitSync, (std::vector<RdKafka::TopicPartition*>&), (override));
         MOCK_METHOD(RdKafka::ErrorCode, committed, (std::vector<RdKafka::TopicPartition*>&, int), (override));
+        MOCK_METHOD(RdKafka::ErrorCode, subscription, (std::vector<std::string>&), (override));
     };
 } // namespace Kafka1C
