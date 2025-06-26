@@ -558,6 +558,16 @@ namespace Kafka1C {
 		StopConsumer();
 	}
 
+	TEST_F(AddInNativeTest, ConsumerQueueLen)
+	{
+		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
+		SetConfigProperty(u"group.id", u"group-id");
+
+		InitConsumer();
+		ConsumerQueueLen();
+		StopConsumer();
+	}
+
 	// Checks
 
 	void AddInNativeTest::SetConfigProperty(const std::u16string& name, const std::u16string& value)
@@ -888,6 +898,25 @@ namespace Kafka1C {
 		ASSERT_TRUE(is_success);
 		ASSERT_TRUE(TV_VT(pvarRetValue) = VTYPE_BOOL);
 		ASSERT_TRUE(TV_BOOL(pvarRetValue));
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::ConsumerQueueLen()
+	{
+		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
+		tVariant* paParams = new tVariant[0];
+		
+		EXPECT_CALL(*rdk1c->GetConsumer(), outq_len())
+			.WillOnce(Return(111));
+		
+		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethConsumerQueueLen, pvarRetValue, paParams, 0);
+		delete_array(paParams);
+
+		ASSERT_TRUE(is_success);
+		ASSERT_TRUE(TV_VT(pvarRetValue) = VTYPE_INT);
+		ASSERT_EQ(111, TV_INT(pvarRetValue));
 
 		CheckPropErrorDescription("");
 		CheckPropError(false);

@@ -17,11 +17,6 @@ namespace Kafka1C
 		return 0;
 	}
 
-	int MockKafkaConsumer::outq_len()
-	{
-		return 0;
-	}
-
 	RdKafka::ErrorCode MockKafkaConsumer::metadata(bool, const RdKafka::Topic*, RdKafka::Metadata**, int)
 	{
 		return RdKafka::ERR_NO_ERROR;

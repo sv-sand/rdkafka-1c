@@ -18,7 +18,6 @@ namespace Kafka1C
         std::string name() const override;
         std::string memberid() const override;
         int poll(int timeout_ms) override;
-        int outq_len() override;
         RdKafka::ErrorCode metadata(bool all_topics, const RdKafka::Topic* only_rkt, RdKafka::Metadata** metadatap, int timeout_ms) override;
         RdKafka::ErrorCode pause(std::vector<RdKafka::TopicPartition*>& partitions) override;
         RdKafka::ErrorCode resume(std::vector<RdKafka::TopicPartition*>& partitions) override;
@@ -66,6 +65,7 @@ namespace Kafka1C
         RdKafka::Error* close(RdKafka::Queue* queue) override;
         bool closed() override;
 
+        MOCK_METHOD(int, outq_len, (), (override));
         MOCK_METHOD(RdKafka::Message*, consume, (int), (override));
         MOCK_METHOD(RdKafka::ErrorCode, commitSync, (), (override));
         MOCK_METHOD(RdKafka::ErrorCode, commitSync, (std::vector<RdKafka::TopicPartition*>&), (override));
