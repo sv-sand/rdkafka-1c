@@ -2,12 +2,13 @@
 
 using namespace testing;
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
 	AddInNativeTest::AddInNativeTest()
 	{
 		memoryManager = nullptr;
 		addInNative = nullptr;
+		rdk1c = nullptr;
 	}
 
 	void AddInNativeTest::SetUp()
@@ -16,6 +17,7 @@ namespace RdKafka1C {
 		addInNative = new MockAddInNative();
 		addInNative->Init(nullptr);
 		addInNative->setMemManager(memoryManager);
+		rdk1c = addInNative->GetRdk1C();
 	}
 
 	void AddInNativeTest::TearDown()
@@ -471,6 +473,11 @@ namespace RdKafka1C {
 
 	TEST_F(AddInNativeTest, Consume)
 	{
+		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
+		SetConfigProperty(u"group.id", u"group-id");
+
+		InitConsumer();
+		
 		MockMessage* message = new MockMessage();	// Will be deleted in RdKafka1C::StopConsumer()
 		message->topic_name_ = "topic-name";
 		message->payload_ = "payload";
@@ -479,14 +486,11 @@ namespace RdKafka1C {
 		message->partition_ = 111;
 		message->offset_ = 222;
 
-		EXPECT_CALL(*addInNative->GetRdk1C(), ConsumerConsume())
+		EXPECT_CALL(*rdk1c->GetConsumer(), consume(_))
 			.WillOnce(Return(message));
 
-		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
-		SetConfigProperty(u"group.id", u"group-id");
-
-		InitConsumer();
 		Consume();
+		
 		CheckMessageData("payload");
 		CheckMessageKey("key");
 		CheckMessageHeaders("header1:value1;");
@@ -600,7 +604,7 @@ namespace RdKafka1C {
 	{
 		tVariant* paParams = new tVariant();
 
-		EXPECT_CALL(*addInNative->GetRdk1C(), ProduserFlush())
+		EXPECT_CALL(*rdk1c->GetProducer(), flush(_))
 			.WillOnce(Return(RdKafka::ErrorCode::ERR_NO_ERROR));
 
 		bool is_success = addInNative->CallAsProc(CAddInNative::eMethFlush, paParams, 0);
@@ -814,7 +818,7 @@ namespace RdKafka1C {
 		setToVariant(&paParams[0], u"topic-name");
 		setToVariant(&paParams[1], 123);
 
-		EXPECT_CALL(*addInNative->GetRdk1C(), ConsumerCommittedOffset(_))
+		EXPECT_CALL(*rdk1c->GetConsumer(), committed(_, _))
 			.WillOnce(Return(RdKafka::ErrorCode::ERR_NO_ERROR));
 		
 		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethCommittedOffset, pvarRetValue, paParams, 2);

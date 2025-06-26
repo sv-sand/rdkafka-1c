@@ -5,7 +5,7 @@
 #include <librdkafka/rdkafkacpp.h>
 #include "Loger.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
 	class DeliveryReport : public RdKafka::DeliveryReportCb {
 

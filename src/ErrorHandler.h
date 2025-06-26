@@ -3,7 +3,7 @@
 #include <string>
 #include "Loger.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     class ErrorHandler {
 

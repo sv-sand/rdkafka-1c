@@ -1,6 +1,6 @@
 #include "DeliveryReport.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     DeliveryReport::DeliveryReport(Loger* Loger) {
         loger = Loger;

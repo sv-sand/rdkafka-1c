@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     class MockMessage :
         public RdKafka::Message

@@ -4,11 +4,13 @@
 #include <gmock/gmock.h>
 #include <codecvt>
 #include "MockAddInNative.h"
+#include "MockRdKafka1C.h"
+#include "MockProducer.h"
 #include "utils.h"
 #include "MemoryManager.h"
 #include "MockMessage.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
 	class AddInNativeTest
 		: public testing::Test
@@ -16,7 +18,8 @@ namespace RdKafka1C {
 	protected:
 		MemoryManager* memoryManager;
 		MockAddInNative* addInNative;
-
+		MockRdKafka1C* rdk1c;
+		
 		AddInNativeTest();
 		void SetUp() override;
 		void TearDown() override;

@@ -1,6 +1,6 @@
 #include "ErrorHandler.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     ErrorHandler::ErrorHandler(Loger* Loger) {
         error = false;

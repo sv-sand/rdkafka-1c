@@ -6,7 +6,7 @@
 #include <filesystem>
 #include "strings.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     class Loger {
 

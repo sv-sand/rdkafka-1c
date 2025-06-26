@@ -4,7 +4,7 @@
 #include "Loger.h"
 #include "ErrorHandler.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     class IRdKafka1C {
         public:

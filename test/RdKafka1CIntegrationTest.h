@@ -21,7 +21,7 @@ class RdKafka1CIntegrationTest : public testing::Test
 
         Loger* loger;
         ErrorHandler* error;
-        RdKafka1C* rdk1c;
+        Kafka1C* rdk1c;
 
         void CreateRdKafka1C();
         void DeleteRdKafka1C();

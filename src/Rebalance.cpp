@@ -6,7 +6,7 @@
  * The algorithm used by Kafka to assign partitions to consumers in a group.
  */
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     Rebalance::Rebalance(Loger* Loger) {
         loger = Loger;

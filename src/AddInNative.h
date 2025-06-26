@@ -117,8 +117,13 @@ class CAddInNative : public IComponentBase {
         
         // UserLanguageBase
         void ADDIN_API SetUserInterfaceLanguageCode(const WCHAR_T* lang) override;
-        
+
     protected:
+        Kafka1C::Loger* loger;
+        Kafka1C::ErrorHandler* error;
+        Kafka1C::IRdKafka1C* rdk1c;
+
+    private:
 
         const wchar_t* EXTENSION_NAME = L"RdKafka1C";
         const wchar_t* COMPONENT_VERSION = L"1.3.1";
@@ -126,20 +131,19 @@ class CAddInNative : public IComponentBase {
         std::string currentLocale;
         IAddInDefBase* m_iConnect;
         IMemoryManager* m_iMemory;    
-        RdKafka1C::Loger* loger;
-        RdKafka1C::ErrorHandler* error;
-        RdKafka1C::IRdKafka1C* rdk1c;
         
         bool SetLocale(tVariant* varPropVal);
         bool SetLocale(std::string LocaleName);
         
         // Common methods
+        Kafka1C::IRdKafka1C* CreateRdKafka1C(Kafka1C::Loger* loger, Kafka1C::ErrorHandler* error);
+
         bool StartLogging(tVariant* paParams, const long lSizeArray);
         bool StopLogging(tVariant* paParams, const long lSizeArray);
         bool SetLogLevel(tVariant* varPropVal);
         std::string GetLogLevel();
         std::string GetLogFile();
-        RdKafka1C::Loger::Levels StringToLogLevel(std::string String);
+        Kafka1C::Loger::Levels StringToLogLevel(std::string String);
         
         bool SetConfigProperty(tVariant* paParams, const long lSizeArray);
         

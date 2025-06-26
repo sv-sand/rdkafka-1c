@@ -1,6 +1,6 @@
 #include "ConfigBuilder.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     std::string CoverPaswords(std::string name, std::string value);
 

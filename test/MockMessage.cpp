@@ -1,6 +1,6 @@
 #include "MockMessage.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     // Interface methods
     std::string MockMessage::errstr() const

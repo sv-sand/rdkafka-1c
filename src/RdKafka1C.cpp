@@ -1,6 +1,6 @@
 ﻿#include "RdKafka1C.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     RdKafka1C::RdKafka1C(Loger* Loger, ErrorHandler* Error) {
         loger = Loger;
@@ -38,7 +38,7 @@ namespace RdKafka1C {
         error->Clear();
 
         if (producer) {
-            error->Set("Failed to create producer: producer has been initialized already");
+            error->Set("Failed to init producer: producer has been initialized already");
             return false;
         }
 
@@ -48,14 +48,14 @@ namespace RdKafka1C {
 
         loger->Debug("Create producer");
         std::string errorDescription;
+
         producer = RdKafka::Producer::create(config->GetConf(), errorDescription);
         if (!producer) {
             error->Set("Failed to create producer: " + errorDescription);
             return false;
         }
-
+        
         loger->Info("Producer created successful: " + producer->name());
-
         return true;
     }
 
@@ -167,17 +167,13 @@ namespace RdKafka1C {
             return false;
         }
 
-        RdKafka::ErrorCode errorCode = ProduserFlush();
+        RdKafka::ErrorCode errorCode = producer->flush(OperationTimeout);
         if (errorCode) {
             error->Set("Failed to flush messages: " + RdKafka::err2str(errorCode));
             return false;
         }
 
         return true;
-    }
-
-    RdKafka::ErrorCode RdKafka1C::ProduserFlush() {
-        return producer->flush(OperationTimeout);
     }
 
     bool RdKafka1C::SetHeaders(RdKafka::Headers* Headers, std::string HeadersString) {
@@ -293,7 +289,7 @@ namespace RdKafka1C {
         delete_pointer(message);
 
         loger->Debug("Consume new message");
-        message = ConsumerConsume();
+        message = consumer->consume(OperationTimeout);
 
         RdKafka::ErrorCode errorCode = message->err();
         switch (errorCode) {
@@ -315,10 +311,6 @@ namespace RdKafka1C {
         }
 
         return true;
-    }
-
-    RdKafka::Message* RdKafka1C::ConsumerConsume() {
-        return consumer->consume(OperationTimeout);
     }
 
     std::string RdKafka1C::MessageData() {
@@ -435,7 +427,9 @@ namespace RdKafka1C {
         loger->Debug("Create topic partition pair");
         RdKafka::TopicPartition* partition = RdKafka::TopicPartition::create(Topic, Partition);
         
-        RdKafka::ErrorCode errorCode = ConsumerCommittedOffset(partition);
+        std::vector<RdKafka::TopicPartition*> partitions;
+        partitions.push_back(partition);
+        RdKafka::ErrorCode errorCode = consumer->committed(partitions, OperationTimeout);
 
         int64_t offset = partition->offset();
         delete_pointer(partition);
@@ -446,12 +440,6 @@ namespace RdKafka1C {
         }
 
         return offset;
-    }
-
-    RdKafka::ErrorCode RdKafka1C::ConsumerCommittedOffset(RdKafka::TopicPartition* partition) {
-        std::vector<RdKafka::TopicPartition*> partitions;
-        partitions.push_back(partition);
-        return consumer->committed(partitions, OperationTimeout);
     }
 
     bool RdKafka1C::ChangeOffset(std::string Topic, int Partition, int64_t Offset) {

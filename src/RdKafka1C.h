@@ -15,10 +15,9 @@
 #include "strings.h"
 #include "utils.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
-    class RdKafka1C :
-        public IRdKafka1C
+    class RdKafka1C : public IRdKafka1C
     {
     public:
 
@@ -63,22 +62,18 @@ namespace RdKafka1C {
         // Other
         std::string MessageStatusToString(RdKafka::Message::Status Status);
 
-    private:
-
+    protected:
+        RdKafka::Producer* producer;
+        RdKafka::KafkaConsumer* consumer;
         Loger* loger;
         ErrorHandler* error;
 
-        RdKafka::Producer* producer;
-        RdKafka::KafkaConsumer* consumer;
+    private:
+
         RdKafka::Message* message;
         ConfigBuilder* config;
 
         bool SetHeaders(RdKafka::Headers* Headers, std::string StringHeaders);
-
-        // Mock methods
-        virtual RdKafka::ErrorCode ProduserFlush();
-        virtual RdKafka::Message* ConsumerConsume();
-        virtual RdKafka::ErrorCode ConsumerCommittedOffset(RdKafka::TopicPartition* partition);
     };
 
 } // namespace RdKafka1C

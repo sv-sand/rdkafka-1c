@@ -4,7 +4,7 @@
 #include <librdkafka/rdkafkacpp.h>
 #include "Loger.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     class Rebalance : public RdKafka::RebalanceCb {
     public:

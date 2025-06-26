@@ -1,6 +1,6 @@
 #include "Event.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     Event::Event(Loger* Loger) {
         loger = Loger;

@@ -1,16 +1,25 @@
 #include "MockAddInNative.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
-    bool MockAddInNative::Init(void* pConnection) {
-        loger = new Loger();
-        error = new ErrorHandler(loger);
-        rdk1c = new MockRdKafka1C(loger, error);
-        m_iConnect = (IAddInDefBase*)pConnection;
-        return m_iConnect != nullptr;
+    MockAddInNative::MockAddInNative() :
+        CAddInNative() 
+    {
+    };
+
+    bool MockAddInNative::Init(void* pConnection) 
+    {
+        bool result = CAddInNative::Init(pConnection);
+
+		// Change to mock implementation
+        delete_pointer(rdk1c);
+        rdk1c = new Kafka1C::MockRdKafka1C(loger, error);
+
+        return result;
     }
 
-    MockRdKafka1C* MockAddInNative::GetRdk1C() {
+    MockRdKafka1C* MockAddInNative::GetRdk1C() 
+    {
         return (MockRdKafka1C*)rdk1c;
     }
 

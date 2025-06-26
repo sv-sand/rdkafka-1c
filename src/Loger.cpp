@@ -1,6 +1,6 @@
 ﻿#include "Loger.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     Loger::Loger() {
     }

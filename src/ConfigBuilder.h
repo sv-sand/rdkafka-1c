@@ -9,7 +9,7 @@
 #include "Event.h" 
 #include "utils.h"
 
-namespace RdKafka1C {
+namespace Kafka1C {
 
     class ConfigBuilder {
 
