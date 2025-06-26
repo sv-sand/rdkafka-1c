@@ -4,6 +4,11 @@ using namespace testing;
 
 namespace Kafka1C {
 
+	ACTION_P(AddToVectorArgument, topic1)
+	{
+		arg0.push_back(topic1);
+	}
+
 	AddInNativeTest::AddInNativeTest()
 	{
 		memoryManager = nullptr;
@@ -930,11 +935,6 @@ namespace Kafka1C {
 
 		CheckPropErrorDescription("");
 		CheckPropError(false);
-	}
-
-	ACTION_P(AddToVectorArgument, topic1)
-	{ 
-		arg0.push_back(topic1);
 	}
 
 	void AddInNativeTest::Subscription()
