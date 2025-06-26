@@ -51,7 +51,6 @@ namespace Kafka1C
         RdKafka::ErrorCode commitAsync() override;
         RdKafka::ErrorCode commitSync(RdKafka::Message* message) override;
         RdKafka::ErrorCode commitAsync(RdKafka::Message* message) override;
-        RdKafka::ErrorCode commitSync(std::vector<RdKafka::TopicPartition*>& offsets) override;
         RdKafka::ErrorCode commitAsync(const std::vector<RdKafka::TopicPartition*>& offsets) override;
         RdKafka::ErrorCode commitSync(RdKafka::OffsetCommitCb* offset_commit_cb) override;
         RdKafka::ErrorCode commitSync(std::vector<RdKafka::TopicPartition*>& offsets, RdKafka::OffsetCommitCb* offset_commit_cb) override;
@@ -69,6 +68,7 @@ namespace Kafka1C
 
         MOCK_METHOD(RdKafka::Message*, consume, (int), (override));
         MOCK_METHOD(RdKafka::ErrorCode, commitSync, (), (override));
+        MOCK_METHOD(RdKafka::ErrorCode, commitSync, (std::vector<RdKafka::TopicPartition*>&), (override));
         MOCK_METHOD(RdKafka::ErrorCode, committed, (std::vector<RdKafka::TopicPartition*>&, int), (override));
     };
 } // namespace Kafka1C

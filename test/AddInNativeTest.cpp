@@ -548,6 +548,16 @@ namespace Kafka1C {
 		StopConsumer();
 	}
 
+	TEST_F(AddInNativeTest, ChangeOffset)
+	{
+		SetConfigProperty(u"bootstrap.servers", u"localhost:9092");
+		SetConfigProperty(u"group.id", u"group-id");
+
+		InitConsumer();
+		ChangeOffset();
+		StopConsumer();
+	}
+
 	// Checks
 
 	void AddInNativeTest::SetConfigProperty(const std::u16string& name, const std::u16string& value)
@@ -851,6 +861,28 @@ namespace Kafka1C {
 			.WillOnce(Return(RdKafka::ErrorCode::ERR_NO_ERROR));
 		
 		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethCommitOffset, pvarRetValue, paParams, 0);
+		delete_array(paParams);
+
+		ASSERT_TRUE(is_success);
+		ASSERT_TRUE(TV_VT(pvarRetValue) = VTYPE_BOOL);
+		ASSERT_TRUE(TV_BOOL(pvarRetValue));
+
+		CheckPropErrorDescription("");
+		CheckPropError(false);
+	}
+
+	void AddInNativeTest::ChangeOffset()
+	{
+		tVariant* pvarRetValue = new tVariant();	// Will be delete by MemoryManager
+		tVariant* paParams = new tVariant[3];
+		setToVariant(&paParams[0], u"topic-name");
+		setToVariant(&paParams[1], 111);
+		setToVariant(&paParams[2], 222);
+
+		EXPECT_CALL(*rdk1c->GetConsumer(), commitSync(_))
+			.WillOnce(Return(RdKafka::ErrorCode::ERR_NO_ERROR));
+		
+		bool is_success = addInNative->CallAsFunc(CAddInNative::eMethChangeOffset, pvarRetValue, paParams, 3);
 		delete_array(paParams);
 
 		ASSERT_TRUE(is_success);

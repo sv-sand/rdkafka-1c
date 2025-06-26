@@ -170,11 +170,6 @@ namespace Kafka1C
 		return RdKafka::ERR_NO_ERROR;
 	}
 
-	RdKafka::ErrorCode MockKafkaConsumer::commitSync(std::vector<RdKafka::TopicPartition*>&)
-	{
-		return RdKafka::ERR_NO_ERROR;
-	}
-
 	RdKafka::ErrorCode MockKafkaConsumer::commitAsync(const std::vector<RdKafka::TopicPartition*>&)
 	{
 		return RdKafka::ERR_NO_ERROR;
