@@ -56,6 +56,7 @@ namespace Kafka1C {
 		void Subscribe();
 		void Unsubscribe();
 		void CommittedOffset();
+		void CommitOffset();
 		void StopConsumer();
 
 		// Helper methods

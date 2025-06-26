@@ -155,11 +155,6 @@ namespace Kafka1C
 		return RdKafka::ERR_NO_ERROR;
 	}
 
-	RdKafka::ErrorCode MockKafkaConsumer::commitSync()
-	{
-		return RdKafka::ERR_NO_ERROR;
-	}
-
 	RdKafka::ErrorCode MockKafkaConsumer::commitAsync()
 	{
 		return RdKafka::ERR_NO_ERROR;
