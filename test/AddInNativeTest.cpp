@@ -100,7 +100,7 @@ namespace Kafka1C {
 
 	TEST_F(AddInNativeTest, PropRdKafkaVersion)
 	{
-		CheckPropRdKafkaVersion("2.10.0-devel");
+		CheckPropRdKafkaVersion("2.10.0");
 	}
 
 	TEST_F(AddInNativeTest, PropLocale)
@@ -187,6 +187,9 @@ namespace Kafka1C {
 		ASSERT_TRUE(is_success);
 		ASSERT_TRUE(TV_VT(result) = VTYPE_PWSTR);
 		ASSERT_STREQ(rdkafka_version.c_str(), ToString(TV_WSTR(result)).c_str());
+		
+		std::string string_result = ToString(TV_WSTR(result));
+		ASSERT_THAT(rdkafka_version, HasSubstr(string_result));
 
 		delete_pointer(result);
 	}

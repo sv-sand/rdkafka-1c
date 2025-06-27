@@ -81,6 +81,10 @@ add_executable(ModuleTests
 	test/AddInNativeTest.cpp
 	test/MemoryManager.cpp
 	test/MockAddInNative.cpp
+	test/MockRdKafka1C.cpp
+	test/MockKafkaConsumer.cpp
+	test/MockProducer.cpp
+	test/MockMessage.cpp
 	src/RdKafka1C.cpp
 	src/ErrorHandler.cpp
 	src/Loger.cpp
@@ -94,33 +98,6 @@ target_include_directories(ModuleTests PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/include)	
 
 target_link_libraries(ModuleTests PRIVATE
-	RdKafka1C
-	GTest::gtest  
-	GTest::gtest_main 
-	GTest::gmock 
-	GTest::gmock_main)
-
-# Integration tests
-project(IntegrationTests)
-find_package(GTest CONFIG REQUIRED)
-enable_testing()
-
-add_executable(IntegrationTests 
-	test/main.cpp
-	test/RdKafka1CIntegrationTest.cpp
-	src/RdKafka1C.cpp
-	src/ErrorHandler.cpp
-	src/Loger.cpp
-	src/ConfigBuilder.cpp
-	src/DeliveryReport.cpp
-	src/Event.cpp
-	src/Rebalance.cpp)
-
-target_include_directories(IntegrationTests PRIVATE 
-	${CMAKE_CURRENT_SOURCE_DIR}/src
-	${CMAKE_CURRENT_SOURCE_DIR}/include)	
-
-target_link_libraries(IntegrationTests PRIVATE
 	RdKafka1C
 	GTest::gtest  
 	GTest::gtest_main 
