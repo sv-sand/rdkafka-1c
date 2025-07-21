@@ -1,7 +1,7 @@
 #pragma once
 
 #include <wchar.h>
-#include <string>
+#include <string.h>
 #include <sstream>
 #include <chrono>
 #include <iomanip>

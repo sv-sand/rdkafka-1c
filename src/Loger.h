@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include <string>
+#include <string.h>
 #include <fstream>
 #include <sstream>
 #include <filesystem>
-#include "strings.h"
+#include "Strings.h"
 
 namespace Kafka1C {
 

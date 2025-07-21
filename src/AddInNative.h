@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <wchar.h>
-#include <string>
+#include <string.h>
 #include <clocale>
 #include "stdafx.h"
 #include "ComponentBase.h"
@@ -11,7 +11,7 @@
 #include "Loger.h"
 #include "ErrorHandler.h"
 #include "RdKafka1C.h"
-#include "strings.h"
+#include "Strings.h"
 #include "utils.h"
 
 #if defined( __linux__ )

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "librdkafka/rdkafkacpp.h"
-#include <string>
+#include <string.h>
 #include <memory>
 
 namespace Kafka1C {

@@ -34,7 +34,7 @@ add_library(RdKafka1C SHARED
 	src/DeliveryReport.cpp
 	src/Event.cpp
 	src/Rebalance.cpp
-    src/strings.cpp)
+    src/Strings.cpp)
 
 if(WIN32)
 	if(NOT MSVC)
@@ -91,7 +91,8 @@ add_executable(ModuleTests
 	src/ConfigBuilder.cpp
 	src/DeliveryReport.cpp
 	src/Event.cpp
-	src/Rebalance.cpp)
+	src/Rebalance.cpp
+	src/Strings.cpp)
 
 target_include_directories(ModuleTests PRIVATE 
 	${CMAKE_CURRENT_SOURCE_DIR}/src

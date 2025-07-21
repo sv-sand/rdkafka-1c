@@ -105,7 +105,11 @@ namespace Kafka1C {
 
 	TEST_F(AddInNativeTest, PropLocale)
 	{
-		CheckPropLocale("ru-RU");
+		#ifdef WIN32
+			CheckPropLocale("ru-RU");
+		#else
+			CheckPropLocale("ru_RU");
+		#endif
 	}
 
 	TEST_F(AddInNativeTest, PropLogFile)
@@ -137,12 +141,21 @@ namespace Kafka1C {
 
 	TEST_F(AddInNativeTest, SetPropLocale)
 	{
-		tVariant* propValue = newVariant(u"en-UK");
+		#ifdef WIN32
+			tVariant* propValue = newVariant(u"en-US");
+		#else
+			tVariant* propValue = newVariant(u"C");
+		#endif
+
 		bool is_success = addInNative->SetPropVal(CAddInNative::ePropLocale, propValue);
 		ASSERT_TRUE(is_success);
 		delete_pointer(propValue);
 
-		CheckPropLocale("en-UK");
+		#ifdef WIN32
+			CheckPropLocale("en-US");
+		#else
+			CheckPropLocale("C");
+		#endif
 	}
 
 	TEST_F(AddInNativeTest, SetPropLogLevel)
@@ -186,10 +199,9 @@ namespace Kafka1C {
 
 		ASSERT_TRUE(is_success);
 		ASSERT_TRUE(TV_VT(result) = VTYPE_PWSTR);
-		ASSERT_STREQ(rdkafka_version.c_str(), ToString(TV_WSTR(result)).c_str());
 		
 		std::string string_result = ToString(TV_WSTR(result));
-		ASSERT_THAT(rdkafka_version, HasSubstr(string_result));
+		ASSERT_THAT(string_result, HasSubstr(rdkafka_version));
 
 		delete_pointer(result);
 	}

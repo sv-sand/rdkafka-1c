@@ -12,7 +12,7 @@
 #include "Loger.h"
 #include "ErrorHandler.h"
 #include "ConfigBuilder.h"
-#include "strings.h"
+#include "Strings.h"
 #include "utils.h"
 
 namespace Kafka1C {

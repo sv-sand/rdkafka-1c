@@ -1,4 +1,4 @@
-#include "strings.h"
+#include "Strings.h"
 
 namespace Strings {
 
