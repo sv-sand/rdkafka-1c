@@ -23,7 +23,7 @@ static const wchar_t *g_PropNamesRu[] = {
 
 static const wchar_t *g_MethodNames[] = {
 
-    // Logging
+    // Common methods
     L"StartLogging",
     L"StopLogging",
     L"SetConfigProperty",
@@ -59,7 +59,7 @@ static const wchar_t *g_MethodNames[] = {
 };
 static const wchar_t *g_MethodNamesRu[] = {
     
-    // Логирование
+    // Общего назначения
     L"НачатьЛогирование",
     L"ОстановитьЛогирование",
     L"УстановитьПараметр",
@@ -159,9 +159,9 @@ CAddInNative::~CAddInNative() {
 }
 
 bool CAddInNative::Init(void* pConnection) {
-    loger = new Loger(); 
-    error = new ErrorHandler(loger); 
-    rdk1c = new RdKafka1C(loger, error);
+    loger = new Kafka1C::Loger();
+    error = new Kafka1C::ErrorHandler(loger);
+    rdk1c = new Kafka1C::RdKafka1C(loger, error);
     m_iConnect = (IAddInDefBase*)pConnection;
     return m_iConnect != nullptr;
 }
@@ -434,7 +434,7 @@ bool CAddInNative::CallAsProc(const long lMethodNum, tVariant* paParams, const l
 
     switch (lMethodNum) {
 
-        // Logging
+        // Common methods
         case eMethStartLogging:
             return StartLogging(paParams, lSizeArray);
 
@@ -470,14 +470,11 @@ bool CAddInNative::CallAsProc(const long lMethodNum, tVariant* paParams, const l
         case eMethAssignPartition:
             return AssignPartition(paParams, lSizeArray);
 
-        // Subscription
         case eMethSubscribe:
             return Subscribe(paParams, lSizeArray);
 
         case eMethUnsubscribe:
             return Unsubscribe(paParams, lSizeArray);
-
-
     }
 
     return false;
@@ -588,7 +585,7 @@ long CAddInNative::findName(const wchar_t* names[], const wchar_t* name, const u
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// Logging
+// Common methods
 
 bool CAddInNative::StartLogging(tVariant* paParams, const long lSizeArray) {
     error->Clear(); 
@@ -600,7 +597,7 @@ bool CAddInNative::StartLogging(tVariant* paParams, const long lSizeArray) {
 
     std::string fileName = ToString(&paParams[0]);
     std::string levelName = ToString(&paParams[1]);
-    Loger::Levels level = StringToLogLevel(levelName);
+    Kafka1C::Loger::Levels level = StringToLogLevel(levelName);
 
     if (error->Error()) 
         return true;
@@ -620,7 +617,7 @@ bool CAddInNative::StopLogging(tVariant* paParams, const long lSizeArray) {
     loger->Info("Stop logging");
     error->Clear();
     
-    loger->level = Loger::Levels::NONE;
+    loger->level = Kafka1C::Loger::Levels::NONE;
     return true;
 }
 
@@ -633,7 +630,7 @@ bool CAddInNative::SetLogLevel(tVariant* varPropVal) {
     if (error->Error())
         return true;    
 
-    Loger::Levels logLevel = StringToLogLevel(level);
+    Kafka1C::Loger::Levels logLevel = StringToLogLevel(level);
     if (error->Error())
         return true;
 
@@ -649,19 +646,19 @@ std::string CAddInNative::GetLogFile() {
     return loger->GetLogFile();
 }
 
-Loger::Levels CAddInNative::StringToLogLevel(std::string String) {
-    Loger::Levels Level = Loger::Levels::NONE;
+Kafka1C::Loger::Levels CAddInNative::StringToLogLevel(std::string String) {
+    Kafka1C::Loger::Levels Level = Kafka1C::Loger::Levels::NONE;
     
     if (String == "none")
-        Level = Loger::Levels::NONE;
+        Level = Kafka1C::Loger::Levels::NONE;
     else if (String == "debug")
-        Level = Loger::Levels::DEBUG;
+        Level = Kafka1C::Loger::Levels::DEBUG;
     else if (String == "info")
-        Level = Loger::Levels::INFO;
+        Level = Kafka1C::Loger::Levels::INFO;
     else if (String == "warn")
-        Level = Loger::Levels::WARN;
+        Level = Kafka1C::Loger::Levels::WARN;
     else if (String == "error")
-        Level = Loger::Levels::ERRORS;
+        Level = Kafka1C::Loger::Levels::ERRORS;
     else
     {
         error->Set("Faled to convert value '" + String + "' to log level. Valid values: none, debug, info, warn, error");
@@ -677,23 +674,20 @@ std::string CAddInNative::GetLogLevel() {
     
     switch (loger->level)
     {
-    case Loger::Levels::NONE:
+    case Kafka1C::Loger::Levels::NONE:
         return "none";
-    case Loger::Levels::DEBUG:
+    case Kafka1C::Loger::Levels::DEBUG:
         return "debug";
-    case Loger::Levels::INFO:
+    case Kafka1C::Loger::Levels::INFO:
         return "info";
-    case Loger::Levels::WARN:
+    case Kafka1C::Loger::Levels::WARN:
         return "warn";
-    case Loger::Levels::ERRORS:
+    case Kafka1C::Loger::Levels::ERRORS:
         return "error";
     default:
         return "undefined";
     }
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// General action
 
 bool CAddInNative::SetConfigProperty(tVariant* paParams, const long lSizeArray) {
     if (lSizeArray != 2 || !paParams ) {

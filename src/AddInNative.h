@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <wchar.h>
-#include <string>
+#include <string.h>
 #include <clocale>
 #include "stdafx.h"
 #include "ComponentBase.h"
@@ -11,7 +11,7 @@
 #include "Loger.h"
 #include "ErrorHandler.h"
 #include "RdKafka1C.h"
-#include "strings.h"
+#include "Strings.h"
 #include "utils.h"
 
 #if defined( __linux__ )
@@ -46,6 +46,8 @@ class CAddInNative : public IComponentBase {
             // Logging
             eMethStartLogging = 0,
             eMethStopLogging,
+
+            // Config
             eMethSetConfigProperty,
 
             // Producer
@@ -82,64 +84,67 @@ class CAddInNative : public IComponentBase {
 
         
         CAddInNative(void);
-        virtual ~CAddInNative();
+        ~CAddInNative();
 
         // IInitDoneBase
-        virtual bool ADDIN_API Init(void*) override;
-        virtual bool ADDIN_API setMemManager(void* mem) override;
-        virtual long ADDIN_API GetInfo() override;
-        virtual void ADDIN_API Done() override;
+        bool ADDIN_API Init(void*) override;
+        bool ADDIN_API setMemManager(void* mem) override;
+        long ADDIN_API GetInfo() override;
+        void ADDIN_API Done() override;
 
         // ILanguageExtenderBase
-        virtual bool ADDIN_API RegisterExtensionAs(WCHAR_T**) override;
+        bool ADDIN_API RegisterExtensionAs(WCHAR_T**) override;
 
-        virtual long ADDIN_API GetNProps() override;
-        virtual long ADDIN_API FindProp(const WCHAR_T* wsPropName) override;
-        virtual const WCHAR_T* ADDIN_API GetPropName(long lPropNum, long lPropAlias) override;
-        virtual bool ADDIN_API GetPropVal(const long lPropNum, tVariant* pvarPropVal) override;
-        virtual bool ADDIN_API SetPropVal(const long lPropNum, tVariant* varPropVal) override;
-        virtual bool ADDIN_API IsPropReadable(const long lPropNum) override;
-        virtual bool ADDIN_API IsPropWritable(const long lPropNum) override;
+        long ADDIN_API GetNProps() override;
+        long ADDIN_API FindProp(const WCHAR_T* wsPropName) override;
+        const WCHAR_T* ADDIN_API GetPropName(long lPropNum, long lPropAlias) override;
+        bool ADDIN_API GetPropVal(const long lPropNum, tVariant* pvarPropVal) override;
+        bool ADDIN_API SetPropVal(const long lPropNum, tVariant* varPropVal) override;
+        bool ADDIN_API IsPropReadable(const long lPropNum) override;
+        bool ADDIN_API IsPropWritable(const long lPropNum) override;
 
-        virtual long ADDIN_API GetNMethods() override;
-        virtual long ADDIN_API FindMethod(const WCHAR_T* wsMethodName) override;
-        virtual const WCHAR_T* ADDIN_API GetMethodName(const long lMethodNum, const long lMethodAlias) override;
-        virtual long ADDIN_API GetNParams(const long lMethodNum) override;
-        virtual bool ADDIN_API GetParamDefValue(const long lMethodNum, const long lParamNum, tVariant *pvarParamDefValue) override;   
-        virtual bool ADDIN_API HasRetVal(const long lMethodNum) override;
-        virtual bool ADDIN_API CallAsProc(const long lMethodNum, tVariant* paParams, const long lSizeArray) override;
-        virtual bool ADDIN_API CallAsFunc(const long lMethodNum, tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) override;
+        long ADDIN_API GetNMethods() override;
+        long ADDIN_API FindMethod(const WCHAR_T* wsMethodName) override;
+        const WCHAR_T* ADDIN_API GetMethodName(const long lMethodNum, const long lMethodAlias) override;
+        long ADDIN_API GetNParams(const long lMethodNum) override;
+        bool ADDIN_API GetParamDefValue(const long lMethodNum, const long lParamNum, tVariant *pvarParamDefValue) override;   
+        bool ADDIN_API HasRetVal(const long lMethodNum) override;
+        bool ADDIN_API CallAsProc(const long lMethodNum, tVariant* paParams, const long lSizeArray) override;
+        bool ADDIN_API CallAsFunc(const long lMethodNum, tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray) override;
         
         // LocaleBase
-        virtual void ADDIN_API SetLocale(const WCHAR_T* loc) override;
+        void ADDIN_API SetLocale(const WCHAR_T* loc) override;
         
         // UserLanguageBase
-        virtual void ADDIN_API SetUserInterfaceLanguageCode(const WCHAR_T* lang) override;
-        
+        void ADDIN_API SetUserInterfaceLanguageCode(const WCHAR_T* lang) override;
+
+    protected:
+        Kafka1C::Loger* loger;
+        Kafka1C::ErrorHandler* error;
+        Kafka1C::IRdKafka1C* rdk1c;
+
     private:
 
         const wchar_t* EXTENSION_NAME = L"RdKafka1C";
-        const wchar_t* COMPONENT_VERSION = L"1.3.0";
+        const wchar_t* COMPONENT_VERSION = L"1.3.1";
         
         std::string currentLocale;
         IAddInDefBase* m_iConnect;
         IMemoryManager* m_iMemory;    
-        Loger* loger;
-        ErrorHandler* error;
-        RdKafka1C* rdk1c;
         
         bool SetLocale(tVariant* varPropVal);
         bool SetLocale(std::string LocaleName);
         
-        // Logging
+        // Common methods
+        Kafka1C::IRdKafka1C* CreateRdKafka1C(Kafka1C::Loger* loger, Kafka1C::ErrorHandler* error);
+
         bool StartLogging(tVariant* paParams, const long lSizeArray);
         bool StopLogging(tVariant* paParams, const long lSizeArray);
         bool SetLogLevel(tVariant* varPropVal);
         std::string GetLogLevel();
         std::string GetLogFile();
-        Loger::Levels StringToLogLevel(std::string String);
+        Kafka1C::Loger::Levels StringToLogLevel(std::string String);
         
-        // General action
         bool SetConfigProperty(tVariant* paParams, const long lSizeArray);
         
         // Producer
@@ -166,7 +171,6 @@ class CAddInNative : public IComponentBase {
         bool CommitOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
         bool ChangeOffset(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
 
-        // Subscription
         bool Subscription(tVariant* pvarRetValue, tVariant* paParams, const long lSizeArray);
         bool Subscribe(tVariant* paParams, const long lSizeArray);
         bool Unsubscribe(tVariant* paParams, const long lSizeArray);

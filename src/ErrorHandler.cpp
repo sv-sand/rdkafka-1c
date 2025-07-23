@@ -1,26 +1,31 @@
 #include "ErrorHandler.h"
 
-ErrorHandler::ErrorHandler(Loger* Loger) {
-    loger = Loger;
-}
+namespace Kafka1C {
 
-bool ErrorHandler::Error() {
-    return error;
-}
+    ErrorHandler::ErrorHandler(Loger* Loger) {
+        error = false;
+        loger = Loger;
+    }
 
-std::string ErrorHandler::ErrorDescription() {
-    return errorDescription;
-}
+    bool ErrorHandler::Error() {
+        return error;
+    }
 
-void ErrorHandler::Set(std::string ErrorDescription) {
-    error = true;
-    errorDescription = ErrorDescription;
+    std::string ErrorHandler::ErrorDescription() {
+        return errorDescription;
+    }
 
-    if (loger)
-        loger->Error(errorDescription);
-}
+    void ErrorHandler::Set(std::string ErrorDescription) {
+        error = true;
+        errorDescription = ErrorDescription;
 
-void ErrorHandler::Clear() {
-    error = false;
-    errorDescription = "";
-}
+        if (loger)
+            loger->Error(errorDescription);
+    }
+
+    void ErrorHandler::Clear() {
+        error = false;
+        errorDescription = "";
+    }
+
+} // namespace RdKafka1C
