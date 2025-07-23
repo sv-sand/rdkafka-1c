@@ -1,83 +1,85 @@
 ﻿#include "Loger.h"
 
-Loger::Loger() {
-}
+namespace Kafka1C {
 
-Loger::~Loger() {
-    Info("Stop logging");
-}
-
-bool Loger::Init(std::string FileName) {
-    std::string ErrorDescription = "";
-    return Init(FileName, ErrorDescription);
-}
-
-bool Loger::Init(std::string FileName, std::string &ErrorDescription) {
-    fileName = FileName;
-
-    if (!StartNewFile(fileName)) {
-        ErrorDescription = "Failed to open file " + fileName;
-        return false;
+    Loger::Loger() {
     }
 
-    return true;
-}
+    Loger::~Loger() {
+        Info("Stop logging");
+    }
 
-void Loger::Debug(std::string Message) {
-	if (level > Levels::DEBUG || level == Levels::NONE || fileName.empty())
-		return;
+    bool Loger::Init(std::string FileName) {
+        std::string ErrorDescription = "";
+        return Init(FileName, ErrorDescription);
+    }
 
-    std::stringstream stream;
-    stream << Strings::TimeStamp() << " [DEBUG] " << Message;
+    bool Loger::Init(std::string FileName, std::string& ErrorDescription) {
+        fileName = FileName;
 
-    WriteFile(fileName, stream.str());
-}
+        if (!StartNewFile(fileName)) {
+            ErrorDescription = "Failed to open file " + fileName;
+            return false;
+        }
 
-void Loger::Info(std::string Message) {
-    if (level > Levels::INFO || level == Levels::NONE || fileName.empty())
-        return;
+        return true;
+    }
 
-    std::stringstream stream;
-    stream << Strings::TimeStamp() << " [INFO] " << Message;
+    void Loger::Debug(std::string Message) {
+        if (level > Levels::DEBUG || level == Levels::NONE || fileName.empty())
+            return;
 
-    WriteFile(fileName, stream.str());
-}
+        std::stringstream stream;
+        stream << Strings::TimeStamp() << " [DEBUG] " << Message;
 
-void Loger::Warn(std::string Message)
-{
-    if (level > Levels::WARN || level == Levels::NONE || fileName.empty())
-        return;
+        WriteFile(fileName, stream.str());
+    }
 
-    std::stringstream stream;
-    stream << Strings::TimeStamp() << " [WARNING] " << Message;
+    void Loger::Info(std::string Message) {
+        if (level > Levels::INFO || level == Levels::NONE || fileName.empty())
+            return;
 
-    WriteFile(fileName, stream.str());
-}
+        std::stringstream stream;
+        stream << Strings::TimeStamp() << " [INFO] " << Message;
 
-void Loger::Error(std::string Message) {
-    if (level > Levels::ERRORS || level == Levels::NONE || fileName.empty())
-        return;
+        WriteFile(fileName, stream.str());
+    }
 
-    std::stringstream stream;
-    stream << Strings::TimeStamp() << " [ERROR] " << Message;
+    void Loger::Warn(std::string Message)
+    {
+        if (level > Levels::WARN || level == Levels::NONE || fileName.empty())
+            return;
 
-    WriteFile(fileName, stream.str());
-}
+        std::stringstream stream;
+        stream << Strings::TimeStamp() << " [WARNING] " << Message;
 
-std::string Loger::GetLogFile() {
-    return fileName;
-}
+        WriteFile(fileName, stream.str());
+    }
 
-/////////////////////////////////////////////////////////////////////////////
-// File operations
+    void Loger::Error(std::string Message) {
+        if (level > Levels::ERRORS || level == Levels::NONE || fileName.empty())
+            return;
 
-bool Loger::StartNewFile(std::string FileName) {
-    bool result;
-    std::ofstream file(FileName, std::ios::out | std::ios::trunc |std::ios::binary);
+        std::stringstream stream;
+        stream << Strings::TimeStamp() << " [ERROR] " << Message;
 
-    result = file.is_open();
-    if (result)
-        file 
+        WriteFile(fileName, stream.str());
+    }
+
+    std::string Loger::GetLogFile() {
+        return fileName;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
+    // File operations
+
+    bool Loger::StartNewFile(std::string FileName) {
+        bool result;
+        std::ofstream file(FileName, std::ios::out | std::ios::trunc | std::ios::binary);
+
+        result = file.is_open();
+        if (result)
+            file
             << "####--####---#--#--####--###--#--#--####----------#--####" << std::endl
             << "#--#--#--##--#-#---#--#--#----#-#---#--#---------##--#---" << std::endl
             << "####--#--##--##----####--###--##----####---###----#--#---" << std::endl
@@ -85,16 +87,18 @@ bool Loger::StartNewFile(std::string FileName) {
             << "#-#---####---#--#--#--#--#----#--#--#--#----------#--####" << std::endl
             << std::endl;
 
-    file.close();
+        file.close();
 
-    return result;
-}
+        return result;
+    }
 
-void Loger::WriteFile(std::string FileName, std::string Message) {
-    std::ofstream file(FileName, std::ios::app);
+    void Loger::WriteFile(std::string FileName, std::string Message) {
+        std::ofstream file(FileName, std::ios::app);
 
-    if (file.is_open())
-        file << Message << std::endl;
-    
-    file.close();
-}
+        if (file.is_open())
+            file << Message << std::endl;
+
+        file.close();
+    }
+
+} // namespace RdKafka1C

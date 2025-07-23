@@ -6,35 +6,37 @@
  * The algorithm used by Kafka to assign partitions to consumers in a group.
  */
 
-Rebalance::Rebalance(Loger* Loger) {
-    loger = Loger;
-}
+namespace Kafka1C {
 
-void Rebalance::LogConfig(const std::vector<RdKafka::TopicPartition*>& partitions) {
-    std::stringstream stream;
-    stream << "Partition config: ";
+    Rebalance::Rebalance(Loger* Loger) {
+        loger = Loger;
+    }
 
-    for (unsigned int i = 0; i < partitions.size(); i++)
-        stream << partitions[i]->topic() << "[" << partitions[i]->partition() << "], ";
+    void Rebalance::LogConfig(const std::vector<RdKafka::TopicPartition*>& partitions) {
+        std::stringstream stream;
+        stream << "Partition config: ";
 
-    loger->Debug(stream.str());
-}
+        for (unsigned int i = 0; i < partitions.size(); i++)
+            stream << partitions[i]->topic() << "[" << partitions[i]->partition() << "], ";
 
-void Rebalance::rebalance_cb(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions) {
-    loger->Debug("Rebalance: " + RdKafka::err2str(err));
-        
-    LogConfig(partitions);
+        loger->Debug(stream.str());
+    }
 
-    if (consumer->rebalance_protocol() == "COOPERATIVE")
-        CooperativeRebalance(consumer, err, partitions);
-    else
-        EagerRebalance(consumer, err, partitions);
-}
+    void Rebalance::rebalance_cb(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions) {
+        loger->Debug("Rebalance: " + RdKafka::err2str(err));
 
-void Rebalance::CooperativeRebalance(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions) {
-    RdKafka::Error* result = NULL;
-    
-    switch (err) {
+        LogConfig(partitions);
+
+        if (consumer->rebalance_protocol() == "COOPERATIVE")
+            CooperativeRebalance(consumer, err, partitions);
+        else
+            EagerRebalance(consumer, err, partitions);
+    }
+
+    void Rebalance::CooperativeRebalance(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions) {
+        RdKafka::Error* result = NULL;
+
+        switch (err) {
         case RdKafka::ERR__ASSIGN_PARTITIONS:
             // Application may load offets from arbitrary external
             // storage here and update partitions
@@ -49,18 +51,18 @@ void Rebalance::CooperativeRebalance(RdKafka::KafkaConsumer* consumer, RdKafka::
 
         default:
             result = consumer->incremental_unassign(partitions);
+        }
+
+        if (result)
+            loger->Error("Incremental assign failed: " + result->str());
+
+        delete result;
     }
 
-    if (result)
-        loger->Error("Incremental assign failed: " + result->str());
+    void Rebalance::EagerRebalance(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions) {
+        RdKafka::ErrorCode result = RdKafka::ERR_NO_ERROR;
 
-    delete result;
-}
-
-void Rebalance::EagerRebalance(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorCode err, std::vector<RdKafka::TopicPartition*>& partitions) {
-    RdKafka::ErrorCode result = RdKafka::ERR_NO_ERROR;
-
-    switch (err) {
+        switch (err) {
         case RdKafka::ERR__ASSIGN_PARTITIONS:
             // Application may load offets from arbitrary external
             // storage here and update partitions
@@ -75,8 +77,10 @@ void Rebalance::EagerRebalance(RdKafka::KafkaConsumer* consumer, RdKafka::ErrorC
 
         default:
             result = consumer->unassign();
+        }
+
+        if (result)
+            loger->Error("Assign failed: " + RdKafka::err2str(result));
     }
 
-    if (result)
-        loger->Error("Assign failed: " + RdKafka::err2str(result));
-}
+} // namespace RdKafka1C

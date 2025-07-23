@@ -1,10 +1,12 @@
 #pragma once
 
-#include <string>
+#include <string.h>
 #include "Loger.h"
 
-class ErrorHandler {
-    
+namespace Kafka1C {
+
+    class ErrorHandler {
+
     public:
         ErrorHandler(Loger* Loger);
 
@@ -17,4 +19,6 @@ class ErrorHandler {
         Loger* loger;
         bool error;
         std::string errorDescription;
-};
+    };
+
+} // namespace RdKafka1C

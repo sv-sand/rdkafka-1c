@@ -1,17 +1,19 @@
 #include "Event.h"
 
-Event::Event(Loger* Loger) {
-    loger = Loger;
-}
+namespace Kafka1C {
 
-void Event::event_cb(RdKafka::Event& event) {
-    std::stringstream stream;
+    Event::Event(Loger* Loger) {
+        loger = Loger;
+    }
 
-    switch (event.type()) {
+    void Event::event_cb(RdKafka::Event& event) {
+        std::stringstream stream;
+
+        switch (event.type()) {
         case RdKafka::Event::EVENT_ERROR:
             stream << "[KAFKA] ";
 
-            if (event.fatal()) 
+            if (event.fatal())
                 stream << "FATAL ";
 
             stream << "ERROR: " << RdKafka::err2str(event.err()) << ": " << event.str();
@@ -32,6 +34,7 @@ void Event::event_cb(RdKafka::Event& event) {
             stream << "[KAFKA] EVENT " << event.type() << ": " << RdKafka::err2str(event.err()) << ": " << event.str();
             loger->Info(stream.str());
             break;
+        }
     }
-}
 
+} // namespace RdKafka1C
